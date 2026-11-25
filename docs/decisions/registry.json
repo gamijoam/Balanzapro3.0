@@ -1,0 +1,1010 @@
+[
+  {
+    "id": "001",
+    "title": "Flutter/Dart",
+    "status": "APROBADA",
+    "decision": "Frontend compartido Android/iOS/web/PC; adaptadores por plataforma."
+  },
+  {
+    "id": "002",
+    "title": "Go",
+    "status": "APROBADA",
+    "decision": "Backend y autoridad de reglas comerciales."
+  },
+  {
+    "id": "003",
+    "title": "PostgreSQL + SQLite",
+    "status": "APROBADA",
+    "decision": "PG autoridad; SQLite/Drift caché y borradores por terminal."
+  },
+  {
+    "id": "004",
+    "title": "Monolito modular hexagonal",
+    "status": "APROBADA",
+    "decision": "Dominios, puertos y adaptadores; sin microservicios iniciales."
+  },
+  {
+    "id": "005",
+    "title": "Autoridad local de inventario",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Un escritor por stock; cliente sin acceso directo a PG."
+  },
+  {
+    "id": "006",
+    "title": "Transacciones e idempotencia",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Descuento condicional, locks ordenados, operación única, resultado durable."
+  },
+  {
+    "id": "007",
+    "title": "Offline configurable D",
+    "status": "APROBADA",
+    "decision": "Sin internet funciona con servidor LAN; sin autoridad no finalizar inicialmente; continuidad futura configurable."
+  },
+  {
+    "id": "008",
+    "title": "PowerSync",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Evaluar frente a Drift + API de cambios; no resuelve conflictos del negocio."
+  },
+  {
+    "id": "009",
+    "title": "Generación SQL/OpenAPI",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Contratos Go/Dart y consultas tipadas."
+  },
+  {
+    "id": "010",
+    "title": "Casbin",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Evaluar RBAC, ámbitos, condiciones y denegación por defecto."
+  },
+  {
+    "id": "011",
+    "title": "Design system",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Encapsular UI y tokens, desacoplar proveedor."
+  },
+  {
+    "id": "012",
+    "title": "TDD y pruebas",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Unitarias, integración, carga, concurrencia y mutación."
+  },
+  {
+    "id": "013",
+    "title": "Monorepo",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Backend, frontend, contratos, infraestructura y docs; complementado por 158."
+  },
+  {
+    "id": "014",
+    "title": "Multiempresa/sucursal/almacén",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Jerarquía y aislamiento."
+  },
+  {
+    "id": "015",
+    "title": "Dispositivos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Identidad, alta, revocación al contacto o expiración."
+  },
+  {
+    "id": "016",
+    "title": "Saldos y kardex",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Movimientos append-only y saldos transaccionales."
+  },
+  {
+    "id": "017",
+    "title": "Reversibilidad",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Compensaciones auditables; no borrar confirmadas."
+  },
+  {
+    "id": "018",
+    "title": "Generadores",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Plantillas de módulos y componentes."
+  },
+  {
+    "id": "019",
+    "title": "Diagnóstico",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Salud, errores legibles, correlación."
+  },
+  {
+    "id": "020",
+    "title": "Rendimiento",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Objetivos medibles con hardware y carga."
+  },
+  {
+    "id": "021",
+    "title": "Despliegue D",
+    "status": "APROBADA",
+    "decision": "Individual, LAN, nube, híbrido futuro; autoridad única."
+  },
+  {
+    "id": "022",
+    "title": "Shadcn UI Flutter",
+    "status": "APROBADA",
+    "decision": "Dirección visual aprobada, compatibilidad pendiente."
+  },
+  {
+    "id": "023",
+    "title": "Módulos declarativos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Compilación estática, manifiestos y dependencias; no borrar historia al desactivar."
+  },
+  {
+    "id": "024",
+    "title": "Permisos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Roles, ámbito, condiciones; servidor decide."
+  },
+  {
+    "id": "025",
+    "title": "Supervisor",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "PIN individual, autorización limitada y auditada."
+  },
+  {
+    "id": "026",
+    "title": "Auth offline",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Autenticación local, sesiones revocables, credenciales seguras."
+  },
+  {
+    "id": "027",
+    "title": "Configuración",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Tipada, versionada, heredada por ámbito; seguridad no anulable."
+  },
+  {
+    "id": "028",
+    "title": "Perfiles comerciales C",
+    "status": "APROBADA",
+    "decision": "Presets por sector y opciones avanzadas activables."
+  },
+  {
+    "id": "029",
+    "title": "Tipos extensibles",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Características combinables; complementado por 059."
+  },
+  {
+    "id": "030",
+    "title": "Restaurantes C",
+    "status": "APROBADA",
+    "decision": "Preparar núcleo ahora; desarrollar después del POS."
+  },
+  {
+    "id": "031",
+    "title": "Recetas/producción",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Versiones, consumos y rendimiento."
+  },
+  {
+    "id": "032",
+    "title": "Pedidos/inventario/facturas/pagos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Estados independientes, no doble descuento."
+  },
+  {
+    "id": "033",
+    "title": "Asistente sectorial",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Configuración progresiva."
+  },
+  {
+    "id": "034",
+    "title": "Motor multimoneda",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Conversiones, tasas y redondeos comunes."
+  },
+  {
+    "id": "035",
+    "title": "Moneda base",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Configurable por empresa; migración controlada si cambia."
+  },
+  {
+    "id": "036",
+    "title": "Referencia comercial D",
+    "status": "APROBADA",
+    "decision": "Moneda base, referencia por producto/lista, precios fijos/calculados, tasas y pagos mixtos bajo reglas fiscales."
+  },
+  {
+    "id": "037",
+    "title": "Tasas versionadas",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Fuente, par, vigencia, auditoría; distinguir fiscal/comercial."
+  },
+  {
+    "id": "038",
+    "title": "Listas dinámicas",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Nombres, reglas y prioridades por cantidad/cliente/sucursal."
+  },
+  {
+    "id": "039",
+    "title": "Pagos mixtos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Medios y monedas múltiples, vuelto y abonos."
+  },
+  {
+    "id": "040",
+    "title": "Decimal exacto",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "NUMERIC, strings API, representación exacta SQLite; no float."
+  },
+  {
+    "id": "041",
+    "title": "Historia monetaria",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Instantáneas de tasas e importes; no recalcular pasado."
+  },
+  {
+    "id": "042",
+    "title": "Internacionalización",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Español inicial, formatos, zona horaria por sucursal."
+  },
+  {
+    "id": "043",
+    "title": "Motor costos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Valuación, adquisición, reposición y ajustes."
+  },
+  {
+    "id": "044",
+    "title": "Promedio ponderado móvil",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Propuesta inicial SKU/almacén; transferencias conservan valor; ratificar."
+  },
+  {
+    "id": "045",
+    "title": "Costos históricos/reposición",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Indicadores independientes."
+  },
+  {
+    "id": "046",
+    "title": "Gastos adquisición",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Asignar por cantidad/peso/valor/volumen; separar recuperables."
+  },
+  {
+    "id": "047",
+    "title": "Márgenes/recargos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Diferenciar margen sobre venta y recargo sobre costo."
+  },
+  {
+    "id": "048",
+    "title": "Precios sugeridos",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Recalcular propuestas ante cambios."
+  },
+  {
+    "id": "049",
+    "title": "Mínimos y autorización",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Precio efectivo tras descuentos, bloqueo/aviso/supervisor."
+  },
+  {
+    "id": "050",
+    "title": "Automatización C",
+    "status": "APROBADA",
+    "decision": "Manual, sugerida con aprobación por defecto, automática con límites y auditoría."
+  },
+  {
+    "id": "051",
+    "title": "Precios versionados",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Vigencia, historia, política de carrito abierto."
+  },
+  {
+    "id": "052",
+    "title": "Centro rentabilidad",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Alertas, márgenes, reposición y rotación."
+  },
+  {
+    "id": "053",
+    "title": "Precio de todo el stock",
+    "status": "APROBADA",
+    "decision": "Nuevo precio para mercancía anterior y nueva, sin cambiar venta histórica."
+  },
+  {
+    "id": "054",
+    "title": "Costo comercial vs valoración",
+    "status": "APROBADA",
+    "decision": "Último costo/promedio/reposición/manual; historia independiente."
+  },
+  {
+    "id": "055",
+    "title": "Ganancia",
+    "status": "APROBADA",
+    "decision": "Fija, recargo o margen."
+  },
+  {
+    "id": "056",
+    "title": "Subidas/bajadas",
+    "status": "APROBADA",
+    "decision": "Actualizar, mantener o sugerir por política."
+  },
+  {
+    "id": "057",
+    "title": "Precio desde compra",
+    "status": "APROBADA",
+    "decision": "Actualizar y aprobar en el mismo flujo."
+  },
+  {
+    "id": "058",
+    "title": "Simple/avanzado",
+    "status": "APROBADA",
+    "decision": "Perfil bodega con último costo como propuesta inicial; opciones avanzadas."
+  },
+  {
+    "id": "059",
+    "title": "Producto universal",
+    "status": "APROBADA",
+    "decision": "Características combinables."
+  },
+  {
+    "id": "060",
+    "title": "Unidad/presentaciones",
+    "status": "APROBADA",
+    "decision": "Stock compartido por defecto; embalaje/reempaque opcional."
+  },
+  {
+    "id": "061",
+    "title": "Conversiones exactas",
+    "status": "APROBADA",
+    "decision": "Fracciones, factores y dimensiones compatibles."
+  },
+  {
+    "id": "062",
+    "title": "Códigos múltiples",
+    "status": "APROBADA",
+    "decision": "Texto, ceros iniciales, SKU/presentación inequívoca."
+  },
+  {
+    "id": "063",
+    "title": "Variantes",
+    "status": "APROBADA",
+    "decision": "SKU/stock independiente; variante invisible por defecto."
+  },
+  {
+    "id": "064",
+    "title": "Lotes/FEFO",
+    "status": "APROBADA",
+    "decision": "Vencimiento, cuarentena y trazabilidad; independiente de costeo."
+  },
+  {
+    "id": "065",
+    "title": "Seriales/IMEI",
+    "status": "APROBADA",
+    "decision": "Unidad física única, varios identificadores, concurrencia."
+  },
+  {
+    "id": "066",
+    "title": "Combos/recetas",
+    "status": "APROBADA",
+    "decision": "Virtual consume componentes; ensamblaje genera stock; versiones sin ciclos."
+  },
+  {
+    "id": "067",
+    "title": "Almacenes/ubicaciones/estados",
+    "status": "APROBADA",
+    "decision": "Disponible, reservado, bloqueado, tránsito."
+  },
+  {
+    "id": "068",
+    "title": "Reservas",
+    "status": "APROBADA",
+    "decision": "Finalidad, vigencia y responsable; no exceder disponible."
+  },
+  {
+    "id": "069",
+    "title": "Conteos/ajustes",
+    "status": "APROBADA",
+    "decision": "Ciego/cíclico, movimientos concurrentes y auditoría."
+  },
+  {
+    "id": "070",
+    "title": "Importación/exportación",
+    "status": "APROBADA",
+    "decision": "Previsualizar, validar, deduplicar y reportar errores."
+  },
+  {
+    "id": "071",
+    "title": "Perfiles progresivos",
+    "status": "APROBADA",
+    "decision": "Un producto adaptable a sectores."
+  },
+  {
+    "id": "072",
+    "title": "Compras configurable",
+    "status": "APROBADA",
+    "decision": "Directa o avanzada; núcleo común."
+  },
+  {
+    "id": "073",
+    "title": "Terceros/proveedores",
+    "status": "APROBADA",
+    "decision": "Identidad común, contactos, condiciones."
+  },
+  {
+    "id": "074",
+    "title": "Catálogo proveedor",
+    "status": "APROBADA",
+    "decision": "Referencias, cotizaciones, costos, moneda, plazos y mínimos."
+  },
+  {
+    "id": "075",
+    "title": "Orden/recepción/factura/pago",
+    "status": "APROBADA",
+    "decision": "Separar logística, obligación y dinero."
+  },
+  {
+    "id": "076",
+    "title": "Recepciones parciales",
+    "status": "APROBADA",
+    "decision": "Solo confirmadas aumentan stock; tolerancias concurrentes."
+  },
+  {
+    "id": "077",
+    "title": "Compra multimoneda",
+    "status": "APROBADA",
+    "decision": "Obligación original, valoración base, tasas históricas."
+  },
+  {
+    "id": "078",
+    "title": "Precios desde compras",
+    "status": "APROBADA",
+    "decision": "Actualizar/sugerir para stock completo."
+  },
+  {
+    "id": "079",
+    "title": "Cuentas por pagar",
+    "status": "APROBADA",
+    "decision": "Obligaciones, cuotas y vencimientos."
+  },
+  {
+    "id": "080",
+    "title": "Abonos/anticipos",
+    "status": "APROBADA",
+    "decision": "Aplicación múltiple y saldo a favor."
+  },
+  {
+    "id": "081",
+    "title": "Devolución proveedor",
+    "status": "APROBADA",
+    "decision": "Salida física separada de crédito/reembolso."
+  },
+  {
+    "id": "082",
+    "title": "Correcciones costo",
+    "status": "APROBADA",
+    "decision": "Ajustes trazables de stock y costo de venta."
+  },
+  {
+    "id": "083",
+    "title": "Conciliación tres documentos",
+    "status": "APROBADA",
+    "decision": "Orden, recepción y factura; diferencias."
+  },
+  {
+    "id": "084",
+    "title": "Reposición",
+    "status": "APROBADA",
+    "decision": "Demanda, plazo, seguridad, tránsito, mínimos, presupuesto."
+  },
+  {
+    "id": "085",
+    "title": "Autorización importe",
+    "status": "APROBADA",
+    "decision": "Roles, límites y ámbitos."
+  },
+  {
+    "id": "086",
+    "title": "Compras por fases",
+    "status": "APROBADA",
+    "decision": "Directas primero; avanzada después."
+  },
+  {
+    "id": "087",
+    "title": "Motor universal ventas",
+    "status": "APROBADA",
+    "decision": "POS y otros canales comparten backend."
+  },
+  {
+    "id": "088",
+    "title": "POS adaptable",
+    "status": "APROBADA",
+    "decision": "Cuadrícula, tabla, teclado, táctil, móvil."
+  },
+  {
+    "id": "089",
+    "title": "Listas múltiples",
+    "status": "APROBADA",
+    "decision": "Por línea con permiso."
+  },
+  {
+    "id": "090",
+    "title": "Descuentos",
+    "status": "APROBADA",
+    "decision": "Por línea/total, prorrateo, mínimo efectivo, autorización."
+  },
+  {
+    "id": "091",
+    "title": "Promociones declarativas",
+    "status": "APROBADA",
+    "decision": "Reglas tipadas, prioridades, vigencia, incompatibilidades."
+  },
+  {
+    "id": "092",
+    "title": "Cotizaciones convertibles",
+    "status": "APROBADA",
+    "decision": "Referencias y vigencia; sin reserva por defecto."
+  },
+  {
+    "id": "093",
+    "title": "Pedidos/entregas",
+    "status": "APROBADA",
+    "decision": "Reserva opcional y entregas parciales, estados separados."
+  },
+  {
+    "id": "094",
+    "title": "Apartados",
+    "status": "APROBADA",
+    "decision": "Reserva, anticipos, vencimiento y política de precio."
+  },
+  {
+    "id": "095",
+    "title": "Ventas suspendidas",
+    "status": "APROBADA",
+    "decision": "Borrador local/servidor, control de versión y exclusión."
+  },
+  {
+    "id": "096",
+    "title": "Crédito concurrente",
+    "status": "APROBADA",
+    "decision": "Límites, plazo, mora, validación atómica."
+  },
+  {
+    "id": "097",
+    "title": "Cuentas por cobrar",
+    "status": "APROBADA",
+    "decision": "Obligaciones, abonos, cuotas, vencimientos."
+  },
+  {
+    "id": "098",
+    "title": "Pagos mixtos",
+    "status": "APROBADA",
+    "decision": "Medios, monedas, tasas, referencias y vuelto."
+  },
+  {
+    "id": "099",
+    "title": "Devolución cliente",
+    "status": "APROBADA",
+    "decision": "Línea original, importe neto y condición física."
+  },
+  {
+    "id": "100",
+    "title": "Anulaciones",
+    "status": "APROBADA",
+    "decision": "Compensaciones auditadas y fiscales cuando proceda."
+  },
+  {
+    "id": "101",
+    "title": "Recuperación errores",
+    "status": "APROBADA",
+    "decision": "Mensajes claros, carrito conservado y consulta de resultado desconocido."
+  },
+  {
+    "id": "102",
+    "title": "POS local",
+    "status": "APROBADA",
+    "decision": "SQLite/Flutter búsqueda y carrito; Go/PG confirma."
+  },
+  {
+    "id": "103",
+    "title": "Reportes ventas",
+    "status": "APROBADA",
+    "decision": "Netas, margen, descuentos, vendedor, terminal, sucursal."
+  },
+  {
+    "id": "104",
+    "title": "Permisos ventas",
+    "status": "APROBADA",
+    "decision": "Ámbito, autorización, costos ocultos si no autorizado."
+  },
+  {
+    "id": "105",
+    "title": "Ventas por fases",
+    "status": "APROBADA",
+    "decision": "POS, crédito y promociones básicas primero."
+  },
+  {
+    "id": "106",
+    "title": "Tesorería independiente",
+    "status": "APROBADA",
+    "decision": "Cobros/pagos/gastos/transferencias por servicios."
+  },
+  {
+    "id": "107",
+    "title": "Cuentas financieras",
+    "status": "APROBADA",
+    "decision": "Multimoneda, efectivo, bancos, tránsito y billeteras."
+  },
+  {
+    "id": "108",
+    "title": "Libro financiero inmutable",
+    "status": "APROBADA",
+    "decision": "Partida doble operativa y saldos transaccionales."
+  },
+  {
+    "id": "109",
+    "title": "Terminal/caja/sesión",
+    "status": "APROBADA",
+    "decision": "Entidades distintas; sesión incompatible única."
+  },
+  {
+    "id": "110",
+    "title": "Arqueos/cierres",
+    "status": "APROBADA",
+    "decision": "Conteo por moneda, arqueo ciego, diferencias justificadas."
+  },
+  {
+    "id": "111",
+    "title": "Medios vs cuentas",
+    "status": "APROBADA",
+    "decision": "Ruta y confirmación/liquidación separadas."
+  },
+  {
+    "id": "112",
+    "title": "Transferencias",
+    "status": "APROBADA",
+    "decision": "Atómicas en misma autoridad; tránsito entre autoridades."
+  },
+  {
+    "id": "113",
+    "title": "Divisas",
+    "status": "APROBADA",
+    "decision": "Importes originales, tasas, comisiones y diferencias."
+  },
+  {
+    "id": "114",
+    "title": "Gastos",
+    "status": "APROBADA",
+    "decision": "Categorías, adjuntos, obligaciones; separar retiros y activos."
+  },
+  {
+    "id": "115",
+    "title": "Obligaciones compartidas",
+    "status": "APROBADA",
+    "decision": "Servicios por cobrar/pagar y vencimientos."
+  },
+  {
+    "id": "116",
+    "title": "Pagos/anticipos",
+    "status": "APROBADA",
+    "decision": "Asignación múltiple sin exceder deuda."
+  },
+  {
+    "id": "117",
+    "title": "Conciliación bancaria",
+    "status": "APROBADA",
+    "decision": "Importación idempotente y revisión de ambiguos."
+  },
+  {
+    "id": "118",
+    "title": "Liquidaciones electrónicas",
+    "status": "APROBADA",
+    "decision": "Fondos pendientes, depósitos y comisiones."
+  },
+  {
+    "id": "119",
+    "title": "Rentabilidad/liquidez",
+    "status": "APROBADA",
+    "decision": "Flujo, compromisos, costo de ventas y reposición separados."
+  },
+  {
+    "id": "120",
+    "title": "Permisos financieros",
+    "status": "APROBADA",
+    "decision": "Segregación y doble aprobación opcional."
+  },
+  {
+    "id": "121",
+    "title": "Contabilidad futura",
+    "status": "APROBADA",
+    "decision": "Contrapartidas y trazabilidad para módulo contable."
+  },
+  {
+    "id": "122",
+    "title": "Tesorería por fases",
+    "status": "APROBADA",
+    "decision": "Caja, obligaciones y conciliación básica primero."
+  },
+  {
+    "id": "123",
+    "title": "Motor fiscal universal",
+    "status": "APROBADA",
+    "decision": "Desacoplado del POS."
+  },
+  {
+    "id": "124",
+    "title": "Paquetes por país",
+    "status": "APROBADA",
+    "decision": "Venezuela primero."
+  },
+  {
+    "id": "125",
+    "title": "Impuestos versionados",
+    "status": "APROBADA",
+    "decision": "Base, alícuota, vigencia, condiciones y redondeo."
+  },
+  {
+    "id": "126",
+    "title": "IVA incluido/excluido",
+    "status": "APROBADA",
+    "decision": "Precio neto/bruto por política/lista."
+  },
+  {
+    "id": "127",
+    "title": "Clasificación fiscal",
+    "status": "APROBADA",
+    "decision": "Gravado, exento, exonerado, no sujeto."
+  },
+  {
+    "id": "128",
+    "title": "IGTF condicionado",
+    "status": "APROBADA",
+    "decision": "Sujeto, operación, moneda, medio; no toda venta USD."
+  },
+  {
+    "id": "129",
+    "title": "Perfiles tributarios",
+    "status": "APROBADA",
+    "decision": "Atributos independientes, verificación y permisos."
+  },
+  {
+    "id": "130",
+    "title": "Documentos fiscales/comerciales",
+    "status": "APROBADA",
+    "decision": "PDF comercial no sustituye factura fiscal."
+  },
+  {
+    "id": "131",
+    "title": "Plantillas",
+    "status": "APROBADA",
+    "decision": "Comerciales configurables; campos fiscales protegidos."
+  },
+  {
+    "id": "132",
+    "title": "Numeraciones",
+    "status": "APROBADA",
+    "decision": "UUID separado de series fiscales/comerciales; autoridad y unicidad."
+  },
+  {
+    "id": "133",
+    "title": "Adaptadores emisión",
+    "status": "APROBADA",
+    "decision": "Dispositivo/proveedor autorizado; no asumir API pública."
+  },
+  {
+    "id": "134",
+    "title": "Device Agent",
+    "status": "APROBADA",
+    "decision": "Servicio local autenticado; SDK específico si requerido."
+  },
+  {
+    "id": "135",
+    "title": "Recuperación fiscal",
+    "status": "APROBADA",
+    "decision": "Estado durable y conciliación antes de reintentar."
+  },
+  {
+    "id": "136",
+    "title": "Contingencia",
+    "status": "APROBADA",
+    "decision": "Solo autorizada; regularización trazable."
+  },
+  {
+    "id": "137",
+    "title": "Retenciones",
+    "status": "APROBADA",
+    "decision": "Liquidación de deuda separada de efectivo."
+  },
+  {
+    "id": "138",
+    "title": "Facturación multimoneda",
+    "status": "APROBADA",
+    "decision": "Importes originales, moneda nacional y tasa fiscal."
+  },
+  {
+    "id": "139",
+    "title": "Libros tributarios",
+    "status": "APROBADA",
+    "decision": "Compras/ventas, impuestos, retenciones, notas y conciliación."
+  },
+  {
+    "id": "140",
+    "title": "Normas versionadas",
+    "status": "APROBADA",
+    "decision": "Paquetes firmados y vigencia; historia intacta."
+  },
+  {
+    "id": "141",
+    "title": "Validación fiscal",
+    "status": "APROBADA",
+    "decision": "Especialista y proveedor/dispositivo antes del lanzamiento."
+  },
+  {
+    "id": "142",
+    "title": "Centro privado",
+    "status": "APROBADA",
+    "decision": "Control plane opcional para operación local."
+  },
+  {
+    "id": "143",
+    "title": "Instalador",
+    "status": "APROBADA",
+    "decision": "Individual, servidor, terminal, nube; preflight."
+  },
+  {
+    "id": "144",
+    "title": "Servicios Windows",
+    "status": "APROBADA",
+    "decision": "Nativos; sin Docker obligatorio."
+  },
+  {
+    "id": "145",
+    "title": "Vinculación segura",
+    "status": "APROBADA",
+    "decision": "mDNS opcional, código temporal, aprobación, identidad individual."
+  },
+  {
+    "id": "146",
+    "title": "Distribución multiplataforma",
+    "status": "APROBADA",
+    "decision": "Windows firmado, tiendas móviles, web HTTPS, Linux."
+  },
+  {
+    "id": "147",
+    "title": "Licencias modulares",
+    "status": "APROBADA",
+    "decision": "Entitlements por instalación, módulos, terminales, sucursales, plazo."
+  },
+  {
+    "id": "148",
+    "title": "Licencias offline firmadas",
+    "status": "APROBADA",
+    "decision": "Ed25519; clave privada fuera del cliente."
+  },
+  {
+    "id": "149",
+    "title": "Tolerancia/restricciones",
+    "status": "APROBADA",
+    "decision": "No interrumpir operación en curso; conservar consultas/exportación/respaldo y deberes fiscales; 30 días orientativos."
+  },
+  {
+    "id": "150",
+    "title": "Actualización verificada",
+    "status": "APROBADA",
+    "decision": "Firmas, hashes, compatibilidad, mantenimiento y recuperación; evaluar TUF."
+  },
+  {
+    "id": "151",
+    "title": "Canales progresivos",
+    "status": "APROBADA",
+    "decision": "Dev, alpha, beta, piloto, estable, soporte prolongado."
+  },
+  {
+    "id": "152",
+    "title": "Compatibilidad/migraciones",
+    "status": "APROBADA",
+    "decision": "API versionada; expansión/contracción; recuperación probada."
+  },
+  {
+    "id": "153",
+    "title": "Respaldos 3-2-1",
+    "status": "APROBADA",
+    "decision": "Consistentes, medios independientes, copia externa y cifrado."
+  },
+  {
+    "id": "154",
+    "title": "Recuperación probada",
+    "status": "APROBADA",
+    "decision": "Objetivos RPO/RTO y restauraciones verificadas."
+  },
+  {
+    "id": "155",
+    "title": "Diagnóstico",
+    "status": "APROBADA",
+    "decision": "Salud, logs depurados, periféricos y paquete técnico."
+  },
+  {
+    "id": "156",
+    "title": "Soporte remoto autorizado",
+    "status": "APROBADA",
+    "decision": "Conexión saliente, acciones limitadas, consentimiento, auditoría; sin puerta trasera."
+  },
+  {
+    "id": "157",
+    "title": "Observabilidad configurable",
+    "status": "APROBADA",
+    "decision": "Logs y métricas locales; avanzado opcional."
+  },
+  {
+    "id": "158",
+    "title": "Monorepo/documentación",
+    "status": "APROBADA",
+    "decision": "Fuente de verdad versionada."
+  },
+  {
+    "id": "159",
+    "title": "AGENTS.md",
+    "status": "APROBADA",
+    "decision": "Instrucciones persistentes y comprobables."
+  },
+  {
+    "id": "160",
+    "title": "Skills",
+    "status": "APROBADA",
+    "decision": "Perfiles con alcance, referencias y criterios."
+  },
+  {
+    "id": "161",
+    "title": "Agentes diferenciados",
+    "status": "APROBADA",
+    "decision": "Responsabilidades y ramas/worktrees separados."
+  },
+  {
+    "id": "162",
+    "title": "TDD/auditoría",
+    "status": "APROBADA",
+    "decision": "Red-green-refactor; revisión independiente, no falsear tests."
+  },
+  {
+    "id": "163",
+    "title": "Generadores",
+    "status": "APROBADA",
+    "decision": "Task, Mason, sqlc y OpenAPI; no reemplazan dominio."
+  },
+  {
+    "id": "164",
+    "title": "Entornos separados",
+    "status": "APROBADA",
+    "decision": "DEV, TEST, QA, STAGING, PROD; datos ficticios y mínimo privilegio."
+  },
+  {
+    "id": "165",
+    "title": "CI/CD",
+    "status": "APROBADA",
+    "decision": "PR, checks, ramas protegidas, aprobación antes de producción."
+  },
+  {
+    "id": "166",
+    "title": "Fases incrementales",
+    "status": "APROBADA",
+    "decision": "Fundación, vertical, fiscal, distribución, piloto y expansión."
+  },
+  {
+    "id": "167",
+    "title": "Rendimiento verificable",
+    "status": "APROBADA",
+    "decision": "100k productos, 1M movimientos, 50 terminales; p95 búsqueda <100ms y venta local <300ms sin externos; validar."
+  },
+  {
+    "id": "168",
+    "title": "Auditoría dependencias",
+    "status": "APROBADA",
+    "decision": "Licencias, mantenimiento, vulnerabilidades, SBOM, firmas y alternativas."
+  }
+]

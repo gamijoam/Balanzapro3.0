@@ -1,0 +1,18 @@
+# BalanzaPro3.0 | Master Blueprint
+Versión documental 0.1 · 25 de noviembre de 2026
+## Visión
+ERP comercial modular, rápido y adaptable, para bodegas, supermercados, farmacias, ferreterías, tiendas de celulares/ropa, distribuidores y futura restauración. Una base Flutter/Dart para Android, iOS, web y Windows, con backend Go y PostgreSQL, SQLite local para caché y borradores. Venezuela primero; expansión mediante adaptadores. El usuario pequeño no debe soportar la complejidad de una empresa grande. No confundir este proyecto con instalaciones anteriores.
+## Estado y alcance
+168 decisiones registradas: 127 aprobadas de diseño y 41 pendientes de ratificación expresa. ADR 001–033 reconstruidas del contexto inicial; no transcripciones. No hay implementación, benchmarks, dependencia instalada, certificación fiscal ni conexión GitHub. No confundir propuestas con resultados. El nombre y ruta elegidos son BalanzaPro3.0 y /opt/BalanzaPro3.0. La estructura es un punto de partida de conocimiento.
+## Principios no negociables
+Autoridad única de inventario por ámbito, funcionamiento local sin Internet, no confirmar sin servidor en V1, transacciones atómicas e idempotencia, stock/kardex y finanzas trazables. Dinero decimal exacto, tasas y precios históricos, permisos servidor, aislamiento por empresa, seguridad por defecto, módulos estáticos activables, un motor comercial compartido. Interfaz básica/avanzada. No editar confirmadas; reversión compensatoria. Fiscal y servicios externos tienen estado durable y reconciliación. No prometer cumplimiento fiscal sin validación.
+## Decisiones principales aprobadas
+Flutter/Go/PG/SQLite, monolito modular hexagonal, offline D estricto inicial, despliegue D, Shadcn UI, perfiles C, restaurante C posterior, multimoneda D, costos y actualización C, productos C (059–071), compras C (072–086), ventas C (087–105), tesorería C (106–122), fiscal C (123–141), instalación y estrategia de IA (142–168).
+## Qué debe ratificarse primero
+Autoridad, transacciones, organización y alcance, permisos, exactitud decimal, versionado, costeo inicial ADR-044 (promedio móvil por SKU/almacén recomendado pero no aprobado expresamente); selección de dependencias, políticas de redondeo y fiscal oficial. No ampliar automáticamente la aprobación de una opción a detalles no tratados.
+## Entregas
+Fase 00 documentación; 01 fundación; 02 pruebas de concepto; 03 cascarón; 04 núcleo; 05 monedas/costos/precios; 06 compras; 07 POS; 08 tesorería; 09 fiscal; 10 distribución; 11 piloto; 12 estable; 13 expansión. Respaldos y contratos financieros/fiscales desde primeras entregas. Primer objetivo funcional: bodega local con compra, precio, venta, caja y devolución. No construir todo de una vez.
+## Navegación de la fuente de verdad
+AGENTS.md (reglas obligatorias), TECH_STACK.md (catálogo), ROADMAP.md (fases), BACKLOG.md (tareas), PROMPT_INICIAL.md (inicio Codex), docs/decisions/ (168 fichas y registro JSON), docs/architecture/ (arquitectura y agentes), docs/business-rules/ (seis dominios), docs/design-system/, docs/security/, docs/testing/, docs/deployment/, docs/runbooks/, .agents/skills/ (13 skills). Las carpetas de código son marcadores.
+## Uso
+Revisar ADR y reglas antes de ejecutar una tarea. Trabajar con datos sintéticos y branch/worktree. Aplicar RED-GREEN-refactor, revisión independiente, PR y autorización humana. No tocar producción. Los Markdown versionados prevalecen sobre el PDF. Ningún enlace del catálogo se ha revalidado en esta entrega. La matriz fiscal es una investigación pendiente, no una opinión legal ni certificación.
