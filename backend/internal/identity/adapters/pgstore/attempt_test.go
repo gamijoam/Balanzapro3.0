@@ -33,7 +33,12 @@ func TestAttemptReservationsAreDurable(t *testing.T) {
 	var wg sync.WaitGroup
 	for i := 0; i < 24; i++ {
 		wg.Go(func() {
-			ok, err := pgstore.New(pool).ReserveAttempt(ctx, key, policy)
+			replica, err := pgstore.NewAttemptStore(pool, 100)
+			if err != nil {
+				results <- result{false, err}
+				return
+			}
+			ok, err := replica.ReserveAttempt(ctx, key, policy)
 			results <- result{ok, err}
 		})
 	}
@@ -51,7 +56,8 @@ func TestAttemptReservationsAreDurable(t *testing.T) {
 	var blocked time.Time
 	require.NoError(t, pool.QueryRow(ctx, "SELECT used,blocked_until FROM identity_attempt_budgets WHERE organization_id=$1 AND budget_key=$2 AND kind=$3", org, key.Digest[:], key.Kind).Scan(&used, &blocked))
 	assert.Equal(t, 3, used)
-	store := pgstore.New(pool)
+	store, err := pgstore.NewAttemptStore(pool, 100)
+	require.NoError(t, err)
 	ok, err := store.ReserveAttempt(ctx, key, policy)
 	require.NoError(t, err)
 	assert.False(t, ok)
