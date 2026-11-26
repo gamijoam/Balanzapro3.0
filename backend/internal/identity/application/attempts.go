@@ -10,6 +10,7 @@ import (
 
 var ErrAttemptPolicyChanged = errors.New("identity: attempt policy changed")
 var ErrAttemptStorage = errors.New("identity: attempt storage failed")
+var ErrAttemptCapacity = errors.New("identity: attempt budget capacity exhausted")
 
 // AttemptKey identifies one budget. Only trusted server code may construct
 // the opaque digest, never a request parameter. Unknown identities need

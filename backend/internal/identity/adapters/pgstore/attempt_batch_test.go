@@ -21,7 +21,8 @@ func TestAttemptBatchAtomicity(t *testing.T) {
 	pool := pgtest.New(t)
 	org, err := organization.NewStore(pool).CreateOrganization(ctx, "A")
 	require.NoError(t, err)
-	store := pgstore.New(pool)
+	store, err := pgstore.NewAttemptStore(pool, 100)
+	require.NoError(t, err)
 	policy := domain.AttemptPolicy{MaxAttempts: 3, Window: time.Minute, Cooldown: time.Minute}
 	common := application.AttemptBudget{Key: application.AttemptKey{OrganizationID: org, Kind: "password", Digest: [32]byte{1}}, Policy: policy}
 	budgets := func(i byte) []application.AttemptBudget {
