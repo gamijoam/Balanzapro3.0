@@ -11,7 +11,7 @@ Base aprobada: Go, Flutter/Dart, PostgreSQL, SQLite y dirección Shadcn UI. Las 
 | pgx | Driver | [Referencia](https://github.com/jackc/pgx) | Candidato preferido |
 | sqlc | SQL tipado | [Referencia](https://github.com/sqlc-dev/sqlc) | Candidato preferido |
 | Goose | Migraciones | [Referencia](https://github.com/pressly/goose) | Candidato |
-| Casbin | RBAC | [Referencia](https://github.com/apache/casbin) | Candidato |
+| Casbin | RBAC | [Referencia](https://github.com/apache/casbin) | No adoptado: motor de permisos propio (ADR-010) |
 | River | Jobs PG | [Referencia](https://github.com/riverqueue/river) | Candidato |
 | Validator | Validación | [Referencia](https://github.com/go-playground/validator) | Candidato |
 | oapi-codegen | Contratos Go | [Referencia](https://github.com/oapi-codegen/oapi-codegen) | Candidato |
