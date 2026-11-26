@@ -1,0 +1,43 @@
+name: architecture-check
+on:
+  pull_request_target:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: architecture-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  architecture:
+    name: ${{ github.event_name == 'pull_request' && 'architecture-preview' || 'architecture-check' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.base.sha || github.sha }}
+          path: trusted
+          persist-credentials: false
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          path: inspected
+          persist-credentials: false
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0
+        with:
+          go-version: '1.26.11'
+          cache: false
+      - name: Test validator and inspect source (never execute inspected tree)
+        working-directory: trusted
+        env:
+          GO111MODULE: 'off'
+          GOTOOLCHAIN: local
+        run: |
+          go test tools/governance/architecture.go tools/governance/architecture_test.go
+          go run tools/governance/architecture.go ../inspected/backend
