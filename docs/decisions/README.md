@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-173 ADR: 141 aprobadas; 32 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado, se ratificaron ADR-171 y 172, y ADR-173 queda propuesta. ADR-024 (permisos) ratificada el 2026-11-26 (Issue #15) y ADR-010 (motor propio, Casbin no adoptado) el mismo día (Issue #5) y ADR-026 (autenticación y sesiones) también (Issue #17); ADR-009 (contrato OpenAPI primero) el mismo día (Issue #4). ADR-023 (módulos, activación por empresa) ratificada el 2026-11-26 (Issue #14). ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
+173 ADR: 142 aprobadas; 31 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado, se ratificaron ADR-171 y 172, y ADR-173 queda propuesta. ADR-024 (permisos) ratificada el 2026-11-26 (Issue #15) y ADR-010 (motor propio, Casbin no adoptado) el mismo día (Issue #5) y ADR-026 (autenticación y sesiones) también (Issue #17); ADR-009 (contrato OpenAPI primero) el mismo día (Issue #4). ADR-023 (módulos, activación por empresa) ratificada el 2026-11-26 (Issue #14). ADR-025 (autorización de supervisor con PIN personal) el mismo día (Issue #16). ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
 
 | ADR | Decisión | Estado |
 |---|---|---|
@@ -28,7 +28,7 @@
 | [ADR-022](ADR-022.md) | Shadcn UI Flutter | APROBADA |
 | [ADR-023](ADR-023.md) | Módulos declarativos | APROBADA (2026-11-26) |
 | [ADR-024](ADR-024.md) | Permisos | APROBADA (2026-11-26) |
-| [ADR-025](ADR-025.md) | Supervisor | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-025](ADR-025.md) | Autorización de supervisor | APROBADA (2026-11-26) |
 | [ADR-026](ADR-026.md) | Autenticación, sesiones y operación sin servidor | APROBADA (2026-11-26) |
 | [ADR-027](ADR-027.md) | Configuración | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-028](ADR-028.md) | Perfiles comerciales C | APROBADA |
