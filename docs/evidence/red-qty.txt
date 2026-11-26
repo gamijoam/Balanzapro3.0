@@ -1,0 +1,177 @@
+--- FAIL: TestParseAcceptsCanonicalExactDecimals (0.00s)
+    qty_test.go:27: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:27
+        	Error:      	Received unexpected error:
+        	            	qty: invalid exact decimal
+        	Test:       	TestParseAcceptsCanonicalExactDecimals
+        	Messages:   	0.5
+--- FAIL: TestArithmeticIsExact (0.00s)
+    qty_test.go:43: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:43
+        	Error:      	Not equal: 
+        	            	expected: "0.3"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-0.3
+        	            	+
+        	Test:       	TestArithmeticIsExact
+    qty_test.go:44: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:44
+        	Error:      	Not equal: 
+        	            	expected: "-0.1"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	--0.1
+        	            	+
+        	Test:       	TestArithmeticIsExact
+    qty_test.go:45: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:45
+        	Error:      	Not equal: 
+        	            	expected: "120"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-120
+        	            	+
+        	Test:       	TestArithmeticIsExact
+--- FAIL: TestScale (0.00s)
+    qty_test.go:50: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:50
+        	Error:      	Not equal: 
+        	            	expected: 0
+        	            	actual  : -1
+        	Test:       	TestScale
+    qty_test.go:51: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:51
+        	Error:      	Not equal: 
+        	            	expected: 0
+        	            	actual  : -1
+        	Test:       	TestScale
+--- FAIL: TestScaleNormalizes (0.00s)
+    qty_test.go:55: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:55
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : -1
+        	Test:       	TestScaleNormalizes
+    qty_test.go:56: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:56
+        	Error:      	Not equal: 
+        	            	expected: 6
+        	            	actual  : -1
+        	Test:       	TestScaleNormalizes
+--- FAIL: TestQuoRemGivesWholePresentationsAndRemainder (0.00s)
+    qty_test.go:61: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:61
+        	Error:      	Not equal: 
+        	            	expected: "5"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-5
+        	            	+
+        	Test:       	TestQuoRemGivesWholePresentationsAndRemainder
+    qty_test.go:62: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:62
+        	Error:      	Not equal: 
+        	            	expected: "7"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-7
+        	            	+
+        	Test:       	TestQuoRemGivesWholePresentationsAndRemainder
+    qty_test.go:65: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:65
+        	Error:      	Not equal: 
+        	            	expected: "4"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-4
+        	            	+
+        	Test:       	TestQuoRemGivesWholePresentationsAndRemainder
+    qty_test.go:66: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:66
+        	Error:      	Not equal: 
+        	            	expected: "0.5"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-0.5
+        	            	+
+        	Test:       	TestQuoRemGivesWholePresentationsAndRemainder
+--- FAIL: TestSignHelpers (0.00s)
+    qty_test.go:70: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:70
+        	Error:      	Should be true
+        	Test:       	TestSignHelpers
+    qty_test.go:71: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:71
+        	Error:      	Should be true
+        	Test:       	TestSignHelpers
+    qty_test.go:72: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:72
+        	Error:      	Should be true
+        	Test:       	TestSignHelpers
+    qty_test.go:73: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:73
+        	Error:      	Not equal: 
+        	            	expected: "-3"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	--3
+        	            	+
+        	Test:       	TestSignHelpers
+--- FAIL: TestJSONUsesStringsOnly (0.00s)
+    qty_test.go:81: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:81
+        	Error:      	Not equal: 
+        	            	expected: map[string]interface {}{"q":"1.5"}
+        	            	actual  : map[string]interface {}{"q":map[string]interface {}{}}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,3 +1,4 @@
+        	            	 (map[string]interface {}) (len=1) {
+        	            	- (string) (len=1) "q": (string) (len=3) "1.5"
+        	            	+ (string) (len=1) "q": (map[string]interface {}) {
+        	            	+ }
+        	            	 }
+        	Test:       	TestJSONUsesStringsOnly
+    qty_test.go:86: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:86
+        	Error:      	Received unexpected error:
+        	            	json: cannot unmarshal string into Go struct field .q of type qty.Q
+        	Test:       	TestJSONUsesStringsOnly
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty	0.012s
+FAIL

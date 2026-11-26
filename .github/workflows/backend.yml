@@ -1,0 +1,49 @@
+name: backend
+
+on:
+  pull_request:
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+  push:
+    branches: [main]
+    paths: ["backend/**", ".github/workflows/backend.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        # Disposable CI database with synthetic data only.
+        image: postgres:16
+        env:
+          POSTGRES_USER: bp
+          POSTGRES_PASSWORD: bp-ci-only
+          POSTGRES_DB: bp_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U bp" --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      BP_TEST_DATABASE_URL: postgres://bp:bp-ci-only@127.0.0.1:5432/bp_test?sslmode=disable
+      BP_REQUIRE_DB: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: gofmt
+        run: make fmt-check
+      - name: go vet
+        run: make vet
+      - name: tests (unit + PostgreSQL integration, race detector)
+        run: make test-integration
+      - name: build
+        run: make build
+      - name: govulncheck
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...

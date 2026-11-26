@@ -1,0 +1,117 @@
+--- FAIL: TestDecimalRoundTripThroughPostgres (0.28s)
+    integration_test.go:144: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:144
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestDecimalRoundTripThroughPostgres
+--- FAIL: TestINV01LastUnitOnlyOneConfirmation (0.15s)
+    integration_test.go:153: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:153
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestINV01LastUnitOnlyOneConfirmation
+--- FAIL: TestINV01ManyUnitsNeverOversold (0.13s)
+    integration_test.go:188: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:188
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestINV01ManyUnitsNeverOversold
+--- FAIL: TestIdempotentReplayAndConflict (0.13s)
+    integration_test.go:214: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:214
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestIdempotentReplayAndConflict
+--- FAIL: TestIdempotentConcurrentSameOperation (0.12s)
+    integration_test.go:241: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:241
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestIdempotentConcurrentSameOperation
+--- FAIL: TestMultiLineOperationIsAllOrNothing (0.14s)
+    integration_test.go:271: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:271
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestMultiLineOperationIsAllOrNothing
+--- FAIL: TestOppositeLineOrderDoesNotDeadlock (0.12s)
+    integration_test.go:287: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:287
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestOppositeLineOrderDoesNotDeadlock
+--- FAIL: TestINV03PresentationsAndBarcodes (0.13s)
+    integration_test.go:315: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:315
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestINV03PresentationsAndBarcodes
+--- FAIL: TestWeightSKUFractions (0.13s)
+    integration_test.go:357: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:357
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestWeightSKUFractions
+--- FAIL: TestAdjustmentsRequireReason (0.13s)
+    integration_test.go:371: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:371
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestAdjustmentsRequireReason
+--- FAIL: TestReservationsLifecycle (0.10s)
+    integration_test.go:385: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:385
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestReservationsLifecycle
+--- FAIL: TestReservationConsumeAndReleaseRaceHasOneWinner (0.11s)
+    integration_test.go:437: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:437
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestReservationConsumeAndReleaseRaceHasOneWinner
+--- FAIL: TestINV07TransferConservesUnits (0.12s)
+    integration_test.go:472: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:472
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestINV07TransferConservesUnits
+--- FAIL: TestCompanyIsolation (0.14s)
+    integration_test.go:513: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:513
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestCompanyIsolation
+--- FAIL: TestKardexIsAppendOnly (0.12s)
+    integration_test.go:540: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:540
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestKardexIsAppendOnly
+--- FAIL: TestDuplicateSKUCodeRejected (0.13s)
+    integration_test.go:554: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:91
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:554
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestDuplicateSKUCodeRejected
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	2.192s
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application	[no test files]
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	(cached)
+FAIL

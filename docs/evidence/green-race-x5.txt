@@ -1,0 +1,27 @@
+--- FAIL: TestReservationConsumeAndReleaseRaceHasOneWinner (0.23s)
+    integration_test.go:444: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:444
+        	Error:      	Received unexpected error:
+        	            	inventory: insufficient available stock: sku df18856c-17ec-48c4-950f-128e1e48fe90 in warehouse 8678f0c7-8ab6-45a8-9322-b3ca9835b54d
+        	Test:       	TestReservationConsumeAndReleaseRaceHasOneWinner
+--- FAIL: TestReservationConsumeAndReleaseRaceHasOneWinner (0.22s)
+    integration_test.go:444: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:444
+        	Error:      	Received unexpected error:
+        	            	inventory: insufficient available stock: sku 14b3a81d-ff0a-4a54-b754-6184f96ff811 in warehouse 3474d18d-657c-4cfa-844b-8b52a67c1a05
+        	Test:       	TestReservationConsumeAndReleaseRaceHasOneWinner
+--- FAIL: TestReservationConsumeAndReleaseRaceHasOneWinner (0.23s)
+    integration_test.go:444: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/integration_test.go:444
+        	Error:      	Received unexpected error:
+        	            	inventory: insufficient available stock: sku da80f3cb-d1a1-4fe8-b28f-73ae8391c018 in warehouse b1725fa5-fa71-465b-b159-1da2d21102cb
+        	Test:       	TestReservationConsumeAndReleaseRaceHasOneWinner
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	15.332s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application	1.053s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	1.052s
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/organization	[no test files]
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest	[no test files]
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres	[no test files]
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty	1.062s
+FAIL

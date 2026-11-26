@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-168 ADR: 127 aprobadas de diseño; 41 pendientes de ratificación expresa. ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
+170 ADR: 134 aprobadas; 36 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170. ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
 
 | ADR | Decisión | Estado |
 |---|---|---|
@@ -8,8 +8,8 @@
 | [ADR-002](ADR-002.md) | Go | APROBADA |
 | [ADR-003](ADR-003.md) | PostgreSQL + SQLite | APROBADA |
 | [ADR-004](ADR-004.md) | Monolito modular hexagonal | APROBADA |
-| [ADR-005](ADR-005.md) | Autoridad local de inventario | PROPUESTA / RATIFICACIÓN PENDIENTE |
-| [ADR-006](ADR-006.md) | Transacciones e idempotencia | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-005](ADR-005.md) | Autoridad local de inventario | APROBADA (2026-11-26) |
+| [ADR-006](ADR-006.md) | Transacciones e idempotencia | APROBADA (2026-11-26) |
 | [ADR-007](ADR-007.md) | Offline configurable D | APROBADA |
 | [ADR-008](ADR-008.md) | PowerSync | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-009](ADR-009.md) | Generación SQL/OpenAPI | PROPUESTA / RATIFICACIÓN PENDIENTE |
@@ -17,9 +17,9 @@
 | [ADR-011](ADR-011.md) | Design system | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-012](ADR-012.md) | TDD y pruebas | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-013](ADR-013.md) | Monorepo | PROPUESTA / RATIFICACIÓN PENDIENTE |
-| [ADR-014](ADR-014.md) | Multiempresa/sucursal/almacén | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-014](ADR-014.md) | Multiempresa/sucursal/almacén | APROBADA (2026-11-26) |
 | [ADR-015](ADR-015.md) | Dispositivos | PROPUESTA / RATIFICACIÓN PENDIENTE |
-| [ADR-016](ADR-016.md) | Saldos y kardex | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-016](ADR-016.md) | Saldos y kardex | APROBADA (2026-11-26) |
 | [ADR-017](ADR-017.md) | Reversibilidad | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-018](ADR-018.md) | Generadores | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-019](ADR-019.md) | Diagnóstico | PROPUESTA / RATIFICACIÓN PENDIENTE |
@@ -43,7 +43,7 @@
 | [ADR-037](ADR-037.md) | Tasas versionadas | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-038](ADR-038.md) | Listas dinámicas | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-039](ADR-039.md) | Pagos mixtos | PROPUESTA / RATIFICACIÓN PENDIENTE |
-| [ADR-040](ADR-040.md) | Decimal exacto | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-040](ADR-040.md) | Decimal exacto | APROBADA (2026-11-26) |
 | [ADR-041](ADR-041.md) | Historia monetaria | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-042](ADR-042.md) | Internacionalización | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-043](ADR-043.md) | Motor costos | PROPUESTA / RATIFICACIÓN PENDIENTE |
@@ -172,3 +172,5 @@
 | [ADR-166](ADR-166.md) | Fases incrementales | APROBADA |
 | [ADR-167](ADR-167.md) | Rendimiento verificable | APROBADA |
 | [ADR-168](ADR-168.md) | Auditoría dependencias | APROBADA |
+| [ADR-169](ADR-169.md) | Camino corto al núcleo con ámbito mínimo | APROBADA (2026-11-26) |
+| [ADR-170](ADR-170.md) | Base de dependencias backend | APROBADA (2026-11-26) |

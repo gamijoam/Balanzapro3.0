@@ -26,14 +26,16 @@
   {
     "id": "005",
     "title": "Autoridad local de inventario",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Un escritor por stock; cliente sin acceso directo a PG."
+    "status": "APROBADA",
+    "decision": "Un escritor por stock; cliente sin acceso directo a PG.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "006",
     "title": "Transacciones e idempotencia",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Descuento condicional, locks ordenados, operación única, resultado durable."
+    "status": "APROBADA",
+    "decision": "Descuento condicional, locks ordenados, operación única, resultado durable.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "007",
@@ -80,8 +82,9 @@
   {
     "id": "014",
     "title": "Multiempresa/sucursal/almacén",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Jerarquía y aislamiento."
+    "status": "APROBADA",
+    "decision": "Jerarquía y aislamiento.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "015",
@@ -92,8 +95,9 @@
   {
     "id": "016",
     "title": "Saldos y kardex",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Movimientos append-only y saldos transaccionales."
+    "status": "APROBADA",
+    "decision": "Movimientos append-only y saldos transaccionales.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "017",
@@ -236,8 +240,9 @@
   {
     "id": "040",
     "title": "Decimal exacto",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "NUMERIC, strings API, representación exacta SQLite; no float."
+    "status": "APROBADA",
+    "decision": "NUMERIC, strings API, representación exacta SQLite; no float.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "041",
@@ -1006,5 +1011,19 @@
     "title": "Auditoría dependencias",
     "status": "APROBADA",
     "decision": "Licencias, mantenimiento, vulnerabilidades, SBOM, firmas y alternativas."
+  },
+  {
+    "id": "169",
+    "title": "Camino corto al núcleo con ámbito mínimo",
+    "status": "APROBADA",
+    "decision": "Núcleo de inventario antes de completar Fase 03; ámbito = empresa obligatoria vía puerto Scope; identidad/permisos/sesiones siguen en BP-008/009.",
+    "ratified_on": "2026-11-26"
+  },
+  {
+    "id": "170",
+    "title": "Base de dependencias backend",
+    "status": "APROBADA",
+    "decision": "chi v5.5.0, pgx v5.13.0, goose v3.30.1, shopspring/decimal v1.6.0, google/uuid v1.6.0, testify v1.12.1; Go 1.26. sqlc y testcontainers diferidos; Makefile en lugar de Task.",
+    "ratified_on": "2026-11-26"
   }
 ]
