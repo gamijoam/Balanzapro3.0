@@ -140,8 +140,9 @@
   {
     "id": "023",
     "title": "Módulos declarativos",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Compilación estática, manifiestos y dependencias; no borrar historia al desactivar."
+    "status": "APROBADA",
+    "decision": "Módulos Go estáticos con manifiesto en código (id, versión, deps, permisos, configuración, migraciones); activación por empresa con licencia, dependencias y permiso; desactivar conserva datos y lectura; módulos base siempre activos.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "024",
