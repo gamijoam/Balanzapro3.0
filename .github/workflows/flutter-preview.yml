@@ -51,3 +51,70 @@ jobs:
           flutter test --no-pub --concurrency=1
           flutter build web --debug --no-pub --no-wasm-dry-run
           git diff --exit-code -- pubspec.lock
+      - name: Package web preview
+        working-directory: frontend/build/web
+        run: |
+          set -euo pipefail
+          printf '%s\n' "$GITHUB_SHA" > BUILD_COMMIT.txt
+          find . -type f ! -path '*/.*' ! -name SHA256SUMS -print0 | sort -z | xargs -0 sha256sum > SHA256SUMS
+      - name: Upload web preview
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: balanzapro-alpha-web
+          path: frontend/build/web/
+          if-no-files-found: error
+          retention-days: 14
+
+  android:
+    name: flutter-android-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install verified Flutter SDK
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 -o flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.50.0-stable.tar.xz
+          echo '6ea2d806fd57269ae783e6788e2a81fc26eaad782f1e0d0ff38623bb765ff9f5  flutter.tar.xz' | sha256sum -c -
+          tar -xJf flutter.tar.xz
+          rm flutter.tar.xz
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Verify Android toolchain
+        run: |
+          set -euo pipefail
+          flutter config --no-analytics
+          flutter --version --machine | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["frameworkRevision"]=="ab2912035e160d9cad6306df307576da6128ebdb" and d["dartSdkVersion"]=="3.14.0"'
+          flutter config --jdk-dir "$JAVA_HOME_17_X64"
+          "$JAVA_HOME_17_X64/bin/java" -version
+          test -f "$ANDROID_HOME/platforms/android-36/android.jar"
+          test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
+          sdkmanager --install "ndk;28.2.13676358"
+          flutter precache --android
+      - name: Build Android development APK
+        working-directory: frontend
+        run: |
+          set -euo pipefail
+          flutter pub get --enforce-lockfile
+          # Use the matching official wrapper rather than the generic SDK jar.
+          curl -fsSL --retry 3 -o android/gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v9.5.0/gradle/wrapper/gradle-wrapper.jar
+          echo '497c8c2a7e5031f6aa847f88104aa80a93532ec32ee17bdb8d1d2f67a194a9c7  android/gradle/wrapper/gradle-wrapper.jar' | sha256sum -c -
+          flutter build apk --debug --no-pub
+          git diff --exit-code -- pubspec.lock android
+          apk=build/app/outputs/flutter-apk/app-debug.apk
+          test -s "$apk"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$apk"
+          mkdir -p "$RUNNER_TEMP/bp-alpha"
+          cp "$apk" "$RUNNER_TEMP/bp-alpha/BalanzaPro-Alpha-debug.apk"
+          cd "$RUNNER_TEMP/bp-alpha"
+          printf '%s\n' "$GITHUB_SHA" > BUILD_COMMIT.txt
+          sha256sum BalanzaPro-Alpha-debug.apk > SHA256SUMS
+      - name: Upload Android preview
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: balanzapro-alpha-android
+          path: ${{ runner.temp }}/bp-alpha/
+          if-no-files-found: error
+          retention-days: 14

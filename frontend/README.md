@@ -43,3 +43,23 @@ The example is synthetic and independent of the inventory entrypoint.
 BPTable receives one page (up to 50 rows and eight columns); the caller
 owns query, page requests, selection and error recovery. Use full remaining
 viewport height. This is not a virtualized 100k SKU grid.
+
+## Alpha packages (Android and web)
+
+Use the **flutter-preview** Actions run for the reviewed commit. Download
+`balanzapro-alpha-android` and `balanzapro-alpha-web` from its Artifacts
+section. Each includes BUILD_COMMIT.txt and SHA256SUMS. On PR runs the
+commit is the tested merge revision; prefer a successful main run for
+installing. Artifacts expire after 14 days.
+
+- Android: extract the ZIP, then install BalanzaPro-Alpha-debug.apk
+  (Android 7/API 24 or newer; compatibility still requires device testing).
+  Allow installation from the chosen source only for this test. Never
+  use production data. The CI debug key is temporary, so updates across
+  runs may require uninstalling the older Alpha. No production signing.
+- Web: extract the web ZIP into a directory and run
+  `python3 -m http.server 8080 --bind 127.0.0.1` inside that directory.
+  Open http://127.0.0.1:8080 in a browser. Do not open index.html directly
+  from disk. A hosted preview requires a separate deployment decision.
+
+These are visual/UX previews; no commercial endpoints or real data.
