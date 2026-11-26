@@ -138,3 +138,34 @@ class RatificationTest(unittest.TestCase):
 
     def test_ratification_rejects_renamed_code(self):
         self.assertTrue(self.errors([doc("docs/decisions/ADR-024.md", previous="backend/internal/x.go")]))
+
+
+class RevisionTest(unittest.TestCase):
+    def setUp(self):
+        self.pr = dict(PR, head={"sha": "a" * 40}, base={"sha": "b" * 40},
+                       state="open", draft=False, changed_files=1, milestone={"number": 1})
+        self.event = copy.deepcopy(self.pr)
+
+    def test_event_revision_must_match(self):
+        from pr_policy import require_event_revision
+        require_event_revision(self.event, self.pr)
+        for field in ("head", "base"):
+            changed = copy.deepcopy(self.pr)
+            changed[field]["sha"] = "c" * 40
+            with self.assertRaises(ValueError):
+                require_event_revision(self.event, changed)
+
+    def test_metadata_change_must_invalidate_result(self):
+        from pr_policy import require_stable_revision
+        require_stable_revision(self.pr, copy.deepcopy(self.pr))
+        for field, value in (("title", "fix: changed"), ("body", "changed"),
+                             ("labels", []), ("milestone", None),
+                             ("state", "closed"), ("draft", True), ("changed_files", 2),
+                             ("head", {"sha": "c" * 40}), ("base", {"sha": "d" * 40})):
+            changed = dict(self.pr, **{field: value})
+            with self.subTest(field=field), self.assertRaises(ValueError):
+                require_stable_revision(self.pr, changed)
+
+    def test_label_order_is_not_a_change(self):
+        from pr_policy import require_stable_revision
+        require_stable_revision(self.pr, dict(self.pr, labels=list(reversed(self.pr["labels"]))))
