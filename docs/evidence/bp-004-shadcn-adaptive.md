@@ -26,3 +26,21 @@ clear search and navigation round trip; analyzer clean and format clean.
 Web compilation attempt exceeded 46s local command limit. CI and actual
 browser execution pending. Native Windows/Linux/Android/iOS/macOS not built;
 100k SKU, virtualized tables and performance remain separate acceptance.
+
+## Revalidación tras integración del propietario
+
+ADR-011 ratificada en main por #167; AGENTS y skill por #169.
+#171 fue fusionado por el propietario en esta rama (021c223), no en main.
+Se incorporó main 1c356e2 preservando los cuatro archivos Flutter
+en conflicto (main.dart, pubspec.yaml, pubspec.lock, widget_test.dart).
+Sin diferencias de backend, gobernanza o workflows respecto a main.
+Copia limpia aislada: pub get --enforce-lockfile, formato, 6/6 tests
+(widget 360/800/1440, botón/skeleton, tema sistema y contraste primario),
+analyze sin hallazgos. Shadcn se importa solo desde design_system.
+Consulta OSV batch de los 74 paquetes hosted y versiones exactas:
+0 avisos devueltos. Los 74 tienen archivo LICENSE/COPYING; clasificación
+preliminar por texto: 56 familia BSD, 14 MIT, 4 Apache-2.0.
+Esto no sustituye auditoría de licencias completas/activos, fuentes
+y dependencias nativas. No implica ausencia de vulnerabilidades.
+No hay pruebas físicas de teclado/lector, escalado de texto, golden,
+100k SKU ni build nativo. Mantener como prototipo sin API ni datos reales.
