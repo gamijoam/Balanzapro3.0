@@ -133,7 +133,7 @@ func TestReadsAreIsolatedByOrganization(t *testing.T) {
 	e.assign(t, e.orgB, e.userB, roleB, e.compB, "company", nil, nil)
 
 	require.NoError(t, e.store.InTx(e.ctx, func(tx application.Tx) error {
-		as, err := tx.Assignments(e.ctx, e.orgA, e.userB, e.compB)
+		as, err := tx.Assignments(e.ctx, e.orgA, e.userB, domain.ScopePath{CompanyID: e.compB})
 		require.NoError(t, err)
 		assert.Empty(t, as, "assignments of another organization are invisible")
 		roles, err := tx.Roles(e.ctx, e.orgA, []uuid.UUID{roleB})
