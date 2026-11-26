@@ -140,8 +140,9 @@
   {
     "id": "023",
     "title": "Módulos declarativos",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Compilación estática, manifiestos y dependencias; no borrar historia al desactivar."
+    "status": "APROBADA",
+    "decision": "Módulos Go estáticos con manifiesto en código (id, versión, deps, permisos, configuración, migraciones); activación por empresa con licencia, dependencias y permiso; desactivar conserva datos y lectura; módulos base siempre activos.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "024",
@@ -152,9 +153,10 @@
   },
   {
     "id": "025",
-    "title": "Supervisor",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "PIN individual, autorización limitada y auditada."
+    "title": "Autorización de supervisor",
+    "status": "APROBADA",
+    "decision": "PIN personal del supervisor (ADR-026) verificado en servidor; autorización ligada a acción, entidad, monto, terminal y sesión; un solo uso, expira ~2 min; validada contra permisos y límites del supervisor; auditada (SEC-02).",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "026",
@@ -165,9 +167,10 @@
   },
   {
     "id": "027",
-    "title": "Configuración",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Tipada, versionada, heredada por ámbito; seguridad no anulable."
+    "title": "Configuración tipada por ámbito",
+    "status": "APROBADA",
+    "decision": "Claves tipadas por módulo con niveles permitidos (global>organización>empresa>sucursal>terminal>usuario, gana el más específico); seguridad/fiscal solo en niveles administrativos; cada cambio versionado con actor, fecha y motivo.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "028",
