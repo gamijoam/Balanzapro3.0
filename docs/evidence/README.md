@@ -20,7 +20,7 @@ No incluye benchmarks ni govulncheck (no se pudo ejecutar localmente; corre en C
 | Pruebas ejecutables contra cualquier BD | `red-test-isolation.txt`; la guarda detectó una BD de pruebas migrada en `public` (`guard-caught-migrated-public.txt`) | `green-test-isolation.txt` |
 | Rollback de migraciones sin probar | `red-migrations-roundtrip.txt` | `green-migrations-roundtrip.txt` |
 | Barrido de reservas sin pruebas | `red-sweeper.txt` | `green-sweeper.txt` |
-| Calidad de pruebas (mutación manual) | primera corrida 11/14 (M10, M11 sobreviven) | `manual-mutation.txt` 14/14 |
+| Calidad de pruebas (mutación manual, `tools/manual_mutation.py`) | primera corrida 11/14 (M10, M11 sobreviven) | `manual-mutation.txt` 14/14 sobre el código final |
 Validación final: `final-*.txt`.
 
 ## Segunda revisión independiente (code-review sobre 1fe1524..5d0ce74)

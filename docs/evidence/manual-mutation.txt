@@ -13,13 +13,13 @@ M09 evento de reserva omitido en release: MATADO; pruebas que fallan: TestReserv
 M10 transferencia sin estado previo: MATADO; pruebas que fallan: TestSetTransferStatusRejectsAlreadyReceivedTransfer
 M11 aislamiento: SKU sin filtro de empresa: MATADO; pruebas que fallan: TestCrossCompanyCatalogWritesAreNotFound
 M12 guarda de BD acepta cualquier nombre: MATADO; pruebas que fallan: TestCheckURLAcceptsOnlyLocalTestDatabases
-M13 barrido se detiene tras error: MATADO; pruebas que fallan: TestRunTicksUntilCancelledAndSurvivesErrors
+M13 barrido se detiene tras el primer intento: MATADO; pruebas que fallan: TestRunTicksUntilCancelledAndSurvivesErrors
 M14 ajuste sin motivo: MATADO; pruebas que fallan: TestAdjustmentsRequireReason
-
 Primera corrida (antes de reforzar pruebas): 11/14 matados.
 - M09 no era válido (no compilaba); se reformuló para omitir el evento "released".
 - M10 sobrevivió: ninguna prueba re-marcaba una transferencia ya recibida → TestSetTransferStatusRejectsAlreadyReceivedTransfer.
 - M11 sobrevivió: las FK compuestas frenaban movimientos, pero AddPresentation habría creado una
   presentación en la empresa A desde la empresa B → TestCrossCompanyCatalogWritesAreNotFound.
-Segunda corrida (arriba): 14/14 matados.
-Herramientas automáticas: no se ejecutaron (el entorno denegó correr herramientas de terceros); ver ADR-172.
+Corridas siguientes (arriba, sobre el código final de la revisión): 14/14 matados. M13 se adaptó al nuevo Run (se detiene tras el primer barrido).
+Herramientas automáticas: no se ejecutaron (el entorno denegó correr herramientas de terceros); ver ADR-173.
+Reproducir: tools/manual_mutation.py.
