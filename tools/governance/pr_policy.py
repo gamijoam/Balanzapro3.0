@@ -167,11 +167,34 @@ def get_issue(repo, number):
             "blockers": [c["title"] for c in blockers if c["state"] == "OPEN" and c["title"].startswith("ADR-")]}
 
 
+def require_event_revision(event_pr, current):
+    """Never approve a revision different from the triggering event."""
+    for key in ("head", "base"):
+        expected = event_pr[key]["sha"]
+        if not re.fullmatch(r"[a-f0-9]{40}", expected) or current[key]["sha"] != expected:
+            raise ValueError("PR revision changed; run policy for the current revision.")
+
+
+def revision_snapshot(pr):
+    return (
+        pr["head"]["sha"], pr["base"]["sha"], pr["title"], pr.get("body") or "",
+        tuple(sorted(label["name"] for label in pr.get("labels", []))),
+        (pr.get("milestone") or {}).get("number"),
+        pr["state"], pr["draft"], pr["changed_files"],
+    )
+
+
+def require_stable_revision(before, after):
+    if revision_snapshot(before) != revision_snapshot(after):
+        raise ValueError("PR metadata changed during validation; rerun policy.")
+
+
 def main():
     event = json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text())
     repo = event["repository"]["full_name"]
     n = int(event["pull_request"]["number"])
     pr = gh("api", f"repos/{repo}/pulls/{n}")
+    require_event_revision(event["pull_request"], pr)
     # gh --paginate returns multiple arrays without slurp in older CLI versions.
     files = []
     for page in range(1, 31):
@@ -186,6 +209,7 @@ def main():
     registry = {"ADR-" + x["id"]: x["status"] for x in json.loads(
         Path("docs/decisions/registry.json").read_text())}
     errors, size = validate(pr, files, issue, registry)
+    require_stable_revision(pr, gh("api", f"repos/{repo}/pulls/{n}"))
     print(f"Líneas productivas aproximadas: {size}; objetivo 200–500 (no mínimo obligatorio).")
     for error in errors:
         print("ERROR: " + error)
