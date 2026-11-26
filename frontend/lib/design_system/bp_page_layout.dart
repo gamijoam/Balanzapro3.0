@@ -280,7 +280,13 @@ class _SideDestination extends StatelessWidget {
           style: const TextStyle(fontSize: 12),
         )
       else
-        Expanded(child: Text(item.label, style: const TextStyle(fontSize: 14))),
+        Expanded(
+          child: Text(
+            item.label,
+            textAlign: TextAlign.start,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
     ];
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: BPTokens.touchTarget),
