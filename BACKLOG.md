@@ -34,7 +34,7 @@ P0 no implica entregar simultáneamente: ordenar por dependencias y vertical fun
 ## Estado al 2026-11-26 (camino corto, ADR-169)
 | ID | Estado | Nota |
 |---|---|---|
-| BP-001 | Parcial | Ratificadas 005, 006, 014, 016, 040. Pendientes: 024 (permisos), 044 (costeo), 051 (precios versionados). |
+| BP-001 | Parcial | Ratificadas 005, 006, 014, 016, 024, 040. Pendientes: 044 (costeo), 051 (precios versionados). |
 | BP-002 | Parcial | Backend Go fijado en ADR-170 (Go 1.26.11, govulncheck sin hallazgos); desviaciones ratificadas en ADR-172. Falta Flutter/Dart y distribución. |
 | BP-003 | Parcial | Módulo Go, Makefile y CI backend (`.github/workflows/backend.yml`). Falta Flutter y monorepo Dart. |
 | BP-005 | Hecho (backend) | INV-01, idempotencia concurrente, atomicidad y orden de locks con PostgreSQL 16 real. |
