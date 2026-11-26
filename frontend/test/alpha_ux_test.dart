@@ -13,10 +13,16 @@ void main() {
       await tester.pumpWidget(const BalanzaProApp());
       await tester.pumpAndSettle();
       final nav = find.byKey(
-        Key(width >= 1000 ? "desktop-navigation" : "compact-navigation"),
+        Key(
+          width >= 1024
+              ? "desktop-navigation"
+              : width >= 600
+              ? "rail-navigation"
+              : "compact-navigation",
+        ),
       );
       expect(nav, findsOneWidget);
-      if (width < 1000) {
+      if (width < 600) {
         expect(tester.getTopLeft(nav).dy, greaterThan(650));
       }
       expect(find.byKey(const ValueKey("bp-status-1")), findsOneWidget);

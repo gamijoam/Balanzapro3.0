@@ -19,11 +19,11 @@ void main() {
       expect(find.text("Arroz 1 kg"), findsOneWidget);
       expect(
         find.byKey(const Key("desktop-navigation")),
-        width >= 1000 ? findsOneWidget : findsNothing,
+        width >= 1024 ? findsOneWidget : findsNothing,
       );
       expect(
         find.byKey(const Key("compact-navigation")),
-        width < 1000 ? findsOneWidget : findsNothing,
+        width < 600 ? findsOneWidget : findsNothing,
       );
       await tester.enterText(find.byType(EditableText), "CAF");
       await tester.pumpAndSettle();
