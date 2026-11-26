@@ -66,8 +66,9 @@
   {
     "id": "011",
     "title": "Design system",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Encapsular UI y tokens, desacoplar proveedor."
+    "status": "APROBADA",
+    "decision": "Biblioteca central (tokens semánticos, temas, componentes BP, layouts adaptables y skeletons); los módulos no importan Shadcn directamente; cambios globales en la fuente central; accesibilidad AA, 48 px táctiles, catálogo y pruebas por tamaño. La versión de librería requiere validación BP-002/BP-004.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "012",
