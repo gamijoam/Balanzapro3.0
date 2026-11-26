@@ -32,3 +32,13 @@ metadatos en dos columnas; preservar acceso a selección y edición.
 BPBadge es el componente para estados; no crear paletas por módulo.
 Probar ancho, escala, tema y acciones, y revisar la apariencia en un
 dispositivo real. Valores concretos provisionales, no marca definitiva.
+
+## Identidad visual Alpha provisional
+Jerarquía Geist de la dependencia existente, sin fuentes remotas: encabezado
+22/700, título 16/600, etiqueta y texto base 14, texto complementario 13.
+Usar escala del sistema, no alturas fijas para texto. Azul de acción
+primaria, tinta azul grisácea y superficies claras/oscuras. La navegación
+con iconos usa énfasis suave en el icono activo y etiqueta en negrita;
+distinguirla de los botones de operación. El estado seleccionado se
+conserva semánticamente. Los valores concretos residen en BPTokens.
+Capturas Flutter de desarrollo son evidencia de render, no de dispositivo.
