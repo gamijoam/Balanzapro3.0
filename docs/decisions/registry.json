@@ -57,9 +57,10 @@
   },
   {
     "id": "010",
-    "title": "Casbin",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Evaluar RBAC, ámbitos, condiciones y denegación por defecto."
+    "title": "Motor de permisos (Casbin evaluado, no adoptado)",
+    "status": "APROBADA",
+    "decision": "Motor propio en Go tras el puerto Authorizer (roles, ámbitos, límites, denegación por defecto); Casbin no se adopta por ahora.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "011",
