@@ -79,7 +79,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(EditableText), "CAF");
       await tester.pumpAndSettle();
-      await tester.tap(find.text("Editar Café 250 g"));
+      await tester.tap(find.byKey(const ValueKey("bp-row-action-2")));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byType(EditableText).first,

@@ -33,7 +33,7 @@ void main() {
       await tester.tap(find.byKey(const ValueKey("product-filter-low")));
       await tester.pumpAndSettle();
       expect(find.text("Café 250 g"), findsOneWidget);
-      final edit = find.text("Editar Café 250 g");
+      final edit = find.byKey(const ValueKey("bp-row-action-2"));
       await tester.scrollUntilVisible(
         edit.hitTestable(),
         150,
