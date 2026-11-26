@@ -9,6 +9,23 @@ abstract final class BPTokens {
       wideBreakpoint = 1000,
       sidebarWidth = 224;
   static const double radius = 10;
+  static const double headingSize = 22,
+      titleSize = 16,
+      labelSize = 14,
+      mutedSize = 13;
+  static const double navIconSize = 20;
+  static const Color inkLight = Color(0xFF17243A);
+  static const Color mutedLight = Color(0xFF526177);
+  static const Color inkDark = Color(0xFFF1F5F9);
+  static const Color mutedDark = Color(0xFFB6C4D6);
+  static const Color navActiveLight = Color(0xFFDBEAFE);
+  static const Color navActiveDark = Color(0xFF253D63);
+
+  static (Color, Color) navigationColors(Brightness brightness) =>
+      brightness == Brightness.dark
+      ? (navActiveDark, primaryDark)
+      : (navActiveLight, primaryLight);
+
   static const Color canvasLight = Color(0xFFF5F7FB);
   static const Color canvasDark = Color(0xFF111827);
   static const Color surfaceDark = Color(0xFF1E293B);
@@ -35,7 +52,9 @@ class BPApp extends StatelessWidget {
         primary: BPTokens.primaryLight,
         primaryForeground: BPTokens.onPrimaryLight,
         ring: BPTokens.primaryLight,
-        mutedForeground: Color(0xFF52525B),
+        foreground: BPTokens.inkLight,
+        cardForeground: BPTokens.inkLight,
+        mutedForeground: BPTokens.mutedLight,
       ),
     ),
     darkTheme: ShadThemeData(
@@ -44,12 +63,27 @@ class BPApp extends StatelessWidget {
       colorScheme: const ShadZincColorScheme.dark(
         background: BPTokens.canvasDark,
         card: BPTokens.surfaceDark,
+        foreground: BPTokens.inkDark,
+        cardForeground: BPTokens.inkDark,
+        mutedForeground: BPTokens.mutedDark,
         primary: BPTokens.primaryDark,
         primaryForeground: BPTokens.onPrimaryDark,
         ring: BPTokens.primaryDark,
       ),
     ),
-    home: home,
+    home: Builder(
+      builder: (context) {
+        final theme = ShadTheme.of(context);
+        return DefaultTextStyle(
+          style: theme.textTheme.p.copyWith(
+            fontSize: BPTokens.labelSize,
+            height: 1.4,
+            color: theme.colorScheme.foreground,
+          ),
+          child: home,
+        );
+      },
+    ),
   );
 }
 
@@ -75,10 +109,22 @@ class BPVisuals {
       theme.colorScheme.background,
       theme.colorScheme.card,
       theme.colorScheme.border,
-      theme.textTheme.h3,
-      theme.textTheme.large,
-      theme.textTheme.muted,
-      theme.textTheme.small,
+      theme.textTheme.h3.copyWith(
+        fontSize: BPTokens.headingSize,
+        height: 1.25,
+        fontWeight: FontWeight.w700,
+      ),
+      theme.textTheme.large.copyWith(
+        fontSize: BPTokens.titleSize,
+        height: 1.35,
+        fontWeight: FontWeight.w600,
+      ),
+      theme.textTheme.muted.copyWith(
+        fontSize: BPTokens.mutedSize,
+        height: 1.45,
+        color: theme.colorScheme.mutedForeground,
+      ),
+      theme.textTheme.small.copyWith(fontSize: BPTokens.labelSize, height: 1.4),
     );
   }
 }
@@ -107,6 +153,11 @@ class BPButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
+      final isNav = navIcon != null;
+      final visual = BPVisuals.of(context);
+      final (navBackground, navForeground) = BPTokens.navigationColors(
+        visual.brightness,
+      );
       const padding = EdgeInsets.symmetric(
         horizontal: BPTokens.md,
         vertical: BPTokens.sm,
@@ -127,9 +178,34 @@ class BPButton extends StatelessWidget {
             : Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ExcludeSemantics(child: Icon(_navIcon(navIcon!), size: 20)),
+                  ExcludeSemantics(
+                    child: DecoratedBox(
+                      key: primary ? const ValueKey("bp-nav-active") : null,
+                      decoration: BoxDecoration(
+                        color: primary ? navBackground : null,
+                        borderRadius: BorderRadius.circular(BPTokens.radius),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: BPTokens.md,
+                          vertical: BPTokens.xs,
+                        ),
+                        child: Icon(
+                          _navIcon(navIcon!),
+                          size: BPTokens.navIconSize,
+                        ),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: BPTokens.xs),
-                  Text(label, textAlign: TextAlign.center),
+                  Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: BPTokens.mutedSize,
+                      fontWeight: primary ? FontWeight.w700 : FontWeight.w500,
+                    ),
+                  ),
                 ],
               ),
       );
@@ -139,9 +215,21 @@ class BPButton extends StatelessWidget {
           minWidth: BPTokens.touchTarget,
         ),
         child: ShadButton.raw(
-          variant: primary
+          variant: isNav
+              ? ShadButtonVariant.ghost
+              : primary
               ? ShadButtonVariant.primary
               : ShadButtonVariant.outline,
+          foregroundColor: isNav
+              ? (primary
+                    ? navForeground
+                    : (visual.brightness == Brightness.dark
+                          ? BPTokens.mutedDark
+                          : BPTokens.mutedLight))
+              : null,
+          hoverForegroundColor: isNav ? navForeground : null,
+          hoverBackgroundColor: isNav ? navBackground : null,
+
           height: 0,
           autofocus: autofocus,
           padding: padding,
