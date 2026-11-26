@@ -1,22 +1,12 @@
 import "package:flutter/widgets.dart";
-import "package:shadcn_ui/shadcn_ui.dart";
+
+import "../design_system/design_system.dart";
 
 /// Experimental UI adapter, not the final design system.
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
   @override
-  Widget build(BuildContext context) => ShadApp(
-    title: "BalanzaPro3.0",
-    theme: ShadThemeData(
-      brightness: Brightness.light,
-      colorScheme: const ShadZincColorScheme.light(),
-    ),
-    darkTheme: ShadThemeData(
-      brightness: Brightness.dark,
-      colorScheme: const ShadZincColorScheme.dark(),
-    ),
-    home: const _InventoryPreview(),
-  );
+  Widget build(BuildContext context) => const BPApp(home: _InventoryPreview());
 }
 
 class _InventoryPreview extends StatefulWidget {
@@ -42,8 +32,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = ShadTheme.of(context);
-    final colors = theme.colorScheme;
+    final theme = BPVisuals.of(context);
     final visible = products
         .where(
           (p) =>
@@ -52,20 +41,20 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
         )
         .toList();
     return ColoredBox(
-      color: colors.background,
+      color: theme.background,
       child: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final wide = constraints.maxWidth >= 1000;
+            final wide = constraints.maxWidth >= BPTokens.wideBreakpoint;
             return Column(
               children: [
                 Container(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
+                    horizontal: BPTokens.lg,
+                    vertical: BPTokens.md,
                   ),
                   decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: colors.border)),
+                    border: Border(bottom: BorderSide(color: theme.border)),
                   ),
                   child: Row(
                     children: [
@@ -73,10 +62,10 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("BalanzaPro3.0", style: theme.textTheme.large),
+                            Text("BalanzaPro3.0", style: theme.title),
                             Text(
                               "Entorno de desarrollo · Datos ficticios",
-                              style: theme.textTheme.muted,
+                              style: theme.muted,
                             ),
                           ],
                         ),
@@ -88,57 +77,62 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
                 Expanded(
                   child: Row(
                     children: [
-                      if (wide) SizedBox(width: 224, child: _navigation(true)),
+                      if (wide)
+                        SizedBox(
+                          width: BPTokens.sidebarWidth,
+                          child: _navigation(true),
+                        ),
                       Expanded(
                         child: ListView(
-                          padding: EdgeInsets.all(wide ? 32 : 16),
+                          padding: EdgeInsets.all(
+                            wide ? BPTokens.xxl : BPTokens.lg,
+                          ),
                           children: [
                             Text(
                               selected == 0 ? "Productos" : "Movimientos",
-                              style: theme.textTheme.h3,
+                              style: theme.heading,
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: BPTokens.sm),
                             Text(
                               selected == 0
                                   ? "Consulta de existencias de ejemplo"
                                   : "Vista de demostración; sin operaciones reales",
-                              style: theme.textTheme.muted,
+                              style: theme.muted,
                             ),
-                            const SizedBox(height: 24),
+                            const SizedBox(height: BPTokens.xl),
                             if (selected == 0) ...[
                               Text(
                                 "Buscar por nombre o código",
-                                style: theme.textTheme.small,
+                                style: theme.label,
                               ),
-                              const SizedBox(height: 8),
-                              Semantics(
+                              const SizedBox(height: BPTokens.sm),
+                              BPInput(
                                 label: "Buscar productos",
-                                child: ShadInput(
-                                  controller: search,
-                                  placeholder: const Text("Ej. café o ALI-002"),
-                                  onChanged: (value) => setState(
-                                    () => query = value.trim().toLowerCase(),
-                                  ),
+                                controller: search,
+                                placeholder: "Ej. café o ALI-002",
+                                onChanged: (value) => setState(
+                                  () => query = value.trim().toLowerCase(),
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: BPTokens.lg),
                               Text(
                                 "${visible.length} productos",
-                                style: theme.textTheme.muted,
+                                style: theme.muted,
                               ),
-                              const SizedBox(height: 12),
+                              const SizedBox(height: BPTokens.md),
                               if (visible.isEmpty)
-                                ShadCard(
+                                BPCard(
                                   child: Column(
                                     children: [
                                       const Text("No encontramos productos"),
-                                      const SizedBox(height: 12),
-                                      ShadButton.outline(
+                                      const SizedBox(height: BPTokens.md),
+                                      BPButton(
+                                        primary: false,
+                                        label: "Limpiar búsqueda",
                                         onPressed: () {
                                           search.clear();
                                           setState(() => query = "");
                                         },
-                                        child: const Text("Limpiar búsqueda"),
                                       ),
                                     ],
                                   ),
@@ -146,8 +140,10 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
                               else
                                 ...visible.map(
                                   (p) => Padding(
-                                    padding: const EdgeInsets.only(bottom: 8),
-                                    child: ShadCard(
+                                    padding: const EdgeInsets.only(
+                                      bottom: BPTokens.sm,
+                                    ),
+                                    child: BPCard(
                                       child: wide
                                           ? Row(
                                               children: [
@@ -155,8 +151,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
                                                   flex: 3,
                                                   child: Text(
                                                     p.$1,
-                                                    style:
-                                                        theme.textTheme.large,
+                                                    style: theme.title,
                                                   ),
                                                 ),
                                                 Expanded(
@@ -176,16 +171,14 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  p.$1,
-                                                  style: theme.textTheme.large,
+                                                Text(p.$1, style: theme.title),
+                                                const SizedBox(
+                                                  height: BPTokens.xs,
                                                 ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  p.$2,
-                                                  style: theme.textTheme.muted,
+                                                Text(p.$2, style: theme.muted),
+                                                const SizedBox(
+                                                  height: BPTokens.sm,
                                                 ),
-                                                const SizedBox(height: 8),
                                                 Text("${p.$3} und. · ${p.$4}"),
                                               ],
                                             ),
@@ -193,7 +186,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
                                   ),
                                 ),
                             ] else
-                              const ShadCard(
+                              const BPCard(
                                 child: Text(
                                   "Los movimientos estarán disponibles al conectar la API protegida.",
                                 ),
@@ -216,27 +209,30 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
     final items = [_navButton("Productos", 0), _navButton("Movimientos", 1)];
     return Padding(
       key: Key(wide ? "desktop-navigation" : "compact-navigation"),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(BPTokens.md),
       child: wide
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: items,
             )
-          : Wrap(spacing: 8, runSpacing: 8, children: items),
+          : Wrap(
+              spacing: BPTokens.sm,
+              runSpacing: BPTokens.sm,
+              children: items,
+            ),
     );
   }
 
   Widget _navButton(String label, int index) {
     void activate() => setState(() => selected = index);
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.only(bottom: BPTokens.xs),
       child: Semantics(
         selected: selected == index,
-        child: SizedBox(
-          height: 48,
-          child: selected == index
-              ? ShadButton(onPressed: activate, child: Text(label))
-              : ShadButton.outline(onPressed: activate, child: Text(label)),
+        child: BPButton(
+          label: label,
+          primary: selected == index,
+          onPressed: activate,
         ),
       ),
     );
