@@ -4,6 +4,7 @@ import "../design_system/design_system.dart";
 import "../design_system/bp_page_layout.dart";
 import "../design_system/bp_table.dart";
 import "../design_system/bp_form.dart";
+import "../design_system/bp_badge.dart";
 
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
@@ -120,9 +121,9 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       title: "BalanzaPro3.0",
       contextLabel: "Entorno de desarrollo · Datos ficticios",
       items: const [
-        BPNavItem("home", "Inicio"),
-        BPNavItem("products", "Productos"),
-        BPNavItem("movements", "Movimientos"),
+        BPNavItem("home", "Inicio", icon: BPNavIcon.home),
+        BPNavItem("products", "Productos", icon: BPNavIcon.products),
+        BPNavItem("movements", "Movimientos", icon: BPNavIcon.movements),
       ],
       selectedId: selected,
       onNavigate: (id) => setState(() => selected = id),
@@ -164,6 +165,20 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
         for (final p in visible.skip(page * pageSize).take(pageSize))
           BPTableRow(p.id, [p.name, p.code, p.stock.toString(), p.status]),
       ],
+      cellBuilder: (row, index) {
+        if (index != 3) return null;
+        final label = row.cells[index];
+        return BPBadge(
+          key: ValueKey("bp-status-${row.id}"),
+          label: label,
+          tone: switch (label) {
+            "Disponible" => BPTone.success,
+            "Stock bajo" => BPTone.warning,
+            "Agotado" => BPTone.danger,
+            _ => BPTone.neutral,
+          },
+        );
+      },
       page: page,
       pageCount: pages,
       searchController: search,

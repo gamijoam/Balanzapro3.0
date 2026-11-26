@@ -8,7 +8,10 @@ abstract final class BPTokens {
   static const double touchTarget = 48,
       wideBreakpoint = 1000,
       sidebarWidth = 224;
-  static const double radius = 8;
+  static const double radius = 10;
+  static const Color canvasLight = Color(0xFFF5F7FB);
+  static const Color canvasDark = Color(0xFF111827);
+  static const Color surfaceDark = Color(0xFF1E293B);
   static const double formMaxWidth = 720;
   static const double dialogMaxWidth = 480;
   static const Color primaryLight = Color(0xFF1E40AF);
@@ -28,6 +31,7 @@ class BPApp extends StatelessWidget {
       brightness: Brightness.light,
       radius: BorderRadius.circular(BPTokens.radius),
       colorScheme: const ShadZincColorScheme.light(
+        background: BPTokens.canvasLight,
         primary: BPTokens.primaryLight,
         primaryForeground: BPTokens.onPrimaryLight,
         ring: BPTokens.primaryLight,
@@ -38,6 +42,8 @@ class BPApp extends StatelessWidget {
       brightness: Brightness.dark,
       radius: BorderRadius.circular(BPTokens.radius),
       colorScheme: const ShadZincColorScheme.dark(
+        background: BPTokens.canvasDark,
+        card: BPTokens.surfaceDark,
         primary: BPTokens.primaryDark,
         primaryForeground: BPTokens.onPrimaryDark,
         ring: BPTokens.primaryDark,
@@ -50,19 +56,24 @@ class BPApp extends StatelessWidget {
 /// Provider-neutral view of semantic theme values.
 class BPVisuals {
   const BPVisuals._(
+    this.brightness,
     this.background,
+    this.surface,
     this.border,
     this.heading,
     this.title,
     this.muted,
     this.label,
   );
-  final Color background, border;
+  final Brightness brightness;
+  final Color background, surface, border;
   final TextStyle heading, title, muted, label;
   static BPVisuals of(BuildContext context) {
     final theme = ShadTheme.of(context);
     return BPVisuals._(
+      theme.brightness,
       theme.colorScheme.background,
+      theme.colorScheme.card,
       theme.colorScheme.border,
       theme.textTheme.h3,
       theme.textTheme.large,
@@ -72,6 +83,14 @@ class BPVisuals {
   }
 }
 
+enum BPNavIcon { home, products, movements }
+
+IconData _navIcon(BPNavIcon icon) => switch (icon) {
+  BPNavIcon.home => LucideIcons.house,
+  BPNavIcon.products => LucideIcons.package,
+  BPNavIcon.movements => LucideIcons.arrowLeftRight,
+};
+
 class BPButton extends StatelessWidget {
   const BPButton({
     super.key,
@@ -79,10 +98,12 @@ class BPButton extends StatelessWidget {
     required this.onPressed,
     this.primary = true,
     this.autofocus = false,
+    this.navIcon,
   });
   final String label;
   final VoidCallback? onPressed;
   final bool primary, autofocus;
+  final BPNavIcon? navIcon;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
@@ -101,7 +122,16 @@ class BPButton extends StatelessWidget {
                 )
               : double.infinity,
         ),
-        child: Text(label, textAlign: TextAlign.center),
+        child: navIcon == null
+            ? Text(label, textAlign: TextAlign.center)
+            : Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ExcludeSemantics(child: Icon(_navIcon(navIcon!), size: 20)),
+                  const SizedBox(height: BPTokens.xs),
+                  Text(label, textAlign: TextAlign.center),
+                ],
+              ),
       );
       return ConstrainedBox(
         constraints: const BoxConstraints(
@@ -162,10 +192,15 @@ class BPInput extends StatelessWidget {
 }
 
 class BPCard extends StatelessWidget {
-  const BPCard({super.key, required this.child});
+  const BPCard({super.key, required this.child, this.compact = false});
   final Widget child;
+  final bool compact;
   @override
-  Widget build(BuildContext context) => ShadCard(child: child);
+  Widget build(BuildContext context) => ShadCard(
+    padding: EdgeInsets.all(compact ? BPTokens.md : BPTokens.lg),
+    shadows: const [],
+    child: child,
+  );
 }
 
 /// Non-animated placeholder. The enclosing loading region announces status.
