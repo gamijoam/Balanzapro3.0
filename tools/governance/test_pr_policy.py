@@ -76,3 +76,8 @@ class PolicyTest(unittest.TestCase):
 
     def test_dependency_requires_justification(self):
         self.assertTrue(self.errors(files=[dict(FILES[0], filename="backend/go.mod")]))
+
+    def test_adr_issue_cannot_implement_code(self):
+        issue = dict(ISSUE, title="ADR-024 · Permisos", labels=["adr"])
+        pr = dict(PR, body=BODY.replace("BP-003", "ADR-024"))
+        self.assertTrue(self.errors(pr=pr, files=[dict(FILES[0], filename="backend/main.go")], issue=issue))

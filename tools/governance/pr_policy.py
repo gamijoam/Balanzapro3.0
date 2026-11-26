@@ -125,6 +125,8 @@ def validate(pr, files, issue, registry):
         ratification = bool(expected and all(c.startswith("ADR-") for c in expected)
                             and files and all(f["filename"].startswith("docs/decisions/") for f in files)
                             and "adr" in labels)
+        if expected and all(c.startswith("ADR-") for c in expected) and not ratification:
+            errors.append("Un issue ADR solo permite documentación de ratificación, no implementación.")
         if (pending or blocking) and not ratification:
             errors.append("ADR bloqueantes pendientes: ratificar antes de implementar.")
         if any(c not in registry for c in CODE.findall(sec.get(HEADERS[1], "")) if c.startswith("ADR-")):
