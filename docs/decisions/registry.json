@@ -144,8 +144,9 @@
   {
     "id": "024",
     "title": "Permisos",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Roles, ámbito, condiciones; servidor decide."
+    "status": "APROBADA",
+    "decision": "RBAC por ámbito empresa>sucursal>almacén con herencia hacia abajo; condiciones y límites exactos por permiso; denegar por defecto; servidor decide en cada comando y consulta; roles iniciales como plantillas por empresa.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "025",

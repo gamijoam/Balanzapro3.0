@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-173 ADR: 136 aprobadas; 37 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado, se ratificaron ADR-171 y 172, y ADR-173 queda propuesta. ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
+173 ADR: 137 aprobadas; 36 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado, se ratificaron ADR-171 y 172, y ADR-173 queda propuesta. ADR-024 (permisos) ratificada el 2026-11-26 (Issue #15). ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
 
 | ADR | Decisión | Estado |
 |---|---|---|
@@ -27,7 +27,7 @@
 | [ADR-021](ADR-021.md) | Despliegue D | APROBADA |
 | [ADR-022](ADR-022.md) | Shadcn UI Flutter | APROBADA |
 | [ADR-023](ADR-023.md) | Módulos declarativos | PROPUESTA / RATIFICACIÓN PENDIENTE |
-| [ADR-024](ADR-024.md) | Permisos | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-024](ADR-024.md) | Permisos | APROBADA (2026-11-26) |
 | [ADR-025](ADR-025.md) | Supervisor | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-026](ADR-026.md) | Auth offline | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-027](ADR-027.md) | Configuración | PROPUESTA / RATIFICACIÓN PENDIENTE |
