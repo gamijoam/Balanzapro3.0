@@ -36,15 +36,15 @@ P0 no implica entregar simultáneamente: ordenar por dependencias y vertical fun
 |---|---|---|
 | BP-001 | Parcial | Ratificadas 005, 006, 014, 016, 024, 040. Pendientes: 044 (costeo), 051 (precios versionados). |
 | BP-002 | Parcial | Backend Go fijado en ADR-170 (Go 1.26.11, govulncheck sin hallazgos); desviaciones ratificadas en ADR-172. Falta Flutter/Dart y distribución. |
-| BP-003 | Parcial | Módulo Go, Makefile y CI backend (`.github/workflows/backend.yml`). Falta Flutter y monorepo Dart. |
+| BP-003 | Parcial | Módulo Go, Makefile, CI backend y controles de PR Policy, secretos y arquitectura (#99–103, #127). Solo backend es obligatorio; falta Flutter y monorepo Dart. |
 | BP-005 | Hecho (backend) | INV-01, idempotencia concurrente, atomicidad y orden de locks con PostgreSQL 16 real. |
 | BP-006 | Parcial | Go↔PostgreSQL exacto. Falta Dart/SQLite y contrato OpenAPI. |
 | BP-011 | Hecho (backend, sin API) | SKU, unidad base, presentaciones, códigos. INV-03. |
 | BP-012 | Hecho (backend, sin API) | Kardex, saldos, reservas con historial de eventos y barrido automático, transferencias. INV-01/07. Conteos (INV-06) pendientes. |
-| BP-008 | Parcial (backend, sin API) | Usuarios por organización, membresías por empresa y denegación por defecto con adaptador PostgreSQL (#78, #79, #80). Faltan credenciales y sesiones (ADR-026) y la API (#81). |
-| BP-009 | Parcial (backend, sin API) | Permisos por ámbito con límites exactos y autorización de supervisor de un solo uso, con adaptador PostgreSQL y auditoría (#82, #83, #84). Dominio de módulos y configuración tipada (#116). Faltan adaptadores de módulos y configuración, el ámbito de organización (ADR-174) y la API (#85). |
+| BP-008 | Parcial (backend, sin API) | Usuarios y membresías con PostgreSQL; esquema y persistencia de verificadores (#135, #139), Argon2id (#137), dominio de presupuesto de intentos (#143). Pendientes: reserva atómica, límites de concurrencia y origen, PIN, TOTP, autenticación, auditoría, sesiones y API (#81). ADR-015 pendiente para dispositivos. |
+| BP-009 | Parcial (backend, sin API) | Permisos por ámbito y supervisor de un solo uso (#82–84), ámbito de organización y membresía (#125, #129, #131), configuración administrativa versionada y auditada (#133, #141). Dominio de módulos (#116); faltan adaptador de módulos, preferencias terminal/usuario, catálogo/roles, autorización transaccional y API (#85). |
 | BP-010 | Pendiente | Dispositivos, outbox y cursor (#86, #87, #88). |
 
 El inventario aún usa el puerto mínimo `Scope`: no llama al `Authorizer`, no audita ni comprueba módulos activos. No exponer API ni usar con datos reales hasta integrarlo.
 
-Evidencia RED/GREEN en `docs/evidence/`.
+Evidencia RED/GREEN en `docs/evidence/` y PR. Estado comprobado en main `59bb1ca`, CI backend, arquitectura y secretos exitosos. Los merges #133, #135, #137, #139, #141 y #143 no registran aprobaciones independientes formales; no confundir merge autorizado con auditoría independiente.
