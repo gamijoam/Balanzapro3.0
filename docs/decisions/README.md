@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-173 ADR: 139 aprobadas; 34 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado, se ratificaron ADR-171 y 172, y ADR-173 queda propuesta. ADR-024 (permisos) ratificada el 2026-11-26 (Issue #15) y ADR-010 (motor propio, Casbin no adoptado) el mismo día (Issue #5) y ADR-026 (autenticación y sesiones) también (Issue #17). ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
+173 ADR: 140 aprobadas; 33 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado, se ratificaron ADR-171 y 172, y ADR-173 queda propuesta. ADR-024 (permisos) ratificada el 2026-11-26 (Issue #15) y ADR-010 (motor propio, Casbin no adoptado) el mismo día (Issue #5) y ADR-026 (autenticación y sesiones) también (Issue #17); ADR-009 (contrato OpenAPI primero) el mismo día (Issue #4). ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
 
 | ADR | Decisión | Estado |
 |---|---|---|
@@ -12,7 +12,7 @@
 | [ADR-006](ADR-006.md) | Transacciones e idempotencia | APROBADA (2026-11-26) |
 | [ADR-007](ADR-007.md) | Offline configurable D | APROBADA |
 | [ADR-008](ADR-008.md) | PowerSync | PROPUESTA / RATIFICACIÓN PENDIENTE |
-| [ADR-009](ADR-009.md) | Generación SQL/OpenAPI | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-009](ADR-009.md) | Contrato OpenAPI primero y generación de código | APROBADA (2026-11-26) |
 | [ADR-010](ADR-010.md) | Motor de permisos (Casbin evaluado, no adoptado) | APROBADA (2026-11-26) |
 | [ADR-011](ADR-011.md) | Design system | PROPUESTA / RATIFICACIÓN PENDIENTE |
 | [ADR-012](ADR-012.md) | TDD y pruebas | PROPUESTA / RATIFICACIÓN PENDIENTE |

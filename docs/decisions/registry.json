@@ -51,9 +51,10 @@
   },
   {
     "id": "009",
-    "title": "Generación SQL/OpenAPI",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Contratos Go/Dart y consultas tipadas."
+    "title": "Contrato OpenAPI primero y generación de código",
+    "status": "APROBADA",
+    "decision": "OpenAPI 3.1 en contracts/openapi/ como fuente de verdad; servidor Go con oapi-codegen strict sobre chi; cliente Dart del mismo contrato (herramienta al iniciar Flutter); /api/v1, errores RFC 9457 con code y correlation_id; sqlc diferido.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "010",
