@@ -4,6 +4,7 @@ import "../design_system/design_system.dart";
 import "../design_system/bp_page_layout.dart";
 import "../design_system/bp_table.dart";
 import "../design_system/bp_form.dart";
+import "../design_system/bp_dialog.dart";
 import "../design_system/bp_badge.dart";
 import "../design_system/bp_choice_bar.dart";
 import "inventory_consultation.dart";
@@ -33,7 +34,8 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
   String selected = "products";
   String? editingId, feedback, detailId, historyProductId;
   String filter = "all";
-  bool editing = false;
+  bool editing = false, confirmingDiscard = false;
+  String initialName = "", initialCode = "";
   int page = 0, nextId = 4;
 
   @override
@@ -49,8 +51,8 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       editing = true;
       feedback = null;
       editingId = item?.id;
-      name.text = item?.name ?? "";
-      code.text = item?.code ?? "";
+      name.text = initialName = item?.name ?? "";
+      code.text = initialCode = item?.code ?? "";
     });
   }
 
@@ -144,7 +146,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
               onBack: () => setState(() => selected = "products"),
             );
           }
-          if (editing) return _editor(theme, constraints);
+          if (editing) return _editor();
           if (detailId != null) {
             final product = products.firstWhere((p) => p.id == detailId);
             return ProductDetail(
@@ -278,61 +280,55 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
     );
   }
 
-  Widget _editor(BPVisuals theme, BoxConstraints constraints) => Column(
-    children: [
-      ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: constraints.maxHeight / 2),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(BPTokens.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  editingId == null
-                      ? "Nuevo producto de ejemplo"
-                      : "Editar producto de ejemplo",
-                  style: theme.heading,
-                ),
-                const SizedBox(height: BPTokens.sm),
-                Text(
-                  "Solo memoria local; no se guardan datos reales.",
-                  style: theme.muted,
-                ),
-                const SizedBox(height: BPTokens.sm),
-                BPButton(
-                  label: "Cancelar borrador",
-                  primary: false,
-                  onPressed: () => setState(() {
-                    editing = false;
-                    editingId = null;
-                  }),
-                ),
-              ],
-            ),
-          ),
-        ),
+  Future<void> _cancelDraft() async {
+    if (!editing || confirmingDiscard) return;
+    if (name.text != initialName || code.text != initialCode) {
+      confirmingDiscard = true;
+      FocusManager.instance.primaryFocus?.unfocus();
+      final discard = await BPDialog.confirm(
+        context,
+        title: "¿Descartar cambios?",
+        description: "Los cambios de este borrador de ejemplo se perderán.",
+        confirmLabel: "Descartar cambios",
+      );
+      confirmingDiscard = false;
+      if (!mounted || !discard || !editing) return;
+    }
+    setState(() {
+      editing = false;
+      editingId = null;
+    });
+  }
+
+  Widget _editor() => BPForm(
+    title: editingId == null
+        ? "Nuevo producto de ejemplo"
+        : "Editar producto de ejemplo",
+    description: "Solo memoria local; no se guardan datos reales.",
+    sectionTitle: "Identificación del producto",
+    fields: [
+      BPTextField(
+        id: "name",
+        label: "Nombre del producto",
+        controller: name,
+        placeholder: "Ej. Arroz 1 kg",
+        help: "Nombre para identificar el producto.",
+        requiredField: true,
+        validate: _validateName,
       ),
-      Expanded(
-        child: BPForm(
-          fields: [
-            BPTextField(
-              id: "name",
-              label: "Nombre del producto",
-              controller: name,
-              validate: _validateName,
-            ),
-            BPTextField(
-              id: "code",
-              label: "Código",
-              controller: code,
-              validate: _validateCode,
-            ),
-          ],
-          onSubmit: _save,
-        ),
+      BPTextField(
+        id: "code",
+        label: "Código",
+        controller: code,
+        placeholder: "Ej. ALI-001",
+        help: "Código único dentro de este ejemplo.",
+        requiredField: true,
+        validate: _validateCode,
       ),
     ],
+    onSubmit: _save,
+    onCancel: _cancelDraft,
+    cancelLabel: "Cancelar borrador",
   );
 
   Widget _dashboard(BPVisuals theme, bool wide) {

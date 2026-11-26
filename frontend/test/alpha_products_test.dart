@@ -75,6 +75,8 @@ void main() {
     await tester.enterText(find.byType(EditableText).last, "DRAFT-1");
     await tester.tap(find.text("Cancelar borrador"));
     await tester.pumpAndSettle();
+    await tester.tap(find.text("Descartar cambios"));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(EditableText), "DRAFT-1");
     await tester.pumpAndSettle();
     expect(find.text("No hay resultados"), findsOneWidget);

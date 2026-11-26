@@ -13,6 +13,7 @@ class BPFormExample extends StatefulWidget {
 class _BPFormExampleState extends State<BPFormExample> {
   final name = TextEditingController();
   final code = TextEditingController();
+  int revision = 0;
   @override
   void dispose() {
     name.dispose();
@@ -38,12 +39,22 @@ class _BPFormExampleState extends State<BPFormExample> {
             const Text("El formulario no guarda productos reales."),
             Expanded(
               child: BPForm(
+                key: ValueKey(revision),
+                sectionTitle: "Identificación de ejemplo",
+                onCancel: () {
+                  name.clear();
+                  code.clear();
+                  setState(() => revision++);
+                },
+                cancelLabel: "Limpiar ejemplo",
                 fields: [
                   BPTextField(
                     id: "name",
                     label: "Nombre del producto",
                     controller: name,
                     placeholder: "Ej. Arroz",
+                    requiredField: true,
+                    help: "Nombre de ejemplo.",
                     validate: (value) =>
                         value.trim().isEmpty ? "Escribe un nombre" : null,
                   ),

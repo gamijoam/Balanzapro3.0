@@ -2,6 +2,7 @@ import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 
 import "design_system.dart";
+import "bp_badge.dart";
 
 /// Presentation validation only. Controllers are owned by the caller.
 class BPTextField {
@@ -11,10 +12,14 @@ class BPTextField {
     required this.controller,
     this.placeholder = "",
     this.validate,
+    this.requiredField = false,
+    this.help,
   });
   final String id, label, placeholder;
   final TextEditingController controller;
   final String? Function(String)? validate;
+  final bool requiredField;
+  final String? help;
 }
 
 /// One in-flight callback per mounted form. A true response means the
@@ -29,6 +34,11 @@ class BPForm extends StatefulWidget {
     required List<BPTextField> fields,
     required this.onSubmit,
     this.successMessage = "Cambios guardados",
+    this.title,
+    this.description,
+    this.sectionTitle,
+    this.onCancel,
+    this.cancelLabel = "Cancelar",
   }) : fields = List.unmodifiable(fields) {
     if (fields.isEmpty ||
         fields.length > 12 ||
@@ -40,7 +50,9 @@ class BPForm extends StatefulWidget {
   }
   final List<BPTextField> fields;
   final Future<bool> Function(Map<String, String>) onSubmit;
-  final String successMessage;
+  final String successMessage, cancelLabel;
+  final String? title, description, sectionTitle;
+  final VoidCallback? onCancel;
 
   @override
   State<BPForm> createState() => _BPFormState();
@@ -98,11 +110,17 @@ class _BPFormState extends State<BPForm> {
     super.dispose();
   }
 
+  String? _validate(BPTextField field, String value) =>
+      field.validate?.call(value) ??
+      (field.requiredField && value.trim().isEmpty
+          ? "Campo obligatorio"
+          : null);
+
   void _changed(BPTextField field, String value) {
     setState(() {
       if (!uncertain) message = null;
       if (attempted) {
-        final error = field.validate?.call(value);
+        final error = _validate(field, value);
         if (error == null) {
           errors.remove(field.id);
         } else {
@@ -119,7 +137,7 @@ class _BPFormState extends State<BPForm> {
     });
     final invalid = <String, String>{};
     for (final f in widget.fields) {
-      final error = f.validate?.call(values[f.id]!);
+      final error = _validate(f, values[f.id]!);
       if (error != null) invalid[f.id] = error;
     }
     setState(() {
@@ -180,12 +198,28 @@ class _BPFormState extends State<BPForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      if (widget.title != null) ...[
+                        Text(widget.title!, style: theme.heading),
+                        const SizedBox(height: BPTokens.sm),
+                      ],
+                      if (widget.description != null) ...[
+                        Text(widget.description!, style: theme.muted),
+                        const SizedBox(height: BPTokens.lg),
+                      ],
+                      if (widget.sectionTitle != null) ...[
+                        Text(widget.sectionTitle!, style: theme.title),
+                        const SizedBox(height: BPTokens.sm),
+                      ],
+                      if (widget.fields.any((f) => f.requiredField)) ...[
+                        Text(
+                          "Campos obligatorios marcados con *",
+                          style: theme.muted,
+                        ),
+                        const SizedBox(height: BPTokens.md),
+                      ],
                       for (var i = 0; i < widget.fields.length; i++)
                         _field(widget.fields[i], i, theme),
-                      BPButton(
-                        label: busy ? "Guardando…" : "Guardar",
-                        onPressed: busy || uncertain ? null : _submit,
-                      ),
+                      _actions(),
                       if (busy || message != null)
                         Padding(
                           padding: const EdgeInsets.only(top: BPTokens.md),
@@ -208,6 +242,42 @@ class _BPFormState extends State<BPForm> {
     );
   }
 
+  Widget _actions() {
+    final save = BPButton(
+      label: busy ? "Guardando…" : "Guardar",
+      onPressed: busy || uncertain ? null : _submit,
+    );
+    if (widget.onCancel == null) return save;
+    final cancel = BPButton(
+      label: widget.cancelLabel,
+      primary: false,
+      onPressed: busy || uncertain ? null : widget.onCancel,
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final horizontal =
+            constraints.maxWidth >= BPTokens.formMaxWidth / 2 &&
+            MediaQuery.textScalerOf(context).scale(14) <= 21;
+        return horizontal
+            ? Row(
+                children: [
+                  Expanded(child: cancel),
+                  const SizedBox(width: BPTokens.sm),
+                  Expanded(child: save),
+                ],
+              )
+            : Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  save,
+                  const SizedBox(height: BPTokens.sm),
+                  cancel,
+                ],
+              );
+      },
+    );
+  }
+
   Widget _field(BPTextField field, int index, BPVisuals theme) {
     final last = index == widget.fields.length - 1;
     return Padding(
@@ -216,11 +286,16 @@ class _BPFormState extends State<BPForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(field.label, style: theme.label),
+          Text(
+            field.requiredField ? "${field.label} *" : field.label,
+            style: theme.label,
+          ),
           const SizedBox(height: BPTokens.sm),
           BPInput(
             controller: field.controller,
-            label: field.label,
+            label: field.requiredField
+                ? "${field.label}, obligatorio"
+                : field.label,
             placeholder: field.placeholder,
             enabled: !busy && !uncertain,
             focusNode: focus[field.id],
@@ -235,12 +310,21 @@ class _BPFormState extends State<BPForm> {
               }
             },
           ),
+          if (field.help != null) ...[
+            const SizedBox(height: BPTokens.xs),
+            Text(field.help!, style: theme.muted),
+          ],
           if (errors.containsKey(field.id))
             Padding(
               padding: const EdgeInsets.only(top: BPTokens.xs),
               child: Semantics(
                 liveRegion: true,
-                child: Text(errors[field.id]!, style: theme.label),
+                child: Text(
+                  errors[field.id]!,
+                  style: theme.label.copyWith(
+                    color: BPBadge.colors(BPTone.danger, theme.brightness).$2,
+                  ),
+                ),
               ),
             ),
         ],
