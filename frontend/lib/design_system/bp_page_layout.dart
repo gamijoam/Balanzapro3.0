@@ -1,6 +1,9 @@
 import "package:flutter/widgets.dart";
 
 import "design_system.dart";
+import "bp_adaptive.dart";
+
+import "package:shadcn_ui/shadcn_ui.dart";
 
 /// Navigation entries are presentation only, never permission grants.
 class BPNavItem {
@@ -10,7 +13,7 @@ class BPNavItem {
 }
 
 /// Caller-controlled layout. Content must manage its own scrolling.
-class BPPageLayout extends StatelessWidget {
+class BPPageLayout extends StatefulWidget {
   BPPageLayout({
     super.key,
     required this.title,
@@ -37,6 +40,13 @@ class BPPageLayout extends StatelessWidget {
   final Widget child;
 
   @override
+  State<BPPageLayout> createState() => _BPPageLayoutState();
+}
+
+class _BPPageLayoutState extends State<BPPageLayout> {
+  bool collapsed = false;
+
+  @override
   Widget build(BuildContext context) {
     final theme = BPVisuals.of(context);
     final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
@@ -47,17 +57,29 @@ class BPPageLayout extends StatelessWidget {
         child: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {
-              final wide =
-                  constraints.maxWidth >= BPTokens.wideBreakpoint &&
-                  MediaQuery.textScalerOf(context).scale(14) <= 21;
-              final navigation = BPSidebar(
-                key: Key(wide ? "desktop-navigation" : "compact-navigation"),
-                items: items,
-                selectedId: selectedId,
-                onNavigate: onNavigate,
-                compact: !wide,
+              final mode = BPAdaptive.mode(
+                constraints.maxWidth,
+                MediaQuery.textScalerOf(context),
+              );
+              final compact = mode == BPLayoutMode.compact;
+              final rail = mode == BPLayoutMode.rail || collapsed;
+              final nav = BPSidebar(
+                key: Key(switch (mode) {
+                  BPLayoutMode.compact => "compact-navigation",
+                  BPLayoutMode.rail => "rail-navigation",
+                  BPLayoutMode.expanded => "desktop-navigation",
+                }),
+                items: widget.items,
+                selectedId: widget.selectedId,
+                onNavigate: widget.onNavigate,
+                compact: compact,
+                rail: rail,
+                onToggle: mode == BPLayoutMode.expanded
+                    ? () => setState(() => collapsed = !collapsed)
+                    : null,
               );
               final header = Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(
                   horizontal: BPTokens.lg,
                   vertical: BPTokens.sm,
@@ -67,43 +89,43 @@ class BPPageLayout extends StatelessWidget {
                   border: Border(bottom: BorderSide(color: theme.border)),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: theme.title),
-                    Text(contextLabel, style: theme.muted),
+                    Text(widget.title, style: theme.title),
+                    Text(widget.contextLabel, style: theme.muted),
                   ],
                 ),
               );
-              return Column(
+              return Row(
                 key: const Key("bp-page-layout"),
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // On short windows the header can scroll instead of crushing
-                  // the content viewport. It retains its complete context label.
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: constraints.maxHeight / 3,
+                  if (!compact)
+                    SizedBox(
+                      width: BPAdaptive.sideWidth(constraints.maxWidth, rail),
+                      child: nav,
                     ),
-                    child: SingleChildScrollView(child: header),
-                  ),
                   Expanded(
-                    child: Row(
+                    key: const ValueKey("bp-workspace"),
+                    child: Column(
                       children: [
-                        if (wide)
-                          SizedBox(
-                            width: BPTokens.sidebarWidth,
-                            child: navigation,
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: constraints.maxHeight / 3,
                           ),
-                        Expanded(child: child),
+                          child: SingleChildScrollView(child: header),
+                        ),
+                        Expanded(child: widget.child),
+                        if (compact && keyboardInset == 0)
+                          ConstrainedBox(
+                            constraints: BoxConstraints(
+                              maxHeight: constraints.maxHeight / 3,
+                            ),
+                            child: nav,
+                          ),
                       ],
                     ),
                   ),
-                  if (!wide && keyboardInset == 0)
-                    ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: constraints.maxHeight / 3,
-                      ),
-                      child: navigation,
-                    ),
                 ],
               );
             },
@@ -121,30 +143,48 @@ class BPSidebar extends StatelessWidget {
     required this.selectedId,
     required this.onNavigate,
     required this.compact,
+    this.rail = false,
+    this.onToggle,
   });
   final List<BPNavItem> items;
   final String selectedId;
   final ValueChanged<String> onNavigate;
-  final bool compact;
+  final bool compact, rail;
+  final VoidCallback? onToggle;
 
   @override
   Widget build(BuildContext context) {
+    final theme = BPVisuals.of(context);
     final buttons = [
       for (final item in items)
         Semantics(
           selected: item.id == selectedId,
-          child: BPButton(
-            key: ValueKey("bp-nav-${item.id}"),
-            label: item.label,
-            primary: item.id == selectedId,
-            navIcon: item.icon,
-            onPressed: () => onNavigate(item.id),
-          ),
+          child: compact
+              ? BPButton(
+                  key: ValueKey("bp-nav-${item.id}"),
+                  label: item.label,
+                  primary: item.id == selectedId,
+                  navIcon: item.icon,
+                  onPressed: () => onNavigate(item.id),
+                )
+              : _SideDestination(
+                  key: ValueKey("bp-nav-${item.id}"),
+                  item: item,
+                  active: item.id == selectedId,
+                  rail: rail,
+                  onPressed: () => onNavigate(item.id),
+                ),
         ),
     ];
     return FocusTraversalGroup(
-      child: ColoredBox(
-        color: BPVisuals.of(context).surface,
+      child: Container(
+        decoration: BoxDecoration(
+          color: theme.surface,
+          border: Border(
+            right: compact ? BorderSide.none : BorderSide(color: theme.border),
+            top: compact ? BorderSide(color: theme.border) : BorderSide.none,
+          ),
+        ),
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(BPTokens.sm),
           child: compact
@@ -176,14 +216,90 @@ class BPSidebar extends StatelessWidget {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (onToggle != null) ...[
+                      _SideDestination(
+                        key: const ValueKey("bp-nav-toggle"),
+                        item: BPNavItem(
+                          "toggle",
+                          rail ? "Expandir menú" : "Contraer menú",
+                        ),
+                        active: false,
+                        rail: rail,
+                        onPressed: onToggle!,
+                        toggle: true,
+                      ),
+                      const SizedBox(height: BPTokens.lg),
+                    ],
                     for (final button in buttons)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: BPTokens.sm),
+                        padding: const EdgeInsets.only(bottom: BPTokens.xs),
                         child: button,
                       ),
                   ],
                 ),
         ),
+      ),
+    );
+  }
+}
+
+/// One shared focusable destination with an actual touch target. The rail
+/// retains visible labels rather than depending on hover/tooltips.
+class _SideDestination extends StatelessWidget {
+  const _SideDestination({
+    super.key,
+    required this.item,
+    required this.active,
+    required this.rail,
+    required this.onPressed,
+    this.toggle = false,
+  });
+  final BPNavItem item;
+  final bool active, rail, toggle;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = ShadTheme.of(context).colorScheme;
+    final color = active ? scheme.primary : scheme.mutedForeground;
+    final icon = toggle
+        ? (rail ? LucideIcons.panelLeftOpen : LucideIcons.panelLeftClose)
+        : switch (item.icon) {
+            BPNavIcon.home => LucideIcons.house,
+            BPNavIcon.products => LucideIcons.package,
+            BPNavIcon.movements => LucideIcons.arrowLeftRight,
+            null => LucideIcons.menu,
+          };
+    final children = [
+      ExcludeSemantics(child: Icon(icon, size: 20)),
+      SizedBox(width: rail ? 0 : BPTokens.sm, height: rail ? BPTokens.xs : 0),
+      if (rail)
+        Text(
+          item.label,
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontSize: 12),
+        )
+      else
+        Expanded(child: Text(item.label, style: const TextStyle(fontSize: 14))),
+    ];
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: BPTokens.touchTarget),
+      child: ShadButton.raw(
+        key: active ? const ValueKey("bp-nav-active") : null,
+        variant: ShadButtonVariant.ghost,
+        height: 0,
+        padding: EdgeInsets.symmetric(
+          horizontal: rail ? BPTokens.xs : BPTokens.md,
+          vertical: BPTokens.sm,
+        ),
+        backgroundColor: active ? scheme.primary.withValues(alpha: .12) : null,
+        foregroundColor: color,
+        hoverForegroundColor: scheme.primary,
+        expands: true,
+        onPressed: onPressed,
+        child: rail
+            ? Column(mainAxisSize: MainAxisSize.min, children: children)
+            : Row(children: children),
       ),
     );
   }
