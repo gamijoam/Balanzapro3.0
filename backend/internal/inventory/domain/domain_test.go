@@ -105,3 +105,12 @@ func TestNormalizeBarcodeKeepsTextSemantics(t *testing.T) {
 		assert.True(t, errors.Is(err, domain.ErrInvalidArgument), "%q", bad)
 	}
 }
+
+// Review #1 finding 2: a presentation conversion may not overflow storage.
+func TestValidateQuantityRejectsUnstorableBaseQuantity(t *testing.T) {
+	und := unitSKU(t)
+	caja, err := domain.NewPresentation(uuid.New(), und, "Caja", qty.MustParse("24"))
+	require.NoError(t, err)
+	huge := caja.ToBase(qty.MustParse("100000000000000000"))
+	assert.ErrorIs(t, und.ValidateQuantity(huge), domain.ErrInvalidArgument)
+}

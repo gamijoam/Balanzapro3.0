@@ -204,6 +204,29 @@ func (s *Service) resolveLines(ctx context.Context, tx Tx, sc Scope, lines []Lin
 	return out, nil
 }
 
+// canonicalLine rewrites the quantity in canonical form ("2.50" → "2.5") so
+// equal requests hash equally (idempotency).
+func canonicalLine(l Line) (Line, error) {
+	q, err := qty.Parse(l.Quantity)
+	if err != nil {
+		return l, invalid("quantity: %v", err)
+	}
+	l.Quantity = q.String()
+	return l, nil
+}
+
+func canonicalLines(lines []Line) ([]Line, error) {
+	out := make([]Line, len(lines))
+	for i, l := range lines {
+		c, err := canonicalLine(l)
+		if err != nil {
+			return nil, fmt.Errorf("line %d: %w", i, err)
+		}
+		out[i] = c
+	}
+	return out, nil
+}
+
 func hashPayload(opType string, payload any) (string, error) {
 	b, err := json.Marshal(payload)
 	if err != nil {
@@ -318,6 +341,10 @@ func (s *Service) PostStock(ctx context.Context, sc Scope, c StockCommand) (Oper
 	if (c.Kind == StockAdjustmentIn || c.Kind == StockAdjustmentOut) && reason == "" {
 		return OperationResult{}, invalid("adjustments require a reason")
 	}
+	var err error
+	if c.Lines, err = canonicalLines(c.Lines); err != nil {
+		return OperationResult{}, err
+	}
 	return s.run(ctx, sc, OpStock, c.OperationID, c, func(tx Tx) (OperationResult, error) {
 		if err := s.checkWarehouse(ctx, tx, sc, c.WarehouseID); err != nil {
 			return OperationResult{}, err
@@ -356,6 +383,10 @@ func (s *Service) ShipTransfer(ctx context.Context, sc Scope, c ShipTransferComm
 	}
 	if c.FromWarehouseID == c.ToWarehouseID {
 		return OperationResult{}, invalid("origin and destination must differ")
+	}
+	var err error
+	if c.Lines, err = canonicalLines(c.Lines); err != nil {
+		return OperationResult{}, err
 	}
 	return s.run(ctx, sc, OpTransferShip, c.OperationID, c, func(tx Tx) (OperationResult, error) {
 		for _, wh := range []uuid.UUID{c.FromWarehouseID, c.ToWarehouseID} {
@@ -438,11 +469,18 @@ func (s *Service) Reserve(ctx context.Context, sc Scope, c ReserveCommand) (Oper
 		return OperationResult{}, invalid("reservation id is required")
 	case purpose == "":
 		return OperationResult{}, invalid("reservation purpose is required")
-	case !c.ExpiresAt.After(s.now()):
-		return OperationResult{}, invalid("reservation must expire in the future")
+	}
+	var err error
+	if c.Line, err = canonicalLine(c.Line); err != nil {
+		return OperationResult{}, err
 	}
 	c.ExpiresAt = c.ExpiresAt.UTC()
 	return s.run(ctx, sc, OpReserve, c.OperationID, c, func(tx Tx) (OperationResult, error) {
+		// Checked after the idempotency claim: an identical retry that
+		// arrives after the expiry replays the stored result.
+		if !c.ExpiresAt.After(s.now()) {
+			return OperationResult{}, invalid("reservation must expire in the future")
+		}
 		if err := s.checkWarehouse(ctx, tx, sc, c.WarehouseID); err != nil {
 			return OperationResult{}, err
 		}
@@ -460,40 +498,48 @@ func (s *Service) Reserve(ctx context.Context, sc Scope, c ReserveCommand) (Oper
 	})
 }
 
-func (s *Service) lockActive(ctx context.Context, tx Tx, sc Scope, id uuid.UUID) (Reservation, error) {
-	r, err := tx.LockReservation(ctx, sc.CompanyID, id)
+// lockActive locks a reservation that is still active (not closed) and
+// reports whether its expiry already passed without being swept.
+func (s *Service) lockActive(ctx context.Context, tx Tx, sc Scope, id uuid.UUID) (r Reservation, expired bool, err error) {
+	r, err = tx.LockReservation(ctx, sc.CompanyID, id)
 	if err != nil {
-		return r, err
+		return r, false, err
 	}
 	if r.Status != ReservationActive {
-		return r, fmt.Errorf("%w: %s is %s", domain.ErrReservationNotActive, id, r.Status)
+		return r, false, fmt.Errorf("%w: %s is %s", domain.ErrReservationNotActive, id, r.Status)
 	}
-	if !s.now().Before(r.ExpiresAt) {
-		return r, fmt.Errorf("%w: %s expired at %s", domain.ErrReservationNotActive, id, r.ExpiresAt.Format(time.RFC3339))
-	}
-	return r, nil
+	return r, !s.now().Before(r.ExpiresAt), nil
 }
 
-// ReleaseReservation returns the reserved quantity to available, once.
+// ReleaseReservation returns the reserved quantity to available, once. An
+// expired reservation not yet swept is released too and closed as expired,
+// so stock never stays held waiting for the sweeper.
 func (s *Service) ReleaseReservation(ctx context.Context, sc Scope, c ReservationCommand) (OperationResult, error) {
 	return s.run(ctx, sc, OpReservationRelease, c.OperationID, c, func(tx Tx) (OperationResult, error) {
-		r, err := s.lockActive(ctx, tx, sc, c.ReservationID)
+		r, expired, err := s.lockActive(ctx, tx, sc, c.ReservationID)
 		if err != nil {
 			return OperationResult{}, err
 		}
 		if _, err := apply(ctx, tx, sc, []BalanceDelta{{Key: BalanceKey{r.WarehouseID, r.SKUID}, Reserved: r.Quantity.Neg()}}); err != nil {
 			return OperationResult{}, err
 		}
-		return OperationResult{ReservationID: &r.ID}, tx.SetReservationStatus(ctx, sc.CompanyID, r.ID, ReservationReleased)
+		status := ReservationReleased
+		if expired {
+			status = ReservationExpired
+		}
+		return OperationResult{ReservationID: &r.ID}, tx.SetReservationStatus(ctx, sc.CompanyID, r.ID, status)
 	})
 }
 
 // ConsumeReservation turns the reservation into a physical exit, atomically.
 func (s *Service) ConsumeReservation(ctx context.Context, sc Scope, c ReservationCommand) (OperationResult, error) {
 	return s.run(ctx, sc, OpReservationConsume, c.OperationID, c, func(tx Tx) (OperationResult, error) {
-		r, err := s.lockActive(ctx, tx, sc, c.ReservationID)
+		r, expired, err := s.lockActive(ctx, tx, sc, c.ReservationID)
 		if err != nil {
 			return OperationResult{}, err
+		}
+		if expired {
+			return OperationResult{}, fmt.Errorf("%w: %s expired at %s", domain.ErrReservationNotActive, r.ID, r.ExpiresAt.Format(time.RFC3339))
 		}
 		key := BalanceKey{r.WarehouseID, r.SKUID}
 		states, err := apply(ctx, tx, sc, []BalanceDelta{{Key: key, Reserved: r.Quantity.Neg(), Physical: r.Quantity.Neg()}})
@@ -536,4 +582,24 @@ func (s *Service) ExpireReservations(ctx context.Context, sc Scope, limit int) (
 		return nil
 	})
 	return n, err
+}
+
+// SweepExpiredReservations runs ExpireReservations for each company in
+// batches until no due reservation is left, and returns how many it freed.
+// bpserver runs it periodically.
+func (s *Service) SweepExpiredReservations(ctx context.Context, companies []uuid.UUID, batch int) (int, error) {
+	total := 0
+	for _, company := range companies {
+		for {
+			n, err := s.ExpireReservations(ctx, Scope{CompanyID: company}, batch)
+			if err != nil {
+				return total, fmt.Errorf("company %s: %w", company, err)
+			}
+			total += n
+			if n < batch {
+				break
+			}
+		}
+	}
+	return total, nil
 }

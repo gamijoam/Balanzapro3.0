@@ -41,7 +41,7 @@ func (s *Store) InTx(ctx context.Context, fn func(application.Tx) error) error {
 	var err error
 	for attempt := 1; attempt <= MaxAttempts; attempt++ {
 		err = s.once(ctx, fn)
-		if !isTransient(err) {
+		if !isTransient(err) || attempt == MaxAttempts {
 			return err
 		}
 		s.retries.Add(1)
@@ -80,6 +80,8 @@ func mapErr(err error, what string) error {
 			return fmt.Errorf("%w: %s", domain.ErrDuplicate, what)
 		case "23503":
 			return fmt.Errorf("%w: %s (reference)", domain.ErrNotFound, what)
+		case "22003":
+			return fmt.Errorf("%w: %s: value out of storable range", domain.ErrInvalidArgument, what)
 		}
 	}
 	return fmt.Errorf("pgstore: %s: %w", what, err)
@@ -414,9 +416,15 @@ func (t *txAdapter) LockTransfer(ctx context.Context, company, id uuid.UUID) (ap
 }
 
 func (t *txAdapter) SetTransferStatus(ctx context.Context, company, id uuid.UUID, status string) error {
-	_, err := t.tx.Exec(ctx, `
+	tag, err := t.tx.Exec(ctx, `
 		UPDATE inventory_transfers SET status = $3,
 			received_at = CASE WHEN $3 = 'received' THEN now() ELSE received_at END
-		WHERE company_id = $1 AND id = $2`, company, id, status)
-	return mapErr(err, "transfer")
+		WHERE company_id = $1 AND id = $2 AND status = 'shipped'`, company, id, status)
+	if err != nil {
+		return mapErr(err, "transfer")
+	}
+	if tag.RowsAffected() != 1 {
+		return fmt.Errorf("%w: %s", domain.ErrTransferNotShipped, id)
+	}
+	return nil
 }

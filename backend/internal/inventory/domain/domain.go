@@ -75,6 +75,9 @@ func (s SKU) ValidateQuantity(q qty.Q) error {
 	if !q.IsPositive() {
 		return fmt.Errorf("%w: quantity must be positive", ErrInvalidArgument)
 	}
+	if !q.Fits() {
+		return fmt.Errorf("%w: quantity %s exceeds the storable range", ErrInvalidArgument, q)
+	}
 	if q.Scale() > s.Precision {
 		return fmt.Errorf("%w: %s has %d decimals, SKU %s allows %d", ErrPrecision, q, q.Scale(), s.Code, s.Precision)
 	}

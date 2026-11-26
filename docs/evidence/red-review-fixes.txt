@@ -1,0 +1,86 @@
+?   	github.com/gamijoam/Balanzapro3.0/backend/cmd/bpserver	[no test files]
+--- FAIL: TestReserveRetryAfterExpiryReplaysOriginalResult (0.16s)
+    review_test.go:32: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:32
+        	Error:      	Received unexpected error:
+        	            	inventory: invalid argument: reservation must expire in the future
+        	Test:       	TestReserveRetryAfterExpiryReplaysOriginalResult
+--- FAIL: TestQuantityOverflowIsInvalidArgument (0.17s)
+    review_test.go:45: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:45
+        	Error:      	Target error should be in err chain:
+        	            	expected: "inventory: invalid argument"
+        	            	in chain: "pgstore: balance: ERROR: numeric field overflow (SQLSTATE 22003)"
+        	            		"ERROR: numeric field overflow (SQLSTATE 22003)"
+        	Test:       	TestQuantityOverflowIsInvalidArgument
+    review_test.go:47: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:47
+        	Error:      	Target error should be in err chain:
+        	            	expected: "inventory: invalid argument"
+        	            	in chain: "pgstore: balance: ERROR: numeric field overflow (SQLSTATE 22003)"
+        	            		"ERROR: numeric field overflow (SQLSTATE 22003)"
+        	Test:       	TestQuantityOverflowIsInvalidArgument
+    review_test.go:52: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:52
+        	Error:      	Target error should be in err chain:
+        	            	expected: "inventory: invalid argument"
+        	            	in chain: "pgstore: balance: ERROR: numeric field overflow (SQLSTATE 22003)"
+        	            		"ERROR: numeric field overflow (SQLSTATE 22003)"
+        	Test:       	TestQuantityOverflowIsInvalidArgument
+        	Messages:   	balance overflow must be reported as invalid
+--- FAIL: TestIdempotencyHashUsesCanonicalQuantities (0.20s)
+    review_test.go:68: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:68
+        	Error:      	Received unexpected error:
+        	            	inventory: operation id reused with a different payload: inventory.stock fce41175-2fe4-49e5-a151-cba3dc43f29e
+        	Test:       	TestIdempotencyHashUsesCanonicalQuantities
+--- FAIL: TestExpiredReservationCanBeReleasedAndSweptForAllCompanies (0.18s)
+    review_test.go:90: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:90
+        	Error:      	Received unexpected error:
+        	            	inventory: reservation is not active: c1e29bc8-84f5-4015-9fdf-612410d46215 expired at 2026-11-26T12:01:00Z
+        	Test:       	TestExpiredReservationCanBeReleasedAndSweptForAllCompanies
+        	Messages:   	releasing an expired, unswept reservation frees its stock
+--- FAIL: TestRetriesCountOnlyPerformedRetries (0.14s)
+    review_test.go:114: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:114
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestRetriesCountOnlyPerformedRetries
+--- FAIL: TestSetTransferStatusRequiresShippedTransfer (0.13s)
+    review_test.go:123: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/review_test.go:123
+        	Error:      	Expected error with "inventory: transfer is not in shipped state" in chain but got nil.
+        	Test:       	TestSetTransferStatusRequiresShippedTransfer
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	4.428s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application	0.008s
+--- FAIL: TestValidateQuantityRejectsUnstorableBaseQuantity (0.00s)
+    domain_test.go:115: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:115
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestValidateQuantityRejectsUnstorableBaseQuantity
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	0.014s
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/organization	[no test files]
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest	[no test files]
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres	[no test files]
+--- FAIL: TestParseRejectsMoreIntegerDigitsThanStorable (0.00s)
+    qty_test.go:106: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:106
+        	Error:      	Expected error with "qty: invalid exact decimal" in chain but got nil.
+        	Test:       	TestParseRejectsMoreIntegerDigitsThanStorable
+        	Messages:   	1000000000000000000
+    qty_test.go:106: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:106
+        	Error:      	Expected error with "qty: invalid exact decimal" in chain but got nil.
+        	Test:       	TestParseRejectsMoreIntegerDigitsThanStorable
+        	Messages:   	-1000000000000000000
+    qty_test.go:109: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/qty/qty_test.go:109
+        	Error:      	Should be false
+        	Test:       	TestParseRejectsMoreIntegerDigitsThanStorable
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty	0.008s
+FAIL

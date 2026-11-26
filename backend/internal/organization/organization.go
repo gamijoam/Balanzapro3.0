@@ -57,6 +57,25 @@ func (s *Store) CreateBranch(ctx context.Context, company uuid.UUID, name string
 	return s.insert(ctx, `INSERT INTO branches (id, company_id, name) VALUES ($1, $2, $3)`, company, n)
 }
 
+// ListCompanyIDs returns every company, for system jobs such as the
+// reservation sweeper.
+func (s *Store) ListCompanyIDs(ctx context.Context) ([]uuid.UUID, error) {
+	rows, err := s.pool.Query(ctx, `SELECT id FROM companies ORDER BY id`)
+	if err != nil {
+		return nil, fmt.Errorf("organization: %w", err)
+	}
+	defer rows.Close()
+	var ids []uuid.UUID
+	for rows.Next() {
+		var id uuid.UUID
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("organization: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
 // CreateWarehouse fails if the branch belongs to another company (FK).
 func (s *Store) CreateWarehouse(ctx context.Context, company, branch uuid.UUID, name string) (uuid.UUID, error) {
 	n, err := clean(name)

@@ -6,3 +6,7 @@ Salidas reales de `go test` del núcleo de inventario, entorno: Linux, Go 1.26.0
 - `green-race-x10.txt`: `-race -count=10` en verde tras la corrección.
 - `make-test.txt`: `make test` (gofmt, vet, integración con `-race`).
 No incluye benchmarks ni govulncheck (no se pudo ejecutar localmente; corre en CI).
+
+## Correcciones de la revisión de la PR #1
+- `red-review-fixes.txt`: RED, 8 pruebas de regresión nuevas que fallan (stubs `Fits` y `SweepExpiredReservations`).
+- `green-review-fixes-race-x5.txt`: `-race -count=5` en verde tras las correcciones.

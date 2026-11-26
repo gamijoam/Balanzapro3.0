@@ -19,6 +19,10 @@ import (
 // MaxScale is the maximum number of decimal places stored (NUMERIC(24,6)).
 const MaxScale = 6
 
+// MaxIntegerDigits is the maximum number of integer digits NUMERIC(24,6)
+// can store (24 - 6).
+const MaxIntegerDigits = 24 - MaxScale
+
 // ErrInvalid reports a value that is not an accepted exact decimal literal.
 var ErrInvalid = errors.New("qty: invalid exact decimal")
 
@@ -35,11 +39,22 @@ func Parse(s string) (Q, error) {
 	if i := strings.IndexByte(s, '.'); i >= 0 && len(s)-i-1 > MaxScale {
 		return Q{}, fmt.Errorf("%w: more than %d decimals: %q", ErrInvalid, MaxScale, s)
 	}
+	if intDigits(s) > MaxIntegerDigits {
+		return Q{}, fmt.Errorf("%w: more than %d integer digits: %q", ErrInvalid, MaxIntegerDigits, s)
+	}
 	d, err := decimal.NewFromString(s)
 	if err != nil {
 		return Q{}, fmt.Errorf("%w: %q", ErrInvalid, s)
 	}
 	return norm(d), nil
+}
+
+func intDigits(s string) int {
+	s = strings.TrimPrefix(s, "-")
+	if i := strings.IndexByte(s, '.'); i >= 0 {
+		s = s[:i]
+	}
+	return len(s)
 }
 
 // norm drops trailing fractional zeros so equal values share one
@@ -107,4 +122,11 @@ func (q *Q) UnmarshalJSON(b []byte) error {
 	}
 	*q = v
 	return nil
+}
+
+// Fits reports whether the value can be stored in NUMERIC(24,6): at most
+// MaxIntegerDigits integer digits and MaxScale decimals. Results of Mul or
+// Add must be checked with it before reaching storage.
+func (q Q) Fits() bool {
+	return intDigits(q.String()) <= MaxIntegerDigits && q.Scale() <= MaxScale
 }

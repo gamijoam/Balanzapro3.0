@@ -1,7 +1,8 @@
 // Command bpserver is the BalanzaPro3.0 backend entry point.
 //
 //	bpserver migrate   apply database migrations
-//	bpserver serve     start the HTTP server (only /healthz for now)
+//	bpserver serve     start the HTTP server (only /healthz for now) and the
+//	                   periodic sweep of expired reservations
 //
 // Configuration: BP_DATABASE_URL (required), BP_HTTP_ADDR (default
 // 127.0.0.1:8080). The inventory HTTP API is not exposed yet: it will be
@@ -23,8 +24,14 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jackc/pgx/v5/pgxpool"
 
+	"github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore"
+	"github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application"
+	"github.com/gamijoam/Balanzapro3.0/backend/internal/organization"
 	"github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres"
 )
+
+// sweepInterval is how often expired reservations are released.
+const sweepInterval = time.Minute
 
 func main() {
 	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -63,6 +70,8 @@ func run(log *slog.Logger, args []string) error {
 	if addr == "" {
 		addr = "127.0.0.1:8080"
 	}
+	go sweepReservations(ctx, log, pool)
+
 	srv := &http.Server{Addr: addr, Handler: router(pool), ReadHeaderTimeout: 5 * time.Second}
 	errc := make(chan error, 1)
 	go func() { errc <- srv.ListenAndServe() }()
@@ -92,4 +101,33 @@ func router(pool *pgxpool.Pool) http.Handler {
 		fmt.Fprint(w, `{"status":"ok"}`)
 	})
 	return r
+}
+
+// sweepReservations releases expired reservations of every company until
+// ctx ends, so reserved stock never stays held after its expiry.
+func sweepReservations(ctx context.Context, log *slog.Logger, pool *pgxpool.Pool) {
+	svc := application.NewService(pgstore.New(pool), nil)
+	orgs := organization.NewStore(pool)
+	t := time.NewTicker(sweepInterval)
+	defer t.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-t.C:
+		}
+		companies, err := orgs.ListCompanyIDs(ctx)
+		if err != nil {
+			log.Error("reservation sweep: list companies", "error", err)
+			continue
+		}
+		n, err := svc.SweepExpiredReservations(ctx, companies, 500)
+		if err != nil {
+			log.Error("reservation sweep", "error", err, "released", n)
+			continue
+		}
+		if n > 0 {
+			log.Info("reservation sweep", "released", n)
+		}
+	}
 }

@@ -17,10 +17,11 @@ internal/inventory/adapters/pgstore/ implementación PostgreSQL + pruebas de int
 ## Reglas que el código garantiza
 - **Un escritor por saldo** y descuento condicional `UPDATE ... WHERE physical - reserved - blocked >= q` (ADR-005/006). Dos cajas por la última unidad: una confirma, la otra recibe `ErrInsufficientStock`.
 - **Locks en orden estable** (`PlanDeltas`: agrupa líneas del mismo saldo y ordena por almacén, SKU). Reintento solo en `40001/40P01`, máximo 3, y contador observable.
-- **Idempotencia durable**: clave empresa + tipo + `operation_id`, hash SHA-256 del payload, resultado JSON guardado en la misma transacción. Repetición idéntica → mismo resultado sin efectos; payload distinto → `ErrIdempotencyConflict`.
+- **Idempotencia durable**: clave empresa + tipo + `operation_id`, hash SHA-256 del payload con cantidades canónicas ("2.50" = "2.5"); las validaciones dependientes del tiempo corren después del reclamo para que un reintento tardío reciba el resultado original; resultado JSON guardado en la misma transacción. Repetición idéntica → mismo resultado sin efectos; payload distinto → `ErrIdempotencyConflict`.
 - **Kardex solo-append** (triggers bloquean UPDATE/DELETE/TRUNCATE) y saldos en la misma transacción; las pruebas verifican que Σ kardex = saldo por bucket.
+- **Rango almacenable**: máximo 18 dígitos enteros y 6 decimales; un desbordamiento (también al convertir presentaciones o al sumar saldos) es `ErrInvalidArgument`.
 - **Unidad base única**: caja ×24, paquete ×6 y unidad descuentan el mismo stock; factor inmutable y con snapshot en cada movimiento; precisión por SKU.
-- **Reservas** con propósito, dueño y expiración; liberar, consumir o expirar ocurre una sola vez.
+- **Reservas** con propósito, dueño y expiración; liberar, consumir o expirar ocurre una sola vez. Una reserva vencida aún no barrida se puede liberar (queda `expired`), no consumir; `bpserver serve` barre las vencidas cada minuto.
 - **Transferencias** en dos pasos: el destino solo cambia al recibir; las unidades se conservan.
 - **Aislamiento por empresa**: todo filtra por `company_id`; FKs compuestas impiden mezclar empresas.
 

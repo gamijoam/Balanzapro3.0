@@ -96,3 +96,15 @@ func TestEqualValuesShareRepresentation(t *testing.T) {
 	assert.Equal(t, qty.MustParse("12"), qty.MustParse("0.5").Mul(qty.MustParse("24")))
 	assert.Equal(t, qty.Zero(), qty.MustParse("0.000"))
 }
+
+// Review #1 finding 2: NUMERIC(24,6) holds at most 18 integer digits.
+func TestParseRejectsMoreIntegerDigitsThanStorable(t *testing.T) {
+	_, err := qty.Parse("999999999999999999.999999")
+	require.NoError(t, err)
+	for _, in := range []string{"1000000000000000000", "-1000000000000000000"} {
+		_, err := qty.Parse(in)
+		assert.ErrorIs(t, err, qty.ErrInvalid, in)
+	}
+	assert.True(t, qty.MustParse("999999999999999999").Fits())
+	assert.False(t, qty.MustParse("100000000000000000").Mul(qty.MustParse("24")).Fits())
+}
