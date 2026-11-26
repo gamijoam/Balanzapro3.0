@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Una tarea `BP-XXX` por Issue. Divide el trabajo **antes** de codificar: cada checkbox de subtareas es un PR sugerido de ~200–500 líneas productivas (ver la "Política de Pull Requests" en AGENTS.md).
+        Una tarea `BP-XXX` por Issue. Divide el trabajo **antes** de codificar: cada subtarea se vincula como sub-issue cuando tenga aceptación propia; cada checkbox es un PR sugerido de ~200–500 líneas productivas (ver la "Política de Pull Requests" en AGENTS.md).
   - type: input
     id: bp
     attributes:
@@ -59,3 +59,10 @@ body:
     attributes:
       label: Fuera de alcance
       placeholder: Lo que explícitamente no entra en esta tarea.
+
+  - type: markdown
+    attributes:
+      value: |
+        Usa dependencias nativas de Issues para ADR bloqueantes. Part of #N para
+        PRs parciales; no cerrar el BP padre por fusionar una subtarea. El estado
+        Completado exige todos los criterios y autorización del propietario.
