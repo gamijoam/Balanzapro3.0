@@ -7,6 +7,7 @@ import "../design_system/bp_form.dart";
 import "../design_system/bp_badge.dart";
 import "../design_system/bp_choice_bar.dart";
 import "inventory_consultation.dart";
+import "inventory_dashboard.dart";
 
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
@@ -130,10 +131,26 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
         builder: (context, constraints) {
           final theme = BPVisuals.of(context);
           if (selected == "home") {
-            return _dashboard(
-              theme,
-              constraints.maxWidth >= BPTokens.wideBreakpoint &&
-                  MediaQuery.textScalerOf(context).scale(14) <= 21,
+            return InventoryDashboard(
+              products: products,
+              hasDraft: editing,
+              onFilter: (id) => _setFilter(id, fromDashboard: true),
+              onProducts: () => setState(() => selected = "products"),
+              onNew: () {
+                if (editing) {
+                  setState(() => selected = "products");
+                } else {
+                  setState(() {
+                    selected = "products";
+                    detailId = null;
+                  });
+                  _startEdit(null);
+                }
+              },
+              onMovements: () => setState(() {
+                historyProductId = null;
+                selected = "movements";
+              }),
             );
           }
           if (selected == "movements") {
@@ -334,78 +351,4 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       ),
     ],
   );
-
-  Widget _dashboard(BPVisuals theme, bool wide) {
-    final cards = [
-      for (final metric in [
-        ("Productos de ejemplo", products.length, "all", "Ver todos"),
-        (
-          "Stock bajo de ejemplo",
-          products.where((p) => p.stock > 0 && p.stock < 10).length,
-          "low",
-          "Ver stock bajo",
-        ),
-        (
-          "Agotados de ejemplo",
-          products.where((p) => p.stock == 0).length,
-          "empty",
-          "Ver agotados",
-        ),
-      ])
-        BPCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(metric.$1, style: theme.label),
-              const SizedBox(height: BPTokens.sm),
-              Text(metric.$2.toString(), style: theme.heading),
-              const SizedBox(height: BPTokens.sm),
-              BPButton(
-                key: ValueKey("dashboard-${metric.$3}"),
-                label: metric.$4,
-                primary: false,
-                onPressed: () => _setFilter(metric.$3, fromDashboard: true),
-              ),
-            ],
-          ),
-        ),
-    ];
-    return ListView(
-      key: const ValueKey("home"),
-      padding: const EdgeInsets.all(BPTokens.lg),
-      children: [
-        Text("Resumen de ejemplo", style: theme.heading),
-        const SizedBox(height: BPTokens.sm),
-        Text(
-          "Indicadores ficticios; no consultan el servidor.",
-          style: theme.muted,
-        ),
-        const SizedBox(height: BPTokens.xl),
-        if (wide)
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (final card in cards)
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: BPTokens.sm),
-                    child: card,
-                  ),
-                ),
-            ],
-          )
-        else
-          for (final card in cards)
-            Padding(
-              padding: const EdgeInsets.only(bottom: BPTokens.sm),
-              child: card,
-            ),
-        const SizedBox(height: BPTokens.lg),
-        BPButton(
-          label: "Ver productos",
-          onPressed: () => setState(() => selected = "products"),
-        ),
-      ],
-    );
-  }
 }
