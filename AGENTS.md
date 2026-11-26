@@ -14,6 +14,11 @@ Go modular hexagonal; Flutter/Dart con design system Shadcn encapsulado; Postgre
 - Priorizar tareas frecuentes y simplicidad; ocultar complejidad opcional, no controles de seguridad o requisitos legales. Nunca duplicar reglas comerciales ni acceder directamente a BD desde UI. Mantener ADR-169.
 - En PRs de UI incluir evidencia visual antes/después cuando sea posible, tamaños probados, estados y accesibilidad, regresiones de tokens/componentes, y pendientes. Excepciones deben justificarse y revisarse; no relajar reglas de seguridad.
 
+## Entregas de pruebas al propietario
+- Agrupar la prueba manual de APK/web por hitos funcionales y visuales coherentes; no pedir reinstalación por cada PR o ajuste menor. Mantener PRs independientes y todos los controles CI; los artefactos de CI son candidatos de desarrollo, no releases aprobados.
+- Antes de recomendar una instalación, cumplir docs/deployment/alpha-validation.md: commit integrado, artefactos del mismo commit, pruebas, límites explícitos y lista breve de recorridos para validar. No confundir una compilación exitosa con aceptación física o MVP comercial.
+- No publicar automáticamente ni cambiar firma, hosting, secretos o protecciones sin autorización del propietario. Para una web de pruebas, aislar del entorno productivo y no exponer datos reales ni API comercial no autorizada.
+
 ## Flujo obligatorio
 Plan pequeño → casos de aceptación → prueba RED reproducible → código mínimo GREEN → refactor → pruebas integración/concurrencia → revisión independiente → PR. No adaptar tests para ocultar fallos. Incluir evidencia de comandos, resultados y fallos; no afirmar ejecución no realizada. Migraciones compatibles y recuperación documentada. Nunca introducir librería sin justificar licencia, mantenimiento, seguridad, soporte de plataformas, benchmark cuando proceda y alternativa. Guardar decisión.
 ## Coordinación
