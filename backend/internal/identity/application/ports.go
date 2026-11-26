@@ -24,6 +24,9 @@ type Store interface {
 type Tx interface {
 	InsertUser(ctx context.Context, u domain.User) error // ErrDuplicate on login
 	GetUser(ctx context.Context, org, id uuid.UUID) (domain.User, error)
+	// LockUser is GetUser holding the row until the transaction ends, so
+	// writers that check the user's state serialize with each other.
+	LockUser(ctx context.Context, org, id uuid.UUID) (domain.User, error)
 	UpdateUser(ctx context.Context, u domain.User) error
 	CompanyOrganization(ctx context.Context, company uuid.UUID) (uuid.UUID, error)
 	InsertMembership(ctx context.Context, m domain.Membership) error // ErrDuplicate
@@ -76,7 +79,9 @@ func (s *Service) AddMembership(ctx context.Context, org, user, company uuid.UUI
 		return err
 	}
 	return s.store.InTx(ctx, func(tx Tx) error {
-		u, err := tx.GetUser(ctx, org, user)
+		// Lock the user so a concurrent DisableUser cannot slip between the
+		// state check and the insert.
+		u, err := tx.LockUser(ctx, org, user)
 		if err != nil {
 			return err
 		}
@@ -99,7 +104,7 @@ func (s *Service) DisableUser(ctx context.Context, org, user uuid.UUID) error {
 		return err
 	}
 	return s.store.InTx(ctx, func(tx Tx) error {
-		u, err := tx.GetUser(ctx, org, user)
+		u, err := tx.LockUser(ctx, org, user)
 		if err != nil {
 			return err
 		}
