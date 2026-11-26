@@ -10,7 +10,9 @@ on:
 
 concurrency:
   group: backend-${{ github.ref }}
-  cancel-in-progress: true
+  # Cancel superseded PR runs only: every commit pushed to main must keep a
+  # completed "backend" result (required check, audit trail).
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
