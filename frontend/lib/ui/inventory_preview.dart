@@ -5,6 +5,7 @@ import "../design_system/bp_page_layout.dart";
 import "../design_system/bp_table.dart";
 import "../design_system/bp_form.dart";
 import "../design_system/bp_badge.dart";
+import "../design_system/bp_choice_bar.dart";
 
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
@@ -41,7 +42,8 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
   final code = TextEditingController();
   static const pageSize = 10;
   String selected = "products";
-  String? selectedProduct, editingId;
+  String? editingId, feedback;
+  String filter = "all";
   bool editing = false;
   int page = 0, nextId = 4;
 
@@ -56,6 +58,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
   void _startEdit(_Fixture? item) {
     setState(() {
       editing = true;
+      feedback = null;
       editingId = item?.id;
       name.text = item?.name ?? "";
       code.text = item?.code ?? "";
@@ -108,7 +111,10 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       }
       editing = false;
       editingId = null;
-      selectedProduct = null;
+      feedback = index < 0
+          ? "Producto creado en esta sesión"
+          : "Producto actualizado en esta sesión";
+      filter = "all";
       search.text = newCode.trim();
       page = 0;
     });
@@ -147,17 +153,36 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
     );
   }
 
+  bool _matchesFilter(_Fixture p) => switch (filter) {
+    "available" => p.stock >= 10,
+    "low" => p.stock > 0 && p.stock < 10,
+    "empty" => p.stock == 0,
+    _ => true,
+  };
+
+  void _setFilter(String id, {bool fromDashboard = false}) {
+    setState(() {
+      filter = id;
+      page = 0;
+      feedback = null;
+      if (fromDashboard) {
+        search.clear();
+        selected = "products";
+      }
+    });
+  }
+
   Widget _products(BPVisuals theme) {
     final query = search.text.trim().toLowerCase();
     final visible = products
         .where(
           (p) =>
-              p.name.toLowerCase().contains(query) ||
-              p.code.toLowerCase().contains(query),
+              _matchesFilter(p) &&
+              (p.name.toLowerCase().contains(query) ||
+                  p.code.toLowerCase().contains(query)),
         )
         .toList();
     final pages = (visible.length + pageSize - 1) ~/ pageSize;
-    final chosen = visible.where((p) => p.id == selectedProduct).firstOrNull;
     return BPTable(
       key: const ValueKey("products"),
       columns: const ["Producto", "Código", "Stock", "Estado"],
@@ -182,46 +207,60 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       page: page,
       pageCount: pages,
       searchController: search,
-      selectedId: selectedProduct,
-      onSelect: (id) => setState(() => selectedProduct = id),
-      onPage: (index) => setState(() {
-        page = index;
-        selectedProduct = null;
-      }),
+      rowActionLabel: "Editar",
+      onRowAction: (id) => _startEdit(products.firstWhere((p) => p.id == id)),
+      onPage: (index) => setState(() => page = index),
       onSearch: (_) => setState(() {
         page = 0;
-        selectedProduct = null;
+        feedback = null;
       }),
+      clearSearchLabel: "Limpiar filtros",
       onClearSearch: () => setState(() {
         search.clear();
+        filter = "all";
         page = 0;
-        selectedProduct = null;
+        feedback = null;
       }),
+      filters: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          BPChoiceBar(
+            label: "Filtrar por existencias",
+            keyPrefix: "product-filter",
+            choices: const [
+              BPChoice("all", "Todos"),
+              BPChoice("available", "Disponibles"),
+              BPChoice("low", "Bajo stock"),
+              BPChoice("empty", "Agotados"),
+            ],
+            selectedId: filter,
+            onChanged: _setFilter,
+          ),
+          const SizedBox(height: BPTokens.md),
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              "${visible.length} de ${products.length} productos de ejemplo",
+              style: theme.muted,
+            ),
+          ),
+        ],
+      ),
       toolbar: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text("Productos", style: theme.heading),
-          const SizedBox(height: BPTokens.sm),
-          Text(
-            "Prueba local · Los cambios se pierden al cerrar la aplicación.",
-            style: theme.muted,
-          ),
+          const SizedBox(height: BPTokens.xs),
+          Text("Prueba local · Cambios temporales", style: theme.muted),
           const SizedBox(height: BPTokens.md),
-          Wrap(
-            spacing: BPTokens.sm,
-            runSpacing: BPTokens.sm,
-            children: [
-              BPButton(
-                label: "Nuevo producto",
-                onPressed: () => _startEdit(null),
-              ),
-              BPButton(
-                label: "Editar seleccionado",
-                primary: false,
-                onPressed: chosen == null ? null : () => _startEdit(chosen),
-              ),
-            ],
-          ),
+          BPButton(label: "Nuevo producto", onPressed: () => _startEdit(null)),
+          if (feedback != null) ...[
+            const SizedBox(height: BPTokens.sm),
+            Semantics(
+              liveRegion: true,
+              child: BPBadge(label: feedback!, tone: BPTone.success),
+            ),
+          ],
         ],
       ),
     );
@@ -287,12 +326,19 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
   Widget _dashboard(BPVisuals theme, bool wide) {
     final cards = [
       for (final metric in [
-        ("Productos de ejemplo", products.length),
+        ("Productos de ejemplo", products.length, "all", "Ver todos"),
         (
           "Stock bajo de ejemplo",
           products.where((p) => p.stock > 0 && p.stock < 10).length,
+          "low",
+          "Ver stock bajo",
         ),
-        ("Agotados de ejemplo", products.where((p) => p.stock == 0).length),
+        (
+          "Agotados de ejemplo",
+          products.where((p) => p.stock == 0).length,
+          "empty",
+          "Ver agotados",
+        ),
       ])
         BPCard(
           child: Column(
@@ -301,6 +347,13 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
               Text(metric.$1, style: theme.label),
               const SizedBox(height: BPTokens.sm),
               Text(metric.$2.toString(), style: theme.heading),
+              const SizedBox(height: BPTokens.sm),
+              BPButton(
+                key: ValueKey("dashboard-${metric.$3}"),
+                label: metric.$4,
+                primary: false,
+                onPressed: () => _setFilter(metric.$3, fromDashboard: true),
+              ),
             ],
           ),
         ),
