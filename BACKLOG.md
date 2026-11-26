@@ -41,6 +41,10 @@ P0 no implica entregar simultáneamente: ordenar por dependencias y vertical fun
 | BP-006 | Parcial | Go↔PostgreSQL exacto. Falta Dart/SQLite y contrato OpenAPI. |
 | BP-011 | Hecho (backend, sin API) | SKU, unidad base, presentaciones, códigos. INV-03. |
 | BP-012 | Hecho (backend, sin API) | Kardex, saldos, reservas con historial de eventos y barrido automático, transferencias. INV-01/07. Conteos (INV-06) pendientes. |
-| BP-008/009/010 | Pendiente | El núcleo usa el puerto mínimo `Scope`; no exponer API ni usar con datos reales hasta completarlos. |
+| BP-008 | Parcial (backend, sin API) | Usuarios por organización, membresías por empresa y denegación por defecto con adaptador PostgreSQL (#78, #79, #80). Faltan credenciales y sesiones (ADR-026) y la API (#81). |
+| BP-009 | Parcial (backend, sin API) | Permisos por ámbito con límites exactos y autorización de supervisor de un solo uso, con adaptador PostgreSQL y auditoría (#82, #83, #84). Dominio de módulos y configuración tipada (#116). Faltan adaptadores de módulos y configuración, el ámbito de organización (ADR-174) y la API (#85). |
+| BP-010 | Pendiente | Dispositivos, outbox y cursor (#86, #87, #88). |
+
+El inventario aún usa el puerto mínimo `Scope`: no llama al `Authorizer`, no audita ni comprueba módulos activos. No exponer API ni usar con datos reales hasta integrarlo.
 
 Evidencia RED/GREEN en `docs/evidence/`.
