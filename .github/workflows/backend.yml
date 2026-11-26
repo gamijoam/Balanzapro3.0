@@ -8,6 +8,12 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: backend-${{ github.ref }}
+  # Cancel superseded PR runs only: every commit pushed to main must keep a
+  # completed "backend" result (required check, audit trail).
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
@@ -18,6 +24,7 @@ jobs:
     # the branch protection.
     name: backend
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: backend
@@ -38,10 +45,13 @@ jobs:
       BP_REQUIRE_DB: "1"
       GOTOOLCHAIN: go1.26.11
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 (Node 24)
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@d8cbb8045d7f43706b9177cceb36c1f91a6644d5 # v7.1.0 (Node 24)
         with:
           go-version-file: backend/go.mod
+          cache: true
           cache-dependency-path: backend/go.sum
       - name: toolchain
         # go.mod pins go/toolchain 1.26.11 (stdlib fixes, ADR-170); fail if

@@ -15,6 +15,9 @@ BP-XXX <!-- subtarea: … -->
 **Queda fuera (explícito):**
 -
 
+## Criterios de aceptación
+- <!-- Resultado verificable, vinculado a issue -->
+
 ## Checklist de validación
 - [ ] PR acotado a una sola unidad lógica (sin mezclar varios `BP-*` ni ADRs con código masivo); ~200–500 líneas productivas
 - [ ] Cumple la arquitectura hexagonal y las reglas de `AGENTS.md` (decimales exactos, idempotencia, sin acceso directo a la BD desde la UI, permisos en el servidor)
@@ -29,3 +32,11 @@ export BP_TEST_DATABASE_URL='postgres://usuario@127.0.0.1:5432/bp_test?sslmode=d
 make test
 ```
 <!-- Agrega comandos específicos (go test -run …) y resultados reales. Riesgos, migración/rollback y pendientes, si los hay. -->
+
+Resultado: <!-- resultado real o Evidencia: enlace; No aplica: motivo -->
+
+## Tamaño y excepciones
+<!-- Indica líneas productivas y justificación si supera 500. -->
+<!-- Excepción: gobernanza / documentación / seguridad / migraciones / dependencias -->
+Justificación: <!-- Solo si aplica; no autoriza omitir ADR ni pruebas necesarias -->
+Dependencias: <!-- Si cambia un manifiesto: licencia, mantenimiento, seguridad y alternativa -->
