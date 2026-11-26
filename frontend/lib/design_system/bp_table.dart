@@ -27,6 +27,8 @@ class BPTable extends StatelessWidget {
     required this.onPage,
     this.state = BPTableState.ready,
     this.onRetry,
+    this.toolbar,
+    this.onClearSearch,
   }) : columns = List.unmodifiable(columns),
        rows = List.unmodifiable(
          rows.map((r) => BPTableRow(r.id, List.unmodifiable(r.cells))),
@@ -53,7 +55,8 @@ class BPTable extends StatelessWidget {
   final ValueChanged<String> onSelect;
   final ValueChanged<int> onPage;
   final BPTableState state;
-  final VoidCallback? onRetry;
+  final VoidCallback? onRetry, onClearSearch;
+  final Widget? toolbar;
 
   @override
   Widget build(BuildContext context) {
@@ -70,6 +73,10 @@ class BPTable extends StatelessWidget {
               key: Key(wide ? "bp-table-wide" : "bp-table-compact"),
               padding: const EdgeInsets.all(BPTokens.lg),
               children: [
+                if (toolbar != null) ...[
+                  toolbar!,
+                  const SizedBox(height: BPTokens.lg),
+                ],
                 Text("Buscar registros", style: theme.label),
                 const SizedBox(height: BPTokens.sm),
                 BPInput(
@@ -84,7 +91,7 @@ class BPTable extends StatelessWidget {
                 else if (state == BPTableState.error)
                   BPErrorState(onRetry: onRetry)
                 else if (rows.isEmpty)
-                  const BPEmptyState()
+                  BPEmptyState(onAction: onClearSearch)
                 else ...[
                   if (wide)
                     BPCard(
