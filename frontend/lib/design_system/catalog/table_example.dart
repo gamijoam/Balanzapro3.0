@@ -16,7 +16,7 @@ class _BPTableExampleState extends State<BPTableExample> {
     9,
     (i) => BPTableRow("demo-${i + 1}", ["Producto ${i + 1}", "SKU-${i + 1}"]),
   );
-  String? selected;
+  String? selected, inspected;
   int page = 0;
 
   @override
@@ -43,6 +43,10 @@ class _BPTableExampleState extends State<BPTableExample> {
         selected = null;
       }),
       selectedId: selected,
+      onRowDetails: (id) => setState(() => inspected = id),
+      toolbar: inspected == null
+          ? null
+          : Text("Detalle de ejemplo: $inspected"),
       onSelect: (id) => setState(() => selected = id),
       onPage: (index) => setState(() {
         page = index;
