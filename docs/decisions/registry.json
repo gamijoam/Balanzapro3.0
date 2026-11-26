@@ -157,9 +157,10 @@
   },
   {
     "id": "026",
-    "title": "Auth offline",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "Autenticación local, sesiones revocables, credenciales seguras."
+    "title": "Autenticación, sesiones y operación sin servidor",
+    "status": "APROBADA",
+    "decision": "Login siempre verificado por el servidor; sin servidor solo continúa la sesión abierta para borradores hasta su vencimiento; token ~15 min + sesión máx. 12 h por usuario/dispositivo, revocable al contacto; contraseña Argon2id + PIN personal verificado en servidor; TOTP obligatorio para propietario/administradores.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "027",
