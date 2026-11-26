@@ -22,3 +22,7 @@ No incluye benchmarks ni govulncheck (no se pudo ejecutar localmente; corre en C
 | Barrido de reservas sin pruebas | `red-sweeper.txt` | `green-sweeper.txt` |
 | Calidad de pruebas (mutación manual) | primera corrida 11/14 (M10, M11 sobreviven) | `manual-mutation.txt` 14/14 |
 Validación final: `final-*.txt`.
+
+## Segunda revisión independiente (code-review sobre 1fe1524..5d0ce74)
+8 hallazgos: migración 00003 con datos previos, backfill de 00004, historial de una reserva sin eventos, barrido que se detenía con el primer error de empresa, pánico con Interval ≤ 0 y primer barrido tardío, comparación de hosts loopback en la guarda, limpieza de la BD de sondeo y ADR-171 sin ratificar (ratificada el 2026-11-26).
+RED: `red-review2.txt` (6 paquetes fallan, incluido el pánico de NewTicker). GREEN: `green-review2.txt`.

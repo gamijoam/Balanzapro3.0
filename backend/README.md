@@ -21,7 +21,7 @@ internal/inventory/jobs/      barrido periódico de reservas vencidas
 - **Idempotencia durable**: clave empresa + tipo + `operation_id`, hash SHA-256 del payload con cantidades canónicas ("2.50" = "2.5"); las validaciones dependientes del tiempo corren después del reclamo para que un reintento tardío reciba el resultado original; resultado JSON guardado en la misma transacción. Repetición idéntica → mismo resultado sin efectos; payload distinto → `ErrIdempotencyConflict`.
 - **Kardex solo-append** (triggers bloquean UPDATE/DELETE/TRUNCATE) y saldos en la misma transacción; las pruebas verifican que Σ kardex = saldo por bucket.
 - **Rango almacenable**: máximo 18 dígitos enteros y 6 decimales; un desbordamiento (también al convertir presentaciones o al sumar saldos) es `ErrInvalidArgument`.
-- **Unidad base por dimensión** (ADR-171, lista pendiente de ratificar): unit=und, weight=kg|g, length=m|cm, volume=l|ml; validado en dominio y por `CHECK` en la base.
+- **Unidad base por dimensión** (ADR-171): unit=und, weight=kg|g, length=m|cm, volume=l|ml; validado en dominio y por `CHECK` en la base.
 - **Unidad base única**: caja ×24, paquete ×6 y unidad descuentan el mismo stock; factor inmutable y con snapshot en cada movimiento; precisión por SKU.
 - **Historial de reservas** solo-append (`inventory_reservation_events`): created/released/consumed/expired con la operación o lote de barrido que lo causó y el saldo reservado resultante; la base admite un `created` y como máximo un terminal por reserva.
 - **Reservas** con propósito, dueño y expiración; liberar, consumir o expirar ocurre una sola vez. Una reserva vencida aún no barrida se puede liberar (queda `expired`), no consumir; `bpserver serve` barre las vencidas cada minuto.
@@ -52,4 +52,4 @@ Sin `BP_TEST_DATABASE_URL` las pruebas de integración se omiten; con `BP_REQUIR
 | Atomicidad, deadlocks, kardex inmutable, reservas | `TestMultiLineOperationIsAllOrNothing`, `TestOppositeLineOrderDoesNotDeadlock`, `TestKardexIsAppendOnly`, `TestReservation*` |
 
 ## Pendiente
-Ratificar ADR-171/172/173; piloto de mutación automática; API OpenAPI + HTTP (tras ADR-009 y Fase 03), permisos (ADR-024), auditoría, outbox/cursor (BP-010), lotes/seriales/combos (BP-013), conteos/ubicaciones/bloqueos, valoración (ADR-044), lado Dart/SQLite de BP-006, recepción parcial de transferencias.
+Ratificar ADR-173 y piloto de mutación automática; API OpenAPI + HTTP (tras ADR-009 y Fase 03), permisos (ADR-024), auditoría, outbox/cursor (BP-010), lotes/seriales/combos (BP-013), conteos/ubicaciones/bloqueos, valoración (ADR-044), lado Dart/SQLite de BP-006, recepción parcial de transferencias.

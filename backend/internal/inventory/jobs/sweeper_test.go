@@ -81,3 +81,27 @@ func TestRunRejectsInvalidConfig(t *testing.T) {
 	_, err := s.RunOnce(context.Background())
 	assert.Error(t, err, "batch must be positive")
 }
+
+// Second independent review: no panic on a bad interval, and the first
+// sweep runs at start instead of one interval later.
+func TestRunRejectsNonPositiveIntervalWithoutPanic(t *testing.T) {
+	s := &jobs.ReservationSweeper{Expirer: &fakeExpirer{}, Batch: 1, Log: quiet,
+		Companies: func(context.Context) ([]uuid.UUID, error) { return nil, nil }}
+	done := make(chan struct{})
+	go func() { s.Run(context.Background()); close(done) }()
+	select {
+	case <-done:
+	case <-time.After(time.Second):
+		t.Fatal("Run must return on an invalid interval")
+	}
+}
+
+func TestRunSweepsImmediatelyAtStart(t *testing.T) {
+	f := &fakeExpirer{}
+	s := &jobs.ReservationSweeper{Expirer: f, Batch: 1, Interval: time.Hour, Log: quiet,
+		Companies: func(context.Context) ([]uuid.UUID, error) { return []uuid.UUID{uuid.New()}, nil }}
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	go s.Run(ctx)
+	require.Eventually(t, func() bool { return f.count() == 1 }, time.Second, time.Millisecond)
+}

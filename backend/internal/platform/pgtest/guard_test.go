@@ -60,8 +60,19 @@ func TestCheckDatabaseRefusesDeployedSchema(t *testing.T) {
 	cfg.Database = "bp_guard_probe_test"
 	probe, err := pgx.ConnectConfig(ctx, cfg)
 	require.NoError(t, err)
+	defer probe.Close(ctx) // runs before the deferred DROP DATABASE above
 	_, err = probe.Exec(ctx, `CREATE TABLE public.goose_db_version (id int)`)
 	require.NoError(t, err)
 	assert.Error(t, checkDatabase(ctx, probe), "a migrated public schema looks like a real deployment")
-	require.NoError(t, probe.Close(ctx))
+}
+
+// Second independent review: equivalent loopback spellings are the same
+// server, and an unparsable BP_DATABASE_URL fails closed.
+func TestCheckURLComparesNormalizedProductionURL(t *testing.T) {
+	test := "postgres://bp@127.0.0.1:5432/app_test?sslmode=disable"
+	assert.Error(t, checkURL(test, "postgres://bp@localhost:5432/app_test"))
+	assert.Error(t, checkURL(test, "postgres://bp@[::1]:5432/app_test"))
+	assert.Error(t, checkURL(test, "%%% not parsable"), "fail closed")
+	assert.NoError(t, checkURL(test, "postgres://bp@localhost:5432/app"))
+	assert.NoError(t, checkURL(test, "postgres://bp@localhost:5433/app_test"))
 }

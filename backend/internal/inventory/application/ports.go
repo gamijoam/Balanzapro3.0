@@ -170,6 +170,7 @@ type Tx interface {
 
 	InsertReservation(ctx context.Context, r Reservation) error
 	LockReservation(ctx context.Context, company, id uuid.UUID) (Reservation, error)
+	GetReservation(ctx context.Context, company, id uuid.UUID) (Reservation, error)
 	SetReservationStatus(ctx context.Context, company, id uuid.UUID, status string) error
 	// ExpireDueReservations marks up to limit active reservations whose
 	// expiry passed as expired, skipping rows locked by other transactions.

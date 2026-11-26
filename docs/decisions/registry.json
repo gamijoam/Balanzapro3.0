@@ -1029,14 +1029,16 @@
   {
     "id": "171",
     "title": "Catálogo inicial de unidades base por dimensión",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "unit: und; weight: kg, g; length: m, cm; volume: l, ml. Empaques son presentaciones. Implementada en PR #1 para cumplir ADR-060/061; lista por ratificar."
+    "status": "APROBADA",
+    "decision": "unit: und; weight: kg, g; length: m, cm; volume: l, ml. Empaques son presentaciones. Implementada en PR #1 para cumplir ADR-060/061; lista por ratificar.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "172",
     "title": "Desviaciones y añadidos de dependencias",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "google/uuid; diferir sqlc y testcontainers; make en lugar de Task; govulncheck v1.9.0."
+    "status": "APROBADA",
+    "decision": "google/uuid; diferir sqlc y testcontainers; make en lugar de Task; govulncheck v1.9.0.",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "173",

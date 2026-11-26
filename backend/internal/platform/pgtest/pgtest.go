@@ -106,12 +106,29 @@ func checkURL(url, prodURL string) error {
 		return fmt.Errorf("database %q must be named \"test\" or end in \"_test\"", cfg.Database)
 	}
 	if prodURL != "" {
-		if p, err := pgx.ParseConfig(prodURL); err == nil &&
-			p.Host == cfg.Host && p.Port == cfg.Port && p.Database == cfg.Database {
+		p, err := pgx.ParseConfig(prodURL)
+		if err != nil {
+			return errors.New("BP_DATABASE_URL is set but unparsable; refusing to guess whether it is the test database")
+		}
+		if sameServer(p.Host, cfg.Host) && p.Port == cfg.Port && p.Database == cfg.Database {
 			return errors.New("BP_TEST_DATABASE_URL points to the same database as BP_DATABASE_URL")
 		}
 	}
 	return nil
+}
+
+// sameServer treats every loopback spelling as one host.
+func sameServer(a, b string) bool {
+	norm := func(h string) string {
+		if h == "localhost" {
+			return "loopback"
+		}
+		if ip := net.ParseIP(h); ip != nil && ip.IsLoopback() {
+			return "loopback"
+		}
+		return h
+	}
+	return norm(a) == norm(b)
 }
 
 func isLocalHost(h string) bool {

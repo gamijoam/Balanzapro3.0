@@ -3,6 +3,11 @@
 -- operación que lo causó: creación, liberación, consumo o vencimiento (lote
 -- del barrido). La base garantiza un "created" y como máximo un evento
 -- terminal por reserva. El actor (usuario/terminal) llega con Fase 03.
+--
+-- Backfill: las reservas anteriores reciben su "created" (y su evento
+-- terminal si están cerradas) con operation_type 'migration.backfill' y un
+-- operation_id fijo. Su reserved_after es el saldo reservado al migrar (la
+-- historia previa no existe); occurred_at usa created_at / closed_at.
 
 -- +goose Up
 ALTER TABLE inventory_reservations ADD CONSTRAINT inventory_reservations_company_id_key UNIQUE (company_id, id);
@@ -23,6 +28,23 @@ CREATE TABLE inventory_reservation_events (
     FOREIGN KEY (company_id, warehouse_id) REFERENCES warehouses (company_id, id),
     FOREIGN KEY (company_id, sku_id) REFERENCES inventory_skus (company_id, id)
 );
+INSERT INTO inventory_reservation_events (company_id, reservation_id, event_type, warehouse_id, sku_id,
+    quantity, reserved_after, operation_type, operation_id, occurred_at)
+SELECT r.company_id, r.id, 'created', r.warehouse_id, r.sku_id, r.quantity, COALESCE(b.reserved, 0),
+       'migration.backfill', '00000000-0000-4000-8000-000000000004', r.created_at
+FROM inventory_reservations r
+LEFT JOIN inventory_balances b USING (company_id, warehouse_id, sku_id)
+ORDER BY r.created_at, r.id;
+
+INSERT INTO inventory_reservation_events (company_id, reservation_id, event_type, warehouse_id, sku_id,
+    quantity, reserved_after, operation_type, operation_id, occurred_at)
+SELECT r.company_id, r.id, r.status, r.warehouse_id, r.sku_id, r.quantity, COALESCE(b.reserved, 0),
+       'migration.backfill', '00000000-0000-4000-8000-000000000004', COALESCE(r.closed_at, now())
+FROM inventory_reservations r
+LEFT JOIN inventory_balances b USING (company_id, warehouse_id, sku_id)
+WHERE r.status <> 'active'
+ORDER BY r.closed_at, r.id;
+
 CREATE UNIQUE INDEX inventory_reservation_events_one_created
     ON inventory_reservation_events (reservation_id) WHERE event_type = 'created';
 CREATE UNIQUE INDEX inventory_reservation_events_one_terminal

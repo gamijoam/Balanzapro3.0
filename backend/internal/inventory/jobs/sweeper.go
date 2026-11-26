@@ -42,23 +42,34 @@ func (s *ReservationSweeper) RunOnce(ctx context.Context) (int, error) {
 	return n, nil
 }
 
-// Run sweeps every Interval until ctx ends. Errors are logged and the next
-// tick tries again, so a transient failure never stops the sweeper.
+// Run sweeps once at start (reservations may have expired while the server
+// was down) and then every Interval until ctx ends. Errors are logged and
+// the next tick tries again, so a transient failure never stops it. A
+// non-positive Interval is a configuration error: it is logged and Run
+// returns.
 func (s *ReservationSweeper) Run(ctx context.Context) {
+	if s.Interval <= 0 {
+		s.Log.Error("reservation sweeper not started: interval must be positive", "interval", s.Interval)
+		return
+	}
 	t := time.NewTicker(s.Interval)
 	defer t.Stop()
 	for {
+		s.sweep(ctx)
 		select {
 		case <-ctx.Done():
 			return
 		case <-t.C:
 		}
-		n, err := s.RunOnce(ctx)
-		switch {
-		case err != nil && ctx.Err() == nil:
-			s.Log.Error("reservation sweep failed", "error", err, "released", n)
-		case n > 0:
-			s.Log.Info("reservation sweep", "released", n)
-		}
+	}
+}
+
+func (s *ReservationSweeper) sweep(ctx context.Context) {
+	n, err := s.RunOnce(ctx)
+	switch {
+	case err != nil && ctx.Err() == nil:
+		s.Log.Error("reservation sweep failed", "error", err, "released", n)
+	case n > 0:
+		s.Log.Info("reservation sweep", "released", n)
 	}
 }

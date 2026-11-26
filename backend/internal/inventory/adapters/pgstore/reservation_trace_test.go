@@ -143,3 +143,22 @@ func TestReservationEventsCoherentUnderConcurrency(t *testing.T) {
 	e.assertReservationsCoherent()
 	e.assertKardexCoherent()
 }
+
+// Second independent review: an existing reservation without events is not
+// "not found"; it has an empty history.
+func TestReservationHistoryOfReservationWithoutEvents(t *testing.T) {
+	e := setup(t)
+	s := e.sku("NOEV", domain.KindUnit, "und", 0)
+	id := uuid.New()
+	_, err := e.pool.Exec(e.ctx, `
+		INSERT INTO inventory_reservations (id, company_id, warehouse_id, sku_id, quantity, purpose, status, expires_at)
+		VALUES ($1, $2, $3, $4, 1, 'legado', 'active', now() + interval '1 hour')`, id, e.sc.CompanyID, e.whA, s.ID)
+	require.NoError(t, err)
+	h, err := e.svc.ReservationHistory(e.ctx, e.sc, id)
+	require.NoError(t, err)
+	assert.Empty(t, h)
+	_, err = e.svc.ReservationHistory(e.ctx, e.sc, uuid.New())
+	assert.ErrorIs(t, err, domain.ErrNotFound)
+	_, err = e.svc.ReservationHistory(e.ctx, e.other, id)
+	assert.ErrorIs(t, err, domain.ErrNotFound)
+}

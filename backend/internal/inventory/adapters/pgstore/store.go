@@ -327,6 +327,12 @@ func (t *txAdapter) LockReservation(ctx context.Context, company, id uuid.UUID) 
 	return r, mapErr(err, "reservation")
 }
 
+func (t *txAdapter) GetReservation(ctx context.Context, company, id uuid.UUID) (application.Reservation, error) {
+	r, err := scanReservation(t.tx.QueryRow(ctx,
+		`SELECT `+reservationCols+` FROM inventory_reservations WHERE company_id = $1 AND id = $2`, company, id))
+	return r, mapErr(err, "reservation")
+}
+
 func (t *txAdapter) SetReservationStatus(ctx context.Context, company, id uuid.UUID, status string) error {
 	tag, err := t.tx.Exec(ctx, `
 		UPDATE inventory_reservations SET status = $3, closed_at = now()

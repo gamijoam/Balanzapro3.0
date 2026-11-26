@@ -44,7 +44,7 @@ func (k QuantityKind) valid() bool {
 }
 
 // baseUnits is the initial catalog of base units per dimension (ADR-171,
-// pending ratification of the concrete list). A SKU's stock is always kept
+// approved 2026-11-26). A SKU's stock is always kept
 // in one of these; packagings such as "caja" or "docena" are presentations
 // with an exact factor, never base units. Migration 00003 mirrors it.
 var baseUnits = map[string]QuantityKind{

@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sort"
 	"strings"
@@ -619,19 +620,22 @@ func (s *Service) ExpireReservations(ctx context.Context, sc Scope, limit int) (
 // bpserver runs it periodically.
 func (s *Service) SweepExpiredReservations(ctx context.Context, companies []uuid.UUID, batch int) (int, error) {
 	total := 0
+	var errs []error
 	for _, company := range companies {
 		for {
 			n, err := s.ExpireReservations(ctx, Scope{CompanyID: company}, batch)
-			if err != nil {
-				return total, fmt.Errorf("company %s: %w", company, err)
-			}
 			total += n
+			if err != nil {
+				// Keep sweeping the other companies; report all failures.
+				errs = append(errs, fmt.Errorf("company %s: %w", company, err))
+				break
+			}
 			if n < batch {
 				break
 			}
 		}
 	}
-	return total, nil
+	return total, errors.Join(errs...)
 }
 
 func recordEvent(ctx context.Context, tx Tx, sc Scope, r Reservation, typ string, st BalanceState, opType string, opID uuid.UUID) error {
@@ -654,7 +658,10 @@ func (s *Service) ReservationHistory(ctx context.Context, sc Scope, id uuid.UUID
 			return err
 		}
 		if len(evs) == 0 {
-			return fmt.Errorf("%w: reservation %s", domain.ErrNotFound, id)
+			// Existing reservation without events (e.g. written before the
+			// history existed): empty history, not "not found".
+			_, err := tx.GetReservation(ctx, sc.CompanyID, id)
+			return err
 		}
 		return nil
 	})
