@@ -29,6 +29,7 @@ class BPTable extends StatelessWidget {
     this.onRetry,
     this.toolbar,
     this.onClearSearch,
+    this.cellBuilder,
   }) : columns = List.unmodifiable(columns),
        rows = List.unmodifiable(
          rows.map((r) => BPTableRow(r.id, List.unmodifiable(r.cells))),
@@ -57,6 +58,7 @@ class BPTable extends StatelessWidget {
   final BPTableState state;
   final VoidCallback? onRetry, onClearSearch;
   final Widget? toolbar;
+  final Widget? Function(BPTableRow, int)? cellBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +108,10 @@ class BPTable extends StatelessWidget {
                   for (final row in rows)
                     Padding(
                       padding: const EdgeInsets.only(top: BPTokens.sm),
-                      child: BPCard(child: _row(row, wide, theme)),
+                      child: BPCard(
+                        compact: true,
+                        child: _row(row, wide, theme),
+                      ),
                     ),
                 ],
                 if (state == BPTableState.ready && pageCount > 0) ...[
@@ -163,7 +168,7 @@ class BPTable extends StatelessWidget {
         children: [
           for (var i = 0; i < columns.length; i++)
             Expanded(
-              child: Semantics(label: columns[i], child: Text(row.cells[i])),
+              child: Semantics(label: columns[i], child: _cell(row, i)),
             ),
           SizedBox(width: BPTokens.sidebarWidth, child: action),
         ],
@@ -172,14 +177,24 @@ class BPTable extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (var i = 0; i < columns.length; i++)
+        Semantics(
+          label: columns.first,
+          child: Text(row.cells.first, style: theme.title),
+        ),
+        const SizedBox(height: BPTokens.sm),
+        for (var i = 1; i < columns.length; i += 2)
           Padding(
             padding: const EdgeInsets.only(bottom: BPTokens.sm),
-            child: Column(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(columns[i], style: theme.label),
-                Text(row.cells[i]),
+                Expanded(child: _metadata(row, i, theme)),
+                const SizedBox(width: BPTokens.sm),
+                Expanded(
+                  child: i + 1 < columns.length
+                      ? _metadata(row, i + 1, theme)
+                      : const SizedBox.shrink(),
+                ),
               ],
             ),
           ),
@@ -187,4 +202,15 @@ class BPTable extends StatelessWidget {
       ],
     );
   }
+
+  Widget _cell(BPTableRow row, int index) =>
+      cellBuilder?.call(row, index) ?? Text(row.cells[index]);
+
+  Widget _metadata(BPTableRow row, int index, BPVisuals theme) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(columns[index], style: theme.muted),
+      _cell(row, index),
+    ],
+  );
 }

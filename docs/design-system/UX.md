@@ -19,3 +19,16 @@ No inventar estados de éxito ni habilitar operaciones reales en el prototipo.
 La paleta y medidas concretas se podrán ajustar desde los tokens; no son marca
 definitiva hasta revisión visual. Widgetbook, Shadcn y sus dependencias requieren
 auditoría antes de adoptarse definitivamente.
+
+## Refinamiento Alpha tras primera prueba física (2026-11-26)
+La instalación física del primer APK confirmó arranque y navegación; el
+propietario solicitó mejorar la apariencia y densidad. Usar superficies
+diferenciadas, encabezados compactos y navegación inferior en anchos
+compactos, lateral en escritorio. No convertir una pantalla móvil en
+una copia reducida del escritorio. Iconos acompañados de texto, objetivos
+táctiles de 48 px, y estados semánticos con texto además de color. En
+tablas compactas, priorizar la entidad como título y distribuir sus
+metadatos en dos columnas; preservar acceso a selección y edición.
+BPBadge es el componente para estados; no crear paletas por módulo.
+Probar ancho, escala, tema y acciones, y revisar la apariencia en un
+dispositivo real. Valores concretos provisionales, no marca definitiva.

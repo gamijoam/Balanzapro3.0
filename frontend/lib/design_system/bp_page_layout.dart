@@ -4,7 +4,8 @@ import "design_system.dart";
 
 /// Navigation entries are presentation only, never permission grants.
 class BPNavItem {
-  const BPNavItem(this.id, this.label);
+  const BPNavItem(this.id, this.label, {this.icon});
+  final BPNavIcon? icon;
   final String id, label;
 }
 
@@ -54,8 +55,12 @@ class BPPageLayout extends StatelessWidget {
               compact: !wide,
             );
             final header = Container(
-              padding: const EdgeInsets.all(BPTokens.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: BPTokens.lg,
+                vertical: BPTokens.sm,
+              ),
               decoration: BoxDecoration(
+                color: theme.surface,
                 border: Border(bottom: BorderSide(color: theme.border)),
               ),
               child: Column(
@@ -77,13 +82,6 @@ class BPPageLayout extends StatelessWidget {
                   ),
                   child: SingleChildScrollView(child: header),
                 ),
-                if (!wide)
-                  ConstrainedBox(
-                    constraints: BoxConstraints(
-                      maxHeight: constraints.maxHeight / 3,
-                    ),
-                    child: navigation,
-                  ),
                 Expanded(
                   child: Row(
                     children: [
@@ -96,6 +94,13 @@ class BPPageLayout extends StatelessWidget {
                     ],
                   ),
                 ),
+                if (!wide)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: constraints.maxHeight / 3,
+                    ),
+                    child: navigation,
+                  ),
               ],
             );
           },
@@ -128,29 +133,53 @@ class BPSidebar extends StatelessWidget {
             key: ValueKey("bp-nav-${item.id}"),
             label: item.label,
             primary: item.id == selectedId,
+            navIcon: item.icon,
             onPressed: () => onNavigate(item.id),
           ),
         ),
     ];
     return FocusTraversalGroup(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(BPTokens.sm),
-        child: compact
-            ? Wrap(
-                spacing: BPTokens.sm,
-                runSpacing: BPTokens.sm,
-                children: buttons,
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (final button in buttons)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: BPTokens.sm),
-                      child: button,
-                    ),
-                ],
-              ),
+      child: ColoredBox(
+        color: BPVisuals.of(context).surface,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(BPTokens.sm),
+          child: compact
+              ? LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (buttons.length > 4 ||
+                        MediaQuery.textScalerOf(context).scale(14) > 21) {
+                      return Wrap(
+                        spacing: BPTokens.sm,
+                        runSpacing: BPTokens.sm,
+                        children: buttons,
+                      );
+                    }
+                    return Row(
+                      children: [
+                        for (final button in buttons)
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: BPTokens.xs,
+                              ),
+                              child: button,
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (final button in buttons)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: BPTokens.sm),
+                        child: button,
+                      ),
+                  ],
+                ),
+        ),
       ),
     );
   }
