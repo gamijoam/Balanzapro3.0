@@ -187,8 +187,9 @@ python3 tools/governance/sync_project.py --apply          # solo campo Estado
 ```
 Los scripts están limitados a este repo/Project, no cambian visibilidad,
 protecciones ni decisiones ADR; no crean duplicados por título exacto. Por
-seguridad detienen la reconciliación cuando se supera la capacidad de listado
-(100), que deberá ampliarse con paginación antes de crecer. Verificar la
+seguridad, Issues y elementos del Project se paginan por cursor (hasta 50 páginas
+de 100; si no termina, se detienen). Los listados de PRs y ramas siguen limitados
+a 100 y se detienen al alcanzarlos; ampliarlos antes de crecer. Verificar la
 situación real y revisar el dry-run antes de aplicar. Nunca ejecutar sobre
 otro repo por copiar/pegar. No almacenar tokens en archivos o comandos.
 

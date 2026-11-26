@@ -36,23 +36,44 @@ PLAN = {
 }
 
 
+MAX_PAGES = 50  # 5000 issues/items; stop rather than loop forever on a bad cursor
+
+REPO_QUERY = """query($after:String){
+  repository(owner:"gamijoam",name:"Balanzapro3.0"){
+    id labels(first:100){nodes{id name}} milestones(first:20){nodes{id number}}
+    issues(first:100, after:$after){pageInfo{hasNextPage endCursor} nodes{id number title state milestone{id number}
+      labels(first:30){nodes{name}} blockedBy(first:100){nodes{id number title state}}
+      parent{number} }}
+  }
+}"""
+
+PROJECT_QUERY = """query($after:String){
+  user(login:"gamijoam"){projectV2(number:3){id items(first:100, after:$after){pageInfo{hasNextPage endCursor} nodes{
+    id content{... on Issue{id number title state}}
+    fieldValueByName(name:"Estado"){... on ProjectV2ItemFieldSingleSelectValue{name}}
+  }}}}
+}"""
+
+
+def _paginate(query, owner_of, connection):
+    """Follow endCursor until the connection is exhausted; returns the owner
+    object of the first page with the connection's nodes concatenated."""
+    after, owner, nodes = None, None, []
+    for _ in range(MAX_PAGES):
+        data = owner_of(gql(query, after=after))
+        conn = data[connection]
+        owner = owner or data
+        nodes.extend(conn["nodes"])
+        if not conn["pageInfo"]["hasNextPage"]:
+            owner[connection] = {"pageInfo": {"hasNextPage": False}, "nodes": nodes}
+            return owner
+        after = conn["pageInfo"]["endCursor"]
+    raise RuntimeError("Pagination did not finish; stop rather than reconcile an incomplete dataset")
+
+
 def fetch():
-    q = """query {
-      repository(owner:"gamijoam",name:"Balanzapro3.0"){
-        id labels(first:100){nodes{id name}} milestones(first:20){nodes{id number}}
-        issues(first:100){pageInfo{hasNextPage} nodes{id number title state milestone{id number}
-          labels(first:30){nodes{name}} blockedBy(first:100){nodes{id number title state}}
-          parent{number} }}
-      }
-      user(login:"gamijoam"){projectV2(number:3){id items(first:100){pageInfo{hasNextPage} nodes{
-        id content{... on Issue{id number title state}}
-        fieldValueByName(name:"Estado"){... on ProjectV2ItemFieldSingleSelectValue{name}}
-      }}}}
-    }"""
-    d = gql(q)
-    repo, project = d["repository"], d["user"]["projectV2"]
-    if repo["issues"]["pageInfo"]["hasNextPage"] or project["items"]["pageInfo"]["hasNextPage"]:
-        raise RuntimeError("Pagination required; stop rather than reconcile an incomplete dataset")
+    repo = _paginate(REPO_QUERY, lambda d: d["repository"], "issues")
+    project = _paginate(PROJECT_QUERY, lambda d: d["user"]["projectV2"], "items")
     return repo, project
 
 
