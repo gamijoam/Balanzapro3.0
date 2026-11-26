@@ -1,10 +1,9 @@
 // Package application orchestrates typed configuration (ADR-027) over
 // storage and the Authorizer port (ADR-010).
 //
-// Writes at global or organization level are denied for now: ADR-024 has
-// no administrative scope above the company yet, so nobody can be granted
-// them (default deny). Reading needs no permission here; the calling use
-// case is already authorized.
+// Organization writes require explicit organization authorization (ADR-174).
+// Global writes remain denied. Reading needs no permission here; the calling
+// use case is already authorized.
 package application
 
 import (
@@ -48,8 +47,9 @@ type Store interface {
 
 // Tx is what the use cases need from storage; reads filter by organization.
 type Tx interface {
-	// VerifyScope checks that a branch, terminal or user scope belongs to
-	// the company (ErrNotFound otherwise).
+	// VerifyScope checks the organization scope when company is nil; otherwise
+	// the requested scope must belong to the company and organization.
+	// Return ErrNotFound for a missing or foreign scope.
 	VerifyScope(ctx context.Context, org, company uuid.UUID, sc domain.Scope) error
 	LatestVersion(ctx context.Context, org uuid.UUID, key string, sc domain.Scope) (int, error)
 	InsertEntry(ctx context.Context, org uuid.UUID, e domain.Entry) error // ErrVersionConflict
@@ -57,8 +57,8 @@ type Tx interface {
 	AppendAudit(ctx context.Context, ev AuditEvent) error
 }
 
-// SetCommand changes one key at one scope of a company. BranchID is the
-// branch of a branch or terminal scope.
+// SetCommand changes a key at one scope. Organization writes have no
+// company or branch; BranchID identifies branch or terminal scope.
 type SetCommand struct {
 	OrganizationID uuid.UUID
 	CompanyID      uuid.UUID
@@ -90,6 +90,11 @@ func NewService(r domain.Registry, s Store, a permapp.Authorizer, now func() tim
 // target is the permission scope a write at sc needs.
 func (c SetCommand) target() (permdomain.ScopePath, error) {
 	switch c.Scope.Level {
+	case domain.LevelOrganization:
+		if c.Scope.ID != c.OrganizationID || c.CompanyID != uuid.Nil || c.BranchID != uuid.Nil {
+			return permdomain.ScopePath{}, fmt.Errorf("%w: organization scope mismatch", permdomain.ErrForbidden)
+		}
+		return permdomain.ScopePath{OrganizationID: c.OrganizationID}, nil
 	case domain.LevelCompany, domain.LevelUser:
 		return permdomain.ScopePath{CompanyID: c.CompanyID}, nil
 	case domain.LevelBranch, domain.LevelTerminal:
@@ -110,8 +115,11 @@ func display(v any) string {
 
 // Set validates, authorizes and stores the next version of a value.
 func (s *Service) Set(ctx context.Context, c SetCommand) error {
-	if c.OrganizationID == uuid.Nil || c.CompanyID == uuid.Nil || c.CorrelationID == uuid.Nil {
-		return fmt.Errorf("%w: organization, company and correlation are required", domain.ErrInvalidArgument)
+	if c.OrganizationID == uuid.Nil || c.ActorUserID == uuid.Nil || c.CorrelationID == uuid.Nil {
+		return fmt.Errorf("%w: organization, actor and correlation are required", domain.ErrInvalidArgument)
+	}
+	if c.Scope.Level != domain.LevelOrganization && c.Scope.Level != domain.LevelGlobal && c.CompanyID == uuid.Nil {
+		return fmt.Errorf("%w: company is required", domain.ErrInvalidArgument)
 	}
 	if _, err := s.reg.Validate(c.Key, c.Value); err != nil {
 		return err
