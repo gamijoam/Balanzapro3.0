@@ -1052,5 +1052,12 @@
     "title": "Pruebas de mutación",
     "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
     "decision": "Pilotar avito-tech/go-mutesting (o gremlins) cuando se autorice; mientras tanto mutación manual de invariantes críticos."
+  },
+  {
+    "id": "174",
+    "title": "Administrador de organización",
+    "status": "APROBADA",
+    "decision": "Nuevo ámbito de asignación 'organización' con herencia solo hacia abajo y plantilla de rol administrador de organización; la membresía sigue siendo obligatoria; la configuración de organización exige configuration.manage en ese ámbito. El nivel global queda fuera y denegado.",
+    "ratified_on": "2026-11-26"
   }
 ]
