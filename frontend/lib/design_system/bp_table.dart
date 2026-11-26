@@ -1,6 +1,7 @@
 import "package:flutter/widgets.dart";
 
 import "design_system.dart";
+import "bp_view_states.dart";
 
 enum BPTableState { ready, loading, error }
 
@@ -79,48 +80,11 @@ class BPTable extends StatelessWidget {
                 ),
                 const SizedBox(height: BPTokens.lg),
                 if (state == BPTableState.loading)
-                  Semantics(
-                    liveRegion: true,
-                    label: "Cargando registros",
-                    child: const BPCard(
-                      child: Column(
-                        children: [
-                          BPSkeleton(
-                            width: double.infinity,
-                            height: BPTokens.touchTarget,
-                          ),
-                          SizedBox(height: BPTokens.sm),
-                          BPSkeleton(
-                            width: double.infinity,
-                            height: BPTokens.touchTarget,
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
+                  const BPLoadingState()
                 else if (state == BPTableState.error)
-                  BPCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Semantics(
-                          liveRegion: true,
-                          child: const Text(
-                            "No se pudieron cargar los registros",
-                          ),
-                        ),
-                        const SizedBox(height: BPTokens.sm),
-                        BPButton(label: "Reintentar", onPressed: onRetry),
-                      ],
-                    ),
-                  )
+                  BPErrorState(onRetry: onRetry)
                 else if (rows.isEmpty)
-                  BPCard(
-                    child: Semantics(
-                      liveRegion: true,
-                      child: const Text("No hay resultados"),
-                    ),
-                  )
+                  const BPEmptyState()
                 else ...[
                   if (wide)
                     BPCard(
