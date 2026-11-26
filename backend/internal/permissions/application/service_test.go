@@ -30,10 +30,10 @@ func (s *memStore) InTx(_ context.Context, fn func(application.Tx) error) error 
 	defer s.mu.Unlock()
 	return fn(s)
 }
-func (s *memStore) Assignments(_ context.Context, org, user, company uuid.UUID) ([]domain.Assignment, error) {
+func (s *memStore) Assignments(_ context.Context, org, user uuid.UUID, target domain.ScopePath) ([]domain.Assignment, error) {
 	var out []domain.Assignment
 	for _, a := range s.assigns {
-		if a.OrganizationID == org && a.UserID == user && a.CompanyID == company {
+		if a.OrganizationID == org && a.UserID == user && a.CompanyID == target.CompanyID {
 			out = append(out, a)
 		}
 	}
