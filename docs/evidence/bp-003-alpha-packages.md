@@ -20,3 +20,8 @@ Actual Android build/signature, web package upload and installation pending
 CI; not GREEN until verified. Debug signing ephemeral, not release trust.
 No public site, no actual devices or browser smoke, no commercial API.
 Rollback: revert this PR; no changes to backend or production.
+
+First remote run 45867497840: web build and upload succeeded; Android
+failed before compilation because sdkmanager was not on PATH. Use explicit
+SDK command-line-tools path (latest or 12.0) and verify NDK installation.
+Android revalidation pending.

@@ -91,7 +91,14 @@ jobs:
           "$JAVA_HOME_17_X64/bin/java" -version
           test -f "$ANDROID_HOME/platforms/android-36/android.jar"
           test -x "$ANDROID_HOME/build-tools/36.0.0/apksigner"
-          sdkmanager --install "ndk;28.2.13676358"
+          # The hosted image does not necessarily expose sdkmanager on PATH.
+          manager="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [[ ! -x "$manager" ]]; then
+            manager="$ANDROID_HOME/cmdline-tools/12.0/bin/sdkmanager"
+          fi
+          test -x "$manager"
+          "$manager" --sdk_root="$ANDROID_HOME" --install "ndk;28.2.13676358"
+          test -f "$ANDROID_HOME/ndk/28.2.13676358/source.properties"
           flutter precache --android
       - name: Build Android development APK
         working-directory: frontend
