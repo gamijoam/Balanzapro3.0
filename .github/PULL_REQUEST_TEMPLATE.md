@@ -39,3 +39,4 @@ Resultado: <!-- resultado real o Evidencia: enlace; No aplica: motivo -->
 <!-- Indica líneas productivas y justificación si supera 500. -->
 <!-- Excepción: gobernanza / documentación / seguridad / migraciones / dependencias -->
 Justificación: <!-- Solo si aplica; no autoriza omitir ADR ni pruebas necesarias -->
+Dependencias: <!-- Si cambia un manifiesto: licencia, mantenimiento, seguridad y alternativa -->

@@ -57,6 +57,10 @@ def validate(pr, files, issue, registry):
     refs = REF.findall(sec.get(HEADERS[0], ""))
     if len(refs) != 1 or issue is None or int(refs[0][1]) != issue["number"]:
         errors.append("Una referencia Part of #N o Closes #N a un issue local existente es obligatoria.")
+    closing = re.findall(r"(?i)\b(?:close[sd]?|fix(?:es|ed)?|resolve[sd]?)\s+(?:[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)?#(\d+)", body)
+    allowed_closing = [refs[0][1]] if len(refs) == 1 and refs[0][0].lower() == "closes" else []
+    if closing != allowed_closing:
+        errors.append("No usar palabras de cierre fuera de la referencia declarada.")
     for h in HEADERS:
         if not meaningful(sec.get(h, "")):
             errors.append("Sección incompleta: " + h)
@@ -90,6 +94,10 @@ def validate(pr, files, issue, registry):
         errors.append("Toda excepción requiere justificación.")
     gov = bool(exception and exception[1].lower() == "gobernanza" and reason
                and governance_only(files) and {"infra", "chore"} <= labels)
+    manifests = {"go.mod", "go.sum", "pubspec.yaml", "pubspec.lock", "package.json", "package-lock.json", "requirements.txt", "pyproject.toml", "Cargo.toml", "Cargo.lock"}
+    if any(Path(f["filename"]).name in manifests for f in files):
+        if not re.search(r"(?im)^Dependencias:\s*\S.{20,}", sec.get("Tamaño y excepciones", "")):
+            errors.append("Cambios de dependencias: declarar licencia, mantenimiento, seguridad y alternativa.")
     # No exemption for changes in business source. A label or body alone cannot bypass.
     if exception and exception[1].lower() == "gobernanza" and not gov:
         errors.append("Excepción gobernanza limitada a rutas administrativas y labels infra/chore.")

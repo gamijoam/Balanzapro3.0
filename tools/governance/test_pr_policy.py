@@ -70,3 +70,9 @@ class PolicyTest(unittest.TestCase):
 
     def test_renamed_business_path(self):
         self.assertTrue(self.errors(files=[dict(FILES[0], previous_filename="backend/main.go")]))
+
+    def test_closing_elsewhere(self):
+        self.assertTrue(self.errors(pr=dict(PR, body=BODY+"\nFixes #42")))
+
+    def test_dependency_requires_justification(self):
+        self.assertTrue(self.errors(files=[dict(FILES[0], filename="backend/go.mod")]))
