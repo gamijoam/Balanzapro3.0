@@ -1,6 +1,7 @@
 import "package:flutter/widgets.dart";
 
 import "../design_system.dart";
+import "../bp_choice_bar.dart";
 
 class BPCatalog extends StatefulWidget {
   const BPCatalog({super.key});
@@ -12,6 +13,7 @@ class _BPCatalogState extends State<BPCatalog> {
   final controller = TextEditingController();
   int actions = 0;
   bool loading = false;
+  String choice = "all";
   @override
   void dispose() {
     controller.dispose();
@@ -58,6 +60,20 @@ class _BPCatalogState extends State<BPCatalog> {
                   primary: false,
                   onPressed: controller.clear,
                 ),
+              ]),
+              _section("Filtros", "Selección única controlada", [
+                BPChoiceBar(
+                  label: "Filtro de ejemplo",
+                  keyPrefix: "catalog-filter",
+                  choices: const [
+                    BPChoice("all", "Todos"),
+                    BPChoice("available", "Disponibles"),
+                    BPChoice("attention", "Por revisar"),
+                  ],
+                  selectedId: choice,
+                  onChanged: (id) => setState(() => choice = id),
+                ),
+                Text("Filtro de ejemplo: $choice", style: theme.muted),
               ]),
               _section(
                 "Carga y tarjeta",
@@ -146,11 +162,24 @@ class _BPCatalogState extends State<BPCatalog> {
                         ),
                       ),
                       const SizedBox(width: BPTokens.lg),
-                      Expanded(child: sections[2]),
+                      Expanded(
+                        child: Column(
+                          children: [
+                            sections[3],
+                            const SizedBox(height: BPTokens.lg),
+                            sections[2],
+                          ],
+                        ),
+                      ),
                     ],
                   )
                 else
-                  for (final section in sections)
+                  for (final section in [
+                    sections[0],
+                    sections[1],
+                    sections[3],
+                    sections[2],
+                  ])
                     Padding(
                       padding: const EdgeInsets.only(bottom: BPTokens.lg),
                       child: section,

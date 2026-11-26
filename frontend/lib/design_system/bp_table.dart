@@ -22,19 +22,26 @@ class BPTable extends StatelessWidget {
     required this.pageCount,
     required this.searchController,
     required this.onSearch,
-    required this.selectedId,
-    required this.onSelect,
+    this.selectedId,
+    this.onSelect,
+    this.onRowAction,
+    this.rowActionLabel = "Abrir",
     required this.onPage,
     this.state = BPTableState.ready,
     this.onRetry,
     this.toolbar,
+    this.filters,
+    this.clearSearchLabel = "Limpiar búsqueda",
     this.onClearSearch,
     this.cellBuilder,
   }) : columns = List.unmodifiable(columns),
        rows = List.unmodifiable(
          rows.map((r) => BPTableRow(r.id, List.unmodifiable(r.cells))),
        ) {
-    if (columns.isEmpty ||
+    if ((onSelect == null) == (onRowAction == null) ||
+        (onRowAction != null && selectedId != null) ||
+        rowActionLabel.trim().isEmpty ||
+        columns.isEmpty ||
         columns.length > 8 ||
         columns.any((c) => c.trim().isEmpty) ||
         rows.length > 50 ||
@@ -53,11 +60,12 @@ class BPTable extends StatelessWidget {
   final TextEditingController searchController;
   final ValueChanged<String> onSearch;
   final String? selectedId;
-  final ValueChanged<String> onSelect;
+  final ValueChanged<String>? onSelect, onRowAction;
+  final String rowActionLabel, clearSearchLabel;
   final ValueChanged<int> onPage;
   final BPTableState state;
   final VoidCallback? onRetry, onClearSearch;
-  final Widget? toolbar;
+  final Widget? toolbar, filters;
   final Widget? Function(BPTableRow, int)? cellBuilder;
 
   @override
@@ -88,12 +96,19 @@ class BPTable extends StatelessWidget {
                   onChanged: onSearch,
                 ),
                 const SizedBox(height: BPTokens.lg),
+                if (filters != null) ...[
+                  filters!,
+                  const SizedBox(height: BPTokens.lg),
+                ],
                 if (state == BPTableState.loading)
                   const BPLoadingState()
                 else if (state == BPTableState.error)
                   BPErrorState(onRetry: onRetry)
                 else if (rows.isEmpty)
-                  BPEmptyState(onAction: onClearSearch)
+                  BPEmptyState(
+                    actionLabel: clearSearchLabel,
+                    onAction: onClearSearch,
+                  )
                 else ...[
                   if (wide)
                     BPCard(
@@ -153,16 +168,23 @@ class BPTable extends StatelessWidget {
 
   Widget _row(BPTableRow row, bool wide, BPVisuals theme) {
     final selected = row.id == selectedId;
-    final action = Semantics(
-      selected: selected,
-      child: BPButton(
-        label: selected
-            ? "Seleccionado ${row.cells.first}"
-            : "Seleccionar ${row.cells.first}",
-        primary: selected,
-        onPressed: () => onSelect(row.id),
-      ),
-    );
+    final action = onRowAction != null
+        ? BPButton(
+            key: ValueKey("bp-row-action-${row.id}"),
+            label: "$rowActionLabel ${row.cells.first}",
+            primary: false,
+            onPressed: () => onRowAction!(row.id),
+          )
+        : Semantics(
+            selected: selected,
+            child: BPButton(
+              label: selected
+                  ? "Seleccionado ${row.cells.first}"
+                  : "Seleccionar ${row.cells.first}",
+              primary: selected,
+              onPressed: () => onSelect!(row.id),
+            ),
+          );
     if (wide) {
       return Row(
         children: [
@@ -198,7 +220,10 @@ class BPTable extends StatelessWidget {
               ],
             ),
           ),
-        action,
+        if (onRowAction != null)
+          Align(alignment: Alignment.centerRight, child: action)
+        else
+          action,
       ],
     );
   }

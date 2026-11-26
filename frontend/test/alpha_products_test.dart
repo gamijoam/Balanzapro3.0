@@ -32,9 +32,18 @@ void main() {
       await tester.enterText(find.byType(EditableText), "PRUEBA-1");
       await tester.pumpAndSettle();
       expect(find.text("Producto de prueba"), findsOneWidget);
-      await tester.tap(find.text("Seleccionar Producto de prueba"));
+      await tester.scrollUntilVisible(
+        find.text("Editar Producto de prueba").hitTestable(),
+        150,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const ValueKey("products")),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       await tester.pumpAndSettle();
-      await tester.tap(find.text("Editar seleccionado"));
+      await tester.tap(find.text("Editar Producto de prueba"));
       await tester.pumpAndSettle();
       await tester.enterText(
         find.byType(EditableText).first,

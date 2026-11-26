@@ -32,7 +32,7 @@ void main() {
       await tester.enterText(find.byType(EditableText), "no existe");
       await tester.pumpAndSettle();
       expect(find.text("No hay resultados"), findsOneWidget);
-      await tester.tap(find.text("Limpiar búsqueda"));
+      await tester.tap(find.text("Limpiar filtros"));
       await tester.pumpAndSettle();
       expect(find.text("Arroz 1 kg"), findsOneWidget);
       await tester.tap(find.text("Movimientos"));
