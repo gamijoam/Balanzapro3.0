@@ -26,6 +26,7 @@ import (
 
 	"github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore"
 	"github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application"
+	"github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs"
 	"github.com/gamijoam/Balanzapro3.0/backend/internal/organization"
 	"github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres"
 )
@@ -70,7 +71,14 @@ func run(log *slog.Logger, args []string) error {
 	if addr == "" {
 		addr = "127.0.0.1:8080"
 	}
-	go sweepReservations(ctx, log, pool)
+	sweeper := &jobs.ReservationSweeper{
+		Expirer:   application.NewService(pgstore.New(pool), nil),
+		Companies: organization.NewStore(pool).ListCompanyIDs,
+		Interval:  sweepInterval,
+		Batch:     500,
+		Log:       log,
+	}
+	go sweeper.Run(ctx)
 
 	srv := &http.Server{Addr: addr, Handler: router(pool), ReadHeaderTimeout: 5 * time.Second}
 	errc := make(chan error, 1)
@@ -101,33 +109,4 @@ func router(pool *pgxpool.Pool) http.Handler {
 		fmt.Fprint(w, `{"status":"ok"}`)
 	})
 	return r
-}
-
-// sweepReservations releases expired reservations of every company until
-// ctx ends, so reserved stock never stays held after its expiry.
-func sweepReservations(ctx context.Context, log *slog.Logger, pool *pgxpool.Pool) {
-	svc := application.NewService(pgstore.New(pool), nil)
-	orgs := organization.NewStore(pool)
-	t := time.NewTicker(sweepInterval)
-	defer t.Stop()
-	for {
-		select {
-		case <-ctx.Done():
-			return
-		case <-t.C:
-		}
-		companies, err := orgs.ListCompanyIDs(ctx)
-		if err != nil {
-			log.Error("reservation sweep: list companies", "error", err)
-			continue
-		}
-		n, err := svc.SweepExpiredReservations(ctx, companies, 500)
-		if err != nil {
-			log.Error("reservation sweep", "error", err, "released", n)
-			continue
-		}
-		if n > 0 {
-			log.Info("reservation sweep", "released", n)
-		}
-	}
 }

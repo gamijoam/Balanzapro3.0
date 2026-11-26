@@ -10,3 +10,15 @@ No incluye benchmarks ni govulncheck (no se pudo ejecutar localmente; corre en C
 ## Correcciones de la revisión de la PR #1
 - `red-review-fixes.txt`: RED, 8 pruebas de regresión nuevas que fallan (stubs `Fits` y `SweepExpiredReservations`).
 - `green-review-fixes-race-x5.txt`: `-race -count=5` en verde tras las correcciones.
+
+## Revisión correctiva del PR #1 (segunda ronda)
+| Hallazgo | RED | GREEN |
+|---|---|---|
+| 24 vulnerabilidades stdlib (Go 1.26.0) | `govulncheck-ci-run2-go1.26.0.txt` (CI run 45729977712) | `govulncheck-go1.26.11.txt` (No vulnerabilities found) |
+| Unidad base no ligada a la dimensión | `red-units.txt` | `green-units.txt` |
+| Reservas sin historial trazable | `red-reservation-trace.txt` | `green-reservation-trace.txt` |
+| Pruebas ejecutables contra cualquier BD | `red-test-isolation.txt`; la guarda detectó una BD de pruebas migrada en `public` (`guard-caught-migrated-public.txt`) | `green-test-isolation.txt` |
+| Rollback de migraciones sin probar | `red-migrations-roundtrip.txt` | `green-migrations-roundtrip.txt` |
+| Barrido de reservas sin pruebas | `red-sweeper.txt` | `green-sweeper.txt` |
+| Calidad de pruebas (mutación manual) | primera corrida 11/14 (M10, M11 sobreviven) | `manual-mutation.txt` 14/14 |
+Validación final: `final-*.txt`.

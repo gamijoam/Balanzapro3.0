@@ -35,12 +35,12 @@ P0 no implica entregar simultáneamente: ordenar por dependencias y vertical fun
 | ID | Estado | Nota |
 |---|---|---|
 | BP-001 | Parcial | Ratificadas 005, 006, 014, 016, 040. Pendientes: 024 (permisos), 044 (costeo), 051 (precios versionados). |
-| BP-002 | Parcial | Backend Go fijado en ADR-170. Falta Flutter/Dart y distribución. |
+| BP-002 | Parcial | Backend Go fijado en ADR-170 (Go 1.26.11, govulncheck sin hallazgos); desviaciones en ADR-172 pendientes. Falta Flutter/Dart y distribución. |
 | BP-003 | Parcial | Módulo Go, Makefile y CI backend (`.github/workflows/backend.yml`). Falta Flutter y monorepo Dart. |
 | BP-005 | Hecho (backend) | INV-01, idempotencia concurrente, atomicidad y orden de locks con PostgreSQL 16 real. |
 | BP-006 | Parcial | Go↔PostgreSQL exacto. Falta Dart/SQLite y contrato OpenAPI. |
 | BP-011 | Hecho (backend, sin API) | SKU, unidad base, presentaciones, códigos. INV-03. |
-| BP-012 | Hecho (backend, sin API) | Kardex, saldos, reservas, transferencias. INV-01/07. Conteos (INV-06) pendientes. |
+| BP-012 | Hecho (backend, sin API) | Kardex, saldos, reservas con historial de eventos y barrido automático, transferencias. INV-01/07. Conteos (INV-06) pendientes. |
 | BP-008/009/010 | Pendiente | El núcleo usa el puerto mínimo `Scope`; no exponer API ni usar con datos reales hasta completarlos. |
 
 Evidencia RED/GREEN en `docs/evidence/`.

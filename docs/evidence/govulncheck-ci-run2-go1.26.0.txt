@@ -1,0 +1,8 @@
+RED de seguridad (CI, run 45729977712, commit 1fe1524, 2026-11-26)
+https://github.com/gamijoam/Balanzapro3.0/actions/runs/45729977712
+Paso govulncheck@v1.1.4 con Go 1.26.0 (go.mod: go 1.26.0):
+  "Your code is affected by 24 vulnerabilities from the Go standard library."
+  Paquetes afectados: crypto/tls, crypto/x509, net, net/url, net/textproto, encoding/asn1, entre otros.
+  Correcciones entre go1.26.1 y go1.26.5 (p. ej. GO-2026-5856 crypto/tls fixed in go1.26.5).
+  Exit status 3 -> job fallido. Las pruebas, vet y build del mismo job pasaron.
+GREEN local: ver govulncheck-go1.26.11.txt ("No vulnerabilities found", exit 0).

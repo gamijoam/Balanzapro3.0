@@ -1,6 +1,6 @@
 module github.com/gamijoam/Balanzapro3.0/backend
 
-go 1.26.0
+go 1.26.11
 
 require (
 	github.com/go-chi/chi/v5 v5.5.0

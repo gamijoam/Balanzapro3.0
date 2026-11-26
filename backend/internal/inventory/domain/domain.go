@@ -43,6 +43,20 @@ func (k QuantityKind) valid() bool {
 	return false
 }
 
+// baseUnits is the initial catalog of base units per dimension (ADR-171,
+// pending ratification of the concrete list). A SKU's stock is always kept
+// in one of these; packagings such as "caja" or "docena" are presentations
+// with an exact factor, never base units. Migration 00003 mirrors it.
+var baseUnits = map[string]QuantityKind{
+	"und": KindUnit,
+	"kg":  KindWeight, "g": KindWeight,
+	"m": KindLength, "cm": KindLength,
+	"l": KindVolume, "ml": KindVolume,
+}
+
+// UnitKind returns the dimension of a base unit code, or "" if unknown.
+func UnitKind(code string) QuantityKind { return baseUnits[strings.ToLower(strings.TrimSpace(code))] }
+
 // SKU is the stock-keeping unit. All stock is held in its base unit.
 type SKU struct {
 	ID        uuid.UUID    `json:"id"`
@@ -56,7 +70,8 @@ type SKU struct {
 
 // NewSKU validates and builds a SKU.
 func NewSKU(id, company uuid.UUID, code, name string, kind QuantityKind, baseUnit string, precision int32) (SKU, error) {
-	code, name, baseUnit = strings.TrimSpace(code), strings.TrimSpace(name), strings.TrimSpace(baseUnit)
+	code, name = strings.TrimSpace(code), strings.TrimSpace(name)
+	baseUnit = strings.ToLower(strings.TrimSpace(baseUnit))
 	switch {
 	case id == uuid.Nil || company == uuid.Nil:
 		return SKU{}, fmt.Errorf("%w: id and company are required", ErrInvalidArgument)
@@ -64,6 +79,8 @@ func NewSKU(id, company uuid.UUID, code, name string, kind QuantityKind, baseUni
 		return SKU{}, fmt.Errorf("%w: code, name and base unit are required", ErrInvalidArgument)
 	case !kind.valid():
 		return SKU{}, fmt.Errorf("%w: unknown quantity kind %q", ErrInvalidArgument, kind)
+	case UnitKind(baseUnit) != kind:
+		return SKU{}, fmt.Errorf("%w: base unit %q is not a %s unit", ErrInvalidArgument, baseUnit, kind)
 	case precision < 0 || precision > qty.MaxScale:
 		return SKU{}, fmt.Errorf("%w: precision must be between 0 and %d", ErrInvalidArgument, qty.MaxScale)
 	}

@@ -114,3 +114,38 @@ func TestValidateQuantityRejectsUnstorableBaseQuantity(t *testing.T) {
 	huge := caja.ToBase(qty.MustParse("100000000000000000"))
 	assert.ErrorIs(t, und.ValidateQuantity(huge), domain.ErrInvalidArgument)
 }
+
+// Corrective review (task 3): the base unit must belong to the declared
+// dimension (ADR-060/061: no kg↔litre without a valid equivalence).
+func TestBaseUnitMustMatchQuantityKind(t *testing.T) {
+	ok := []struct {
+		kind domain.QuantityKind
+		unit string
+	}{
+		{domain.KindUnit, "und"}, {domain.KindWeight, "kg"}, {domain.KindWeight, "g"},
+		{domain.KindLength, "m"}, {domain.KindLength, "cm"}, {domain.KindVolume, "l"}, {domain.KindVolume, "ml"},
+	}
+	for _, c := range ok {
+		_, err := domain.NewSKU(uuid.New(), company, "A", "x", c.kind, c.unit, 3)
+		assert.NoError(t, err, "%s/%s", c.kind, c.unit)
+	}
+	bad := []struct {
+		kind domain.QuantityKind
+		unit string
+	}{
+		{domain.KindWeight, "und"}, {domain.KindUnit, "kg"}, {domain.KindVolume, "kg"},
+		{domain.KindWeight, "l"}, {domain.KindLength, "ml"}, {domain.KindUnit, "caja"}, {domain.KindWeight, "xx"},
+	}
+	for _, c := range bad {
+		_, err := domain.NewSKU(uuid.New(), company, "A", "x", c.kind, c.unit, 3)
+		assert.ErrorIs(t, err, domain.ErrInvalidArgument, "%s/%s", c.kind, c.unit)
+	}
+}
+
+func TestBaseUnitIsNormalized(t *testing.T) {
+	s, err := domain.NewSKU(uuid.New(), company, "A", "x", domain.KindWeight, " KG ", 3)
+	require.NoError(t, err)
+	assert.Equal(t, "kg", s.BaseUnit)
+	assert.Equal(t, domain.KindWeight, domain.UnitKind("kg"))
+	assert.Equal(t, domain.QuantityKind(""), domain.UnitKind("caja"))
+}

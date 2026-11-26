@@ -429,6 +429,7 @@ func TestReservationsLifecycle(t *testing.T) {
 	require.NoError(t, err)
 	assert.Zero(t, n, "expiry releases only once")
 	assert.Equal(t, "3", e.balance(e.whA, s.ID).Available().String())
+	e.assertReservationsCoherent()
 	e.assertKardexCoherent()
 }
 
@@ -469,6 +470,7 @@ func TestReservationConsumeAndReleaseRaceHasOneWinner(t *testing.T) {
 	b := e.balance(e.whA, s.ID)
 	assert.True(t, b.Reserved.IsZero())
 	assert.Equal(t, qty.FromInt(rounds-consumed), b.Physical, "only consumptions reduce physical stock")
+	e.assertReservationsCoherent()
 	e.assertKardexCoherent()
 }
 

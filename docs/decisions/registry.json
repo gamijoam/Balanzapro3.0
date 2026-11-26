@@ -1023,7 +1023,25 @@
     "id": "170",
     "title": "Base de dependencias backend",
     "status": "APROBADA",
-    "decision": "chi v5.5.0, pgx v5.13.0, goose v3.30.1, shopspring/decimal v1.6.0, google/uuid v1.6.0, testify v1.12.1; Go 1.26. sqlc y testcontainers diferidos; Makefile en lugar de Task.",
+    "decision": "Go 1.26.11, chi v5.5.0, pgx v5.13.0, goose v3.30.1, shopspring/decimal v1.6.0, testify v1.12.1 (alcance aprobado por el propietario). sqlc y testcontainers aprobados pero sin uso: ver ADR-172.",
     "ratified_on": "2026-11-26"
+  },
+  {
+    "id": "171",
+    "title": "Catálogo inicial de unidades base por dimensión",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "unit: und; weight: kg, g; length: m, cm; volume: l, ml. Empaques son presentaciones. Implementada en PR #1 para cumplir ADR-060/061; lista por ratificar."
+  },
+  {
+    "id": "172",
+    "title": "Desviaciones y añadidos de dependencias",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "google/uuid; diferir sqlc y testcontainers; make en lugar de Task; govulncheck v1.9.0."
+  },
+  {
+    "id": "173",
+    "title": "Pruebas de mutación",
+    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
+    "decision": "Pilotar avito-tech/go-mutesting (o gremlins) cuando se autorice; mientras tanto mutación manual de invariantes críticos."
   }
 ]

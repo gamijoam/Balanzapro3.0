@@ -98,6 +98,7 @@ func TestExpiredReservationCanBeReleasedAndSweptForAllCompanies(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, 1, n)
 	assert.Equal(t, "10", e.balance(e.whA, s.ID).Available().String())
+	e.assertReservationsCoherent()
 	e.assertKardexCoherent()
 }
 
@@ -121,4 +122,39 @@ func TestSetTransferStatusRequiresShippedTransfer(t *testing.T) {
 		return tx.SetTransferStatus(e.ctx, e.sc.CompanyID, uuid.New(), application.TransferReceived)
 	})
 	assert.ErrorIs(t, err, domain.ErrTransferNotShipped)
+}
+
+// Manual mutation M10: a received transfer cannot be marked again.
+func TestSetTransferStatusRejectsAlreadyReceivedTransfer(t *testing.T) {
+	e := setup(t)
+	s := e.sku("M10", domain.KindUnit, "und", 0)
+	_, err := e.post(application.StockOpening, e.whA, "", line(s.ID, "3"))
+	require.NoError(t, err)
+	tr := uuid.New()
+	_, err = e.svc.ShipTransfer(e.ctx, e.sc, application.ShipTransferCommand{OperationID: uuid.New(), TransferID: tr,
+		FromWarehouseID: e.whA, ToWarehouseID: e.whB, Lines: []application.Line{line(s.ID, "1")}})
+	require.NoError(t, err)
+	_, err = e.svc.ReceiveTransfer(e.ctx, e.sc, application.ReceiveTransferCommand{OperationID: uuid.New(), TransferID: tr})
+	require.NoError(t, err)
+	err = e.store.InTx(e.ctx, func(tx application.Tx) error {
+		return tx.SetTransferStatus(e.ctx, e.sc.CompanyID, tr, application.TransferReceived)
+	})
+	assert.ErrorIs(t, err, domain.ErrTransferNotShipped)
+}
+
+// Manual mutation M11: catalog writes from another company never reach a
+// SKU of this company, even where no foreign key would stop them.
+func TestCrossCompanyCatalogWritesAreNotFound(t *testing.T) {
+	e := setup(t)
+	s := e.sku("M11", domain.KindUnit, "und", 0)
+	_, err := e.svc.AddPresentation(e.ctx, e.other, application.AddPresentationCommand{ID: uuid.New(), SKUID: s.ID, Name: "Caja", Factor: "12"})
+	assert.ErrorIs(t, err, domain.ErrNotFound)
+	err = e.svc.AddBarcode(e.ctx, e.other, application.AddBarcodeCommand{Code: "M11-X", SKUID: s.ID})
+	assert.ErrorIs(t, err, domain.ErrNotFound)
+	_, err = e.svc.Reserve(e.ctx, e.other, application.ReserveCommand{OperationID: uuid.New(), ReservationID: uuid.New(),
+		WarehouseID: e.otherW, Line: line(s.ID, "1"), Purpose: "x", ExpiresAt: e.clock.Now().Add(time.Hour)})
+	assert.ErrorIs(t, err, domain.ErrNotFound)
+	var n int
+	require.NoError(t, e.pool.QueryRow(e.ctx, `SELECT count(*) FROM inventory_presentations WHERE sku_id = $1`, s.ID).Scan(&n))
+	assert.Zero(t, n, "no presentation may be created on another company's SKU")
 }

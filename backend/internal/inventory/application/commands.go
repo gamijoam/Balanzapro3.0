@@ -16,6 +16,9 @@ const (
 	OpReserve            = "inventory.reservation.create"
 	OpReservationRelease = "inventory.reservation.release"
 	OpReservationConsume = "inventory.reservation.consume"
+	// OpReservationExpire identifies a sweep batch in reservation events;
+	// it is not an idempotent client operation.
+	OpReservationExpire = "inventory.reservation.expire"
 )
 
 // StockKind is the purpose of a direct stock posting.

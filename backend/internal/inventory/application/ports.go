@@ -84,6 +84,29 @@ type Reservation struct {
 	ExpiresAt   time.Time
 }
 
+// Reservation event types (append-only history, one "created" and at most
+// one terminal event per reservation).
+const (
+	ReservationEventCreated  = "created"
+	ReservationEventReleased = "released"
+	ReservationEventConsumed = "consumed"
+	ReservationEventExpired  = "expired"
+)
+
+// ReservationEvent is one durable change of a reservation and of the
+// reserved bucket of its balance.
+type ReservationEvent struct {
+	ReservationID uuid.UUID
+	Type          string
+	WarehouseID   uuid.UUID
+	SKUID         uuid.UUID
+	Quantity      qty.Q
+	ReservedAfter qty.Q
+	OperationType string
+	OperationID   uuid.UUID
+	OccurredAt    time.Time
+}
+
 // Transfer statuses.
 const (
 	TransferShipped  = "shipped"
@@ -151,10 +174,20 @@ type Tx interface {
 	// ExpireDueReservations marks up to limit active reservations whose
 	// expiry passed as expired, skipping rows locked by other transactions.
 	ExpireDueReservations(ctx context.Context, company uuid.UUID, now time.Time, limit int) ([]Reservation, error)
+	AppendReservationEvent(ctx context.Context, company uuid.UUID, ev ReservationEvent) error
+	ListReservationEvents(ctx context.Context, company, reservation uuid.UUID) ([]ReservationEvent, error)
 
 	InsertTransfer(ctx context.Context, t Transfer) error
 	LockTransfer(ctx context.Context, company, id uuid.UUID) (Transfer, error)
 	SetTransferStatus(ctx context.Context, company, id uuid.UUID, status string) error
+}
+
+// lessKey is the global lock order of balances: warehouse, then SKU.
+func lessKey(a, b BalanceKey) bool {
+	if c := bytes.Compare(a.WarehouseID[:], b.WarehouseID[:]); c != 0 {
+		return c < 0
+	}
+	return bytes.Compare(a.SKUID[:], b.SKUID[:]) < 0
 }
 
 // PlanDeltas merges deltas of the same balance and orders them by
@@ -175,12 +208,7 @@ func PlanDeltas(in []BalanceDelta) []BalanceDelta {
 		m.InTransit = m.InTransit.Add(d.InTransit)
 		m.Reserved = m.Reserved.Add(d.Reserved)
 	}
-	sort.Slice(keys, func(i, j int) bool {
-		if c := bytes.Compare(keys[i].WarehouseID[:], keys[j].WarehouseID[:]); c != 0 {
-			return c < 0
-		}
-		return bytes.Compare(keys[i].SKUID[:], keys[j].SKUID[:]) < 0
-	})
+	sort.Slice(keys, func(i, j int) bool { return lessKey(keys[i], keys[j]) })
 	out := make([]BalanceDelta, 0, len(keys))
 	for _, k := range keys {
 		out = append(out, *merged[k])

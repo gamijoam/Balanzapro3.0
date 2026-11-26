@@ -368,6 +368,45 @@ func (t *txAdapter) ExpireDueReservations(ctx context.Context, company uuid.UUID
 	return out, mapErr(rows.Err(), "reservation")
 }
 
+func (t *txAdapter) AppendReservationEvent(ctx context.Context, company uuid.UUID, ev application.ReservationEvent) error {
+	_, err := t.tx.Exec(ctx, `
+		INSERT INTO inventory_reservation_events (company_id, reservation_id, event_type, warehouse_id, sku_id,
+			quantity, reserved_after, operation_type, operation_id)
+		VALUES ($1, $2, $3, $4, $5, $6::numeric, $7::numeric, $8, $9)`,
+		company, ev.ReservationID, ev.Type, ev.WarehouseID, ev.SKUID,
+		ev.Quantity.String(), ev.ReservedAfter.String(), ev.OperationType, ev.OperationID)
+	return mapErr(err, "reservation event")
+}
+
+func (t *txAdapter) ListReservationEvents(ctx context.Context, company, reservation uuid.UUID) ([]application.ReservationEvent, error) {
+	rows, err := t.tx.Query(ctx, `
+		SELECT reservation_id, event_type, warehouse_id, sku_id, quantity::text, reserved_after::text,
+		       operation_type, operation_id, occurred_at
+		FROM inventory_reservation_events
+		WHERE company_id = $1 AND reservation_id = $2 ORDER BY id`, company, reservation)
+	if err != nil {
+		return nil, mapErr(err, "reservation event")
+	}
+	defer rows.Close()
+	var out []application.ReservationEvent
+	for rows.Next() {
+		var ev application.ReservationEvent
+		var q, after string
+		if err := rows.Scan(&ev.ReservationID, &ev.Type, &ev.WarehouseID, &ev.SKUID, &q, &after,
+			&ev.OperationType, &ev.OperationID, &ev.OccurredAt); err != nil {
+			return nil, mapErr(err, "reservation event")
+		}
+		if ev.Quantity, err = parse(q); err != nil {
+			return nil, err
+		}
+		if ev.ReservedAfter, err = parse(after); err != nil {
+			return nil, err
+		}
+		out = append(out, ev)
+	}
+	return out, mapErr(rows.Err(), "reservation event")
+}
+
 func (t *txAdapter) InsertTransfer(ctx context.Context, tr application.Transfer) error {
 	if _, err := t.tx.Exec(ctx, `
 		INSERT INTO inventory_transfers (id, company_id, from_warehouse_id, to_warehouse_id, status)

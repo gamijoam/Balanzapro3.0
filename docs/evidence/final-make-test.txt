@@ -1,0 +1,12 @@
+go version go1.26.11 linux/amd64
+go vet ./...
+BP_REQUIRE_DB=1 go test -race -count=1 ./...
+ok  	github.com/gamijoam/Balanzapro3.0/backend/cmd/bpserver	1.017s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	7.307s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application	1.023s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	1.014s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs	1.033s
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/organization	[no test files]
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest	1.609s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres	1.344s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty	1.017s

@@ -1,0 +1,9 @@
+ok  	github.com/gamijoam/Balanzapro3.0/backend/cmd/bpserver	1.016s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	32.146s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application	1.016s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	1.017s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs	1.102s
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/organization	[no test files]
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest	2.021s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres	3.074s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty	1.024s

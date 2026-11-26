@@ -1,11 +1,13 @@
 package application
 
 import (
+	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -488,13 +490,19 @@ func (s *Service) Reserve(ctx context.Context, sc Scope, c ReserveCommand) (Oper
 		if err != nil {
 			return OperationResult{}, err
 		}
-		if _, err := apply(ctx, tx, sc, []BalanceDelta{{Key: BalanceKey{c.WarehouseID, r.sku.ID}, Reserved: r.base}}); err != nil {
+		key := BalanceKey{c.WarehouseID, r.sku.ID}
+		states, err := apply(ctx, tx, sc, []BalanceDelta{{Key: key, Reserved: r.base}})
+		if err != nil {
 			return OperationResult{}, err
 		}
-		err = tx.InsertReservation(ctx, Reservation{ID: c.ReservationID, CompanyID: sc.CompanyID, WarehouseID: c.WarehouseID,
+		res := Reservation{ID: c.ReservationID, CompanyID: sc.CompanyID, WarehouseID: c.WarehouseID,
 			SKUID: r.sku.ID, Quantity: r.base, Purpose: purpose, OwnerRef: strings.TrimSpace(c.OwnerRef),
-			Status: ReservationActive, ExpiresAt: c.ExpiresAt})
-		return OperationResult{ReservationID: &c.ReservationID}, err
+			Status: ReservationActive, ExpiresAt: c.ExpiresAt}
+		if err := tx.InsertReservation(ctx, res); err != nil {
+			return OperationResult{}, err
+		}
+		return OperationResult{ReservationID: &c.ReservationID},
+			recordEvent(ctx, tx, sc, res, ReservationEventCreated, states[key], OpReserve, c.OperationID)
 	})
 }
 
@@ -520,14 +528,20 @@ func (s *Service) ReleaseReservation(ctx context.Context, sc Scope, c Reservatio
 		if err != nil {
 			return OperationResult{}, err
 		}
-		if _, err := apply(ctx, tx, sc, []BalanceDelta{{Key: BalanceKey{r.WarehouseID, r.SKUID}, Reserved: r.Quantity.Neg()}}); err != nil {
+		key := BalanceKey{r.WarehouseID, r.SKUID}
+		states, err := apply(ctx, tx, sc, []BalanceDelta{{Key: key, Reserved: r.Quantity.Neg()}})
+		if err != nil {
 			return OperationResult{}, err
 		}
 		status := ReservationReleased
 		if expired {
 			status = ReservationExpired
 		}
-		return OperationResult{ReservationID: &r.ID}, tx.SetReservationStatus(ctx, sc.CompanyID, r.ID, status)
+		if err := tx.SetReservationStatus(ctx, sc.CompanyID, r.ID, status); err != nil {
+			return OperationResult{}, err
+		}
+		return OperationResult{ReservationID: &r.ID},
+			recordEvent(ctx, tx, sc, r, status, states[key], OpReservationRelease, c.OperationID)
 	})
 }
 
@@ -552,6 +566,9 @@ func (s *Service) ConsumeReservation(ctx context.Context, sc Scope, c Reservatio
 		m := MovementRecord{Type: domain.MoveReservationOut, Bucket: domain.BucketPhysical, Direction: -1,
 			WarehouseID: r.WarehouseID, SKUID: r.SKUID, Quantity: r.Quantity, BalanceAfter: states[key].Physical, ReferenceID: &r.ID}
 		res := OperationResult{ReservationID: &r.ID, Movements: []MovementRecord{m}}
+		if err := recordEvent(ctx, tx, sc, r, ReservationEventConsumed, states[key], OpReservationConsume, c.OperationID); err != nil {
+			return OperationResult{}, err
+		}
 		return res, tx.AppendMovements(ctx, sc.CompanyID, OpReservationConsume, c.OperationID, res.Movements)
 	})
 }
@@ -571,12 +588,25 @@ func (s *Service) ExpireReservations(ctx context.Context, sc Scope, limit int) (
 		if err != nil {
 			return err
 		}
-		deltas := make([]BalanceDelta, 0, len(due))
+		// One delta per reservation, in stable (balance, reservation) order,
+		// so each event records the reserved balance right after it.
+		sort.Slice(due, func(i, j int) bool {
+			ki, kj := BalanceKey{due[i].WarehouseID, due[i].SKUID}, BalanceKey{due[j].WarehouseID, due[j].SKUID}
+			if ki != kj {
+				return lessKey(ki, kj)
+			}
+			return bytes.Compare(due[i].ID[:], due[j].ID[:]) < 0
+		})
+		batch := uuid.New()
 		for _, r := range due {
-			deltas = append(deltas, BalanceDelta{Key: BalanceKey{r.WarehouseID, r.SKUID}, Reserved: r.Quantity.Neg()})
-		}
-		if _, err := apply(ctx, tx, sc, deltas); err != nil {
-			return err
+			key := BalanceKey{r.WarehouseID, r.SKUID}
+			st, err := tx.ApplyDelta(ctx, sc.CompanyID, BalanceDelta{Key: key, Reserved: r.Quantity.Neg()})
+			if err != nil {
+				return err
+			}
+			if err := recordEvent(ctx, tx, sc, r, ReservationEventExpired, st, OpReservationExpire, batch); err != nil {
+				return err
+			}
 		}
 		n = len(due)
 		return nil
@@ -602,4 +632,31 @@ func (s *Service) SweepExpiredReservations(ctx context.Context, companies []uuid
 		}
 	}
 	return total, nil
+}
+
+func recordEvent(ctx context.Context, tx Tx, sc Scope, r Reservation, typ string, st BalanceState, opType string, opID uuid.UUID) error {
+	return tx.AppendReservationEvent(ctx, sc.CompanyID, ReservationEvent{
+		ReservationID: r.ID, Type: typ, WarehouseID: r.WarehouseID, SKUID: r.SKUID,
+		Quantity: r.Quantity, ReservedAfter: st.Reserved, OperationType: opType, OperationID: opID,
+	})
+}
+
+// ReservationHistory returns the append-only events of a reservation of the
+// company, oldest first.
+func (s *Service) ReservationHistory(ctx context.Context, sc Scope, id uuid.UUID) ([]ReservationEvent, error) {
+	if err := requireScope(sc); err != nil {
+		return nil, err
+	}
+	var evs []ReservationEvent
+	err := s.store.InTx(ctx, func(tx Tx) error {
+		var err error
+		if evs, err = tx.ListReservationEvents(ctx, sc.CompanyID, id); err != nil {
+			return err
+		}
+		if len(evs) == 0 {
+			return fmt.Errorf("%w: reservation %s", domain.ErrNotFound, id)
+		}
+		return nil
+	})
+	return evs, err
 }

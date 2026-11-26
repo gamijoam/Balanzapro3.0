@@ -1,6 +1,6 @@
 # Registro de decisiones
 
-170 ADR: 134 aprobadas; 36 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170. ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
+173 ADR: 134 aprobadas; 39 pendientes de ratificación expresa. El 2026-11-26 se ratificaron ADR-005, 006, 014, 016 y 040 (BP-001 parcial) y se añadieron ADR-169 y ADR-170; en la revisión correctiva del PR #1 se acotó ADR-170 al alcance aprobado y se propusieron ADR-171, 172 y 173. ADR 001–033 reconstruidas del resumen disponible, no transcripciones. Algunas propuestas se solapan con decisiones aprobadas posteriores: confirmar antes de implementar, no promover automáticamente. ADR-044 pendiente: método de valoración. ADR-158, 162, 163 y 167 complementan propuestas anteriores.
 
 | ADR | Decisión | Estado |
 |---|---|---|
@@ -173,4 +173,7 @@
 | [ADR-167](ADR-167.md) | Rendimiento verificable | APROBADA |
 | [ADR-168](ADR-168.md) | Auditoría dependencias | APROBADA |
 | [ADR-169](ADR-169.md) | Camino corto al núcleo con ámbito mínimo | APROBADA (2026-11-26) |
-| [ADR-170](ADR-170.md) | Base de dependencias backend | APROBADA (2026-11-26) |
+| [ADR-170](ADR-170.md) | Base de dependencias backend (alcance aprobado) | APROBADA (2026-11-26) |
+| [ADR-171](ADR-171.md) | Catálogo inicial de unidades base | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-172](ADR-172.md) | Desviaciones y añadidos de dependencias | PROPUESTA / RATIFICACIÓN PENDIENTE |
+| [ADR-173](ADR-173.md) | Pruebas de mutación | PROPUESTA / RATIFICACIÓN PENDIENTE |

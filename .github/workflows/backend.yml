@@ -26,17 +26,22 @@ jobs:
           POSTGRES_DB: bp_test
         ports: ["5432:5432"]
         options: >-
-          --health-cmd "pg_isready -U bp" --health-interval 5s
+          --health-cmd "pg_isready -U bp -d bp_test" --health-interval 5s
           --health-timeout 5s --health-retries 10
     env:
       BP_TEST_DATABASE_URL: postgres://bp:bp-ci-only@127.0.0.1:5432/bp_test?sslmode=disable
       BP_REQUIRE_DB: "1"
+      GOTOOLCHAIN: go1.26.11
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version-file: backend/go.mod
           cache-dependency-path: backend/go.sum
+      - name: toolchain
+        # go.mod pins go/toolchain 1.26.11 (stdlib fixes, ADR-170); fail if
+        # the runner ended up on anything else.
+        run: go version | grep -q 'go1.26.11 ' || (go version && exit 1)
       - name: gofmt
         run: make fmt-check
       - name: go vet
@@ -46,4 +51,4 @@ jobs:
       - name: build
         run: make build
       - name: govulncheck
-        run: go run golang.org/x/vuln/cmd/govulncheck@v1.1.4 ./...
+        run: go run golang.org/x/vuln/cmd/govulncheck@v1.9.0 -show verbose ./...

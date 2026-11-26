@@ -1,0 +1,1 @@
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres	0.237s
