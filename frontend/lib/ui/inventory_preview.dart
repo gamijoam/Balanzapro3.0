@@ -258,22 +258,19 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
           ),
         ],
       ),
-      toolbar: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text("Productos", style: theme.heading),
-          const SizedBox(height: BPTokens.xs),
-          Text("Prueba local · Cambios temporales", style: theme.muted),
-          const SizedBox(height: BPTokens.md),
-          BPButton(label: "Nuevo producto", onPressed: () => _startEdit(null)),
-          if (feedback != null) ...[
-            const SizedBox(height: BPTokens.sm),
-            Semantics(
-              liveRegion: true,
-              child: BPBadge(label: feedback!, tone: BPTone.success),
-            ),
-          ],
-        ],
+      toolbar: BPTableHeader(
+        title: "Productos",
+        description: "Prueba local · Cambios temporales",
+        action: BPButton(
+          label: "Nuevo producto",
+          onPressed: () => _startEdit(null),
+        ),
+        feedback: feedback == null
+            ? null
+            : Semantics(
+                liveRegion: true,
+                child: BPBadge(label: feedback!, tone: BPTone.success),
+              ),
       ),
     );
   }
