@@ -1,0 +1,8 @@
+# BP-008 / ADR-026 — Candidato Argon2id
+
+- Dependencia: golang.org/x/crypto v0.59.0, publicada 2026-11-11 según go list -m; Go Authors, licencia BSD-3 comprobada en el módulo. Se añade x/sys v0.50.0 indirecta. Se usa IDKey mantenida por Go, compatible con Go 1.26; no reimplementamos criptografía.
+- Alternativas: scrypt y PBKDF2 no satisfacen la elección Argon2id de ADR-026; envoltorios de terceros ampliarían dependencias. Referencias: https://pkg.go.dev/golang.org/x/crypto/argon2 y https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html.
+- Perfil inicial candidato: 65536 KiB, 3 iteraciones, 1 lane, sal aleatoria 16 bytes, resultado 32 bytes. Se acepta exclusivamente ese perfil; no se permiten parámetros de memoria controlados por el verificador. El límite de entrada de 1024 bytes es un límite técnico, no política completa de contraseña.
+- RED: Hash y Verify inexistentes, error de compilación esperado. GREEN: go test -race -count=1 ./internal/identity/adapters/argon2id exitoso. go vet, formato, arquitectura y govulncheck exitosos (No vulnerabilities found).
+- Benchmark local Linux/amd64, AMD EPYC, GOMAXPROCS=2, 3 iteraciones: 235277939 ns/op, 67111432 B/op, 36 allocs/op. No representa rendimiento Windows/ARM ni carga concurrente; medir en equipos objetivo antes de activar login.
+- Antes de login: límites globales y por identidad, fallos uniformes, política de contraseña, protección de PIN frente a ataque offline (secreto del servidor independiente y rotación), TOTP, revocación, revisión independiente. No se habilita ningún endpoint. No se ratifica nueva ADR.
