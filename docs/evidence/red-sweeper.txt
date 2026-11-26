@@ -1,0 +1,46 @@
+--- FAIL: TestRunOncePassesEveryCompany (0.00s)
+    sweeper_test.go:44: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:44
+        	Error:      	Not equal: 
+        	            	expected: 3
+        	            	actual  : 0
+        	Test:       	TestRunOncePassesEveryCompany
+    sweeper_test.go:45: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:45
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 0
+        	Test:       	TestRunOncePassesEveryCompany
+--- FAIL: TestRunOnceReportsErrors (0.00s)
+    sweeper_test.go:54: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:54
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRunOnceReportsErrors
+    sweeper_test.go:58: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:58
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRunOnceReportsErrors
+--- FAIL: TestRunTicksUntilCancelledAndSurvivesErrors (2.00s)
+    sweeper_test.go:68: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:68
+        	Error:      	Condition never satisfied
+        	Test:       	TestRunTicksUntilCancelledAndSurvivesErrors
+        	Messages:   	keeps sweeping after errors
+--- FAIL: TestRunRejectsInvalidConfig (0.00s)
+    sweeper_test.go:82: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:82
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRunRejectsInvalidConfig
+        	Messages:   	batch must be positive
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs	2.004s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/cmd/bpserver	0.005s
+--- FAIL: TestAutomaticSweepReleasesExpiredReservations (5.15s)
+    sweeper_integration_test.go:42: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/sweeper_integration_test.go:42
+        	Error:      	Condition never satisfied
+        	Test:       	TestAutomaticSweepReleasesExpiredReservations
+        	Messages:   	sweeper must release all expired reservations (batch smaller than total)
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	5.624s
+FAIL

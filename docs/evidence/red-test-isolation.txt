@@ -1,0 +1,45 @@
+--- FAIL: TestCheckURLAcceptsOnlyLocalTestDatabases (0.00s)
+    guard_test.go:31: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:31
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	postgres://bp@127.0.0.1:5432/balanzapro?sslmode=disable
+    guard_test.go:31: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:31
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	postgres://bp@127.0.0.1:5432/bp_test_prod?sslmode=disable
+    guard_test.go:31: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:31
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	postgres://bp@db.example.com:5432/bp_test?sslmode=disable
+    guard_test.go:31: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:31
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	postgres://bp@10.0.0.5:5432/bp_test?sslmode=disable
+    guard_test.go:31: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:31
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	postgres://bp@127.0.0.1:5432/bp_test?sslmode=disable&host=db.example.com
+    guard_test.go:31: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:31
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	not a url %%%
+    guard_test.go:34: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:34
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLAcceptsOnlyLocalTestDatabases
+        	Messages:   	must differ from BP_DATABASE_URL
+--- FAIL: TestCheckDatabaseRefusesDeployedSchema (0.75s)
+    guard_test.go:65: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:65
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckDatabaseRefusesDeployedSchema
+        	Messages:   	a migrated public schema looks like a real deployment
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest	0.757s
+FAIL

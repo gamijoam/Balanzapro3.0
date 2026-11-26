@@ -1,0 +1,25 @@
+Prueba de mutación manual (2026-11-26, Go 1.26.11, PostgreSQL 16 local).
+Cada mutante se aplica, se corre go test ./... y se restaura con git checkout.
+
+M01 descuento condicional permite negativo: MATADO; pruebas que fallan: TestINV01LastUnitOnlyOneConfirmation, TestINV01ManyUnitsNeverOversold, TestMultiLineOperationIsAllOrNothing, TestReservationsLifecycle
+M02 sin orden de locks: MATADO; pruebas que fallan: TestOppositeLineOrderDoesNotDeadlock, TestPlanDeltasMergesAndOrdersByWarehouseThenSKU
+M03 hash ignora payload: MATADO; pruebas que fallan: TestIdempotentReplayAndConflict
+M04 replay no se marca: MATADO; pruebas que fallan: TestIdempotentReplayAndConflict, TestIdempotentConcurrentSameOperation, TestReserveRetryAfterExpiryReplaysOriginalResult, TestIdempotencyHashUsesCanonicalQuantities
+M05 precisión no se valida: MATADO; pruebas que fallan: TestINV03PresentationsAndBarcodes, TestWeightSKUFractions, TestSKUQuantityRespectsPrecision, TestPresentationFactorMustBePositiveAndRepresentable
+M06 unidad sin dimensión: MATADO; pruebas que fallan: TestBaseUnitMustMatchQuantityKind
+M07 límite de dígitos enteros: MATADO; pruebas que fallan: TestParseRejectsMoreIntegerDigitsThanStorable
+M08 reserva vencida se consume: MATADO; pruebas que fallan: TestReservationsLifecycle
+M09 evento de reserva omitido en release: MATADO; pruebas que fallan: TestReservationConsumeAndReleaseRaceHasOneWinner, TestReservationHistoryIsTraceable, TestReservationEventsCoherentUnderConcurrency
+M10 transferencia sin estado previo: MATADO; pruebas que fallan: TestSetTransferStatusRejectsAlreadyReceivedTransfer
+M11 aislamiento: SKU sin filtro de empresa: MATADO; pruebas que fallan: TestCrossCompanyCatalogWritesAreNotFound
+M12 guarda de BD acepta cualquier nombre: MATADO; pruebas que fallan: TestCheckURLAcceptsOnlyLocalTestDatabases
+M13 barrido se detiene tras el primer intento: MATADO; pruebas que fallan: TestRunTicksUntilCancelledAndSurvivesErrors
+M14 ajuste sin motivo: MATADO; pruebas que fallan: TestAdjustmentsRequireReason
+Primera corrida (antes de reforzar pruebas): 11/14 matados.
+- M09 no era válido (no compilaba); se reformuló para omitir el evento "released".
+- M10 sobrevivió: ninguna prueba re-marcaba una transferencia ya recibida → TestSetTransferStatusRejectsAlreadyReceivedTransfer.
+- M11 sobrevivió: las FK compuestas frenaban movimientos, pero AddPresentation habría creado una
+  presentación en la empresa A desde la empresa B → TestCrossCompanyCatalogWritesAreNotFound.
+Corridas siguientes (arriba, sobre el código final de la revisión): 14/14 matados. M13 se adaptó al nuevo Run (se detiene tras el primer barrido).
+Herramientas automáticas: no se ejecutaron (el entorno denegó correr herramientas de terceros); ver ADR-173.
+Reproducir: tools/manual_mutation.py.

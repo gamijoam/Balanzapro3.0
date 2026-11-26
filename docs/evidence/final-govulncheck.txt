@@ -1,0 +1,32 @@
+go: golang.org/x/vuln@v1.9.0 requires go >= 1.26.0; switching to go1.26.11
+Fetching vulnerabilities from the database...
+
+Checking the code against the vulnerabilities...
+
+The package pattern matched the following 9 root packages:
+  github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty
+  github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain
+  github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application
+  github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore
+  github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs
+  github.com/gamijoam/Balanzapro3.0/backend/internal/organization
+  github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres
+  github.com/gamijoam/Balanzapro3.0/backend/cmd/bpserver
+  github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest
+Govulncheck scanned the following 14 modules and the go1.26.11 standard library:
+  github.com/gamijoam/Balanzapro3.0/backend
+  github.com/go-chi/chi/v5@v5.5.0
+  github.com/google/uuid@v1.6.0
+  github.com/jackc/pgpassfile@v1.0.0
+  github.com/jackc/pgservicefile@v0.0.0-20240606120523-5a60cdf6a761
+  github.com/jackc/pgx/v5@v5.13.0
+  github.com/jackc/puddle/v2@v2.2.3
+  github.com/mfridman/interpolate@v0.2.0
+  github.com/pressly/goose/v3@v3.30.1
+  github.com/sethvargo/go-retry@v0.5.0
+  github.com/shopspring/decimal@v1.6.0
+  go.uber.org/multierr@v1.11.0
+  golang.org/x/sync@v0.25.0
+  golang.org/x/text@v0.44.0
+
+No vulnerabilities found.

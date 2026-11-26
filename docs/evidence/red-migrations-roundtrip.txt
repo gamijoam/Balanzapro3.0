@@ -1,0 +1,4 @@
+# github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres_test [github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres.test]
+internal/platform/postgres/migrate_test.go:27:30: undefined: postgres.RollbackTo
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres [build failed]
+FAIL

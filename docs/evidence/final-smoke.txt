@@ -1,0 +1,5 @@
+{"time":"2026-11-26T01:09:32.07417889Z","level":"INFO","msg":"migrations applied"}
+{"time":"2026-11-26T01:09:32.086243126Z","level":"INFO","msg":"listening","addr":"127.0.0.1:18081"}
+GET /healthz -> {"status":"ok"}
+POST /inventory/stock -> HTTP 404
+[1]+  Exit 124                BP_DATABASE_URL=$S BP_HTTP_ADDR=127.0.0.1:18081 timeout 4 ./bin/bpserver serve

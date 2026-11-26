@@ -1,0 +1,214 @@
+--- FAIL: TestNewSKUValidates (0.00s)
+    domain_test.go:26: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:26
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestNewSKUValidates
+    domain_test.go:28: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:28
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestNewSKUValidates
+    domain_test.go:30: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:30
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestNewSKUValidates
+    domain_test.go:32: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:32
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestNewSKUValidates
+    domain_test.go:34: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:34
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestNewSKUValidates
+    domain_test.go:37: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:37
+        	Error:      	Not equal: 
+        	            	expected: "A"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-A
+        	            	+
+        	Test:       	TestNewSKUValidates
+--- FAIL: TestSKUQuantityRespectsPrecision (0.00s)
+    domain_test.go:43: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:43
+        	Error:      	Expected error with "inventory: quantity exceeds SKU precision" in chain but got nil.
+        	Test:       	TestSKUQuantityRespectsPrecision
+    domain_test.go:44: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:44
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestSKUQuantityRespectsPrecision
+    domain_test.go:45: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:45
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestSKUQuantityRespectsPrecision
+    domain_test.go:50: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:50
+        	Error:      	Expected error with "inventory: quantity exceeds SKU precision" in chain but got nil.
+        	Test:       	TestSKUQuantityRespectsPrecision
+--- FAIL: TestPresentationFactorMustBePositiveAndRepresentable (0.00s)
+    domain_test.go:56: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:56
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestPresentationFactorMustBePositiveAndRepresentable
+    domain_test.go:58: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:58
+        	Error:      	Expected error with "inventory: quantity exceeds SKU precision" in chain but got nil.
+        	Test:       	TestPresentationFactorMustBePositiveAndRepresentable
+        	Messages:   	a unit SKU cannot have fractional presentations
+    domain_test.go:60: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:60
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestPresentationFactorMustBePositiveAndRepresentable
+--- FAIL: TestINV03PresentationsShareOneBaseStock (0.00s)
+    domain_test.go:72: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:72
+        	Error:      	Not equal: 
+        	            	expected: "120"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-120
+        	            	+0
+        	Test:       	TestINV03PresentationsShareOneBaseStock
+    domain_test.go:73: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:73
+        	Error:      	Not equal: 
+        	            	expected: "120"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-120
+        	            	+0
+        	Test:       	TestINV03PresentationsShareOneBaseStock
+    domain_test.go:76: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:76
+        	Error:      	Not equal: 
+        	            	expected: "5"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-5
+        	            	+0
+        	Test:       	TestINV03PresentationsShareOneBaseStock
+    domain_test.go:79: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:79
+        	Error:      	Not equal: 
+        	            	expected: "20"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-20
+        	            	+0
+        	Test:       	TestINV03PresentationsShareOneBaseStock
+    domain_test.go:83: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:83
+        	Error:      	Not equal: 
+        	            	expected: "1"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-1
+        	            	+0
+        	Test:       	TestINV03PresentationsShareOneBaseStock
+    domain_test.go:84: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:84
+        	Error:      	Not equal: 
+        	            	expected: "7"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-7
+        	            	+0
+        	Test:       	TestINV03PresentationsShareOneBaseStock
+--- FAIL: TestFractionalPresentationOnWeightSKU (0.00s)
+    domain_test.go:92: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:92
+        	Error:      	Not equal: 
+        	            	expected: "91"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-91
+        	            	+0
+        	Test:       	TestFractionalPresentationOnWeightSKU
+    domain_test.go:93: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:93
+        	Error:      	Not equal: 
+        	            	expected: "22.75"
+        	            	actual  : "0"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-22.75
+        	            	+0
+        	Test:       	TestFractionalPresentationOnWeightSKU
+--- FAIL: TestNormalizeBarcodeKeepsTextSemantics (0.00s)
+    domain_test.go:99: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:99
+        	Error:      	Not equal: 
+        	            	expected: "0012345678905"
+        	            	actual  : "  0012345678905 "
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-0012345678905
+        	            	+  0012345678905 
+        	Test:       	TestNormalizeBarcodeKeepsTextSemantics
+        	Messages:   	leading zeros are significant
+    domain_test.go:105: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:105
+        	Error:      	Should be true
+        	Test:       	TestNormalizeBarcodeKeepsTextSemantics
+        	Messages:   	""
+    domain_test.go:105: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:105
+        	Error:      	Should be true
+        	Test:       	TestNormalizeBarcodeKeepsTextSemantics
+        	Messages:   	"   "
+    domain_test.go:105: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:105
+        	Error:      	Should be true
+        	Test:       	TestNormalizeBarcodeKeepsTextSemantics
+        	Messages:   	"12 34"
+    domain_test.go:105: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:105
+        	Error:      	Should be true
+        	Test:       	TestNormalizeBarcodeKeepsTextSemantics
+        	Messages:   	"a\tb"
+    domain_test.go:105: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:105
+        	Error:      	Should be true
+        	Test:       	TestNormalizeBarcodeKeepsTextSemantics
+        	Messages:   	"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	0.010s
+FAIL
