@@ -1,0 +1,34 @@
+name: Ratificación de ADR
+description: Ratificar (o rechazar) ADR pendientes antes de implementar código que dependa de ellas.
+title: "docs(adr): ratificar ADR-XXX"
+labels: ["adr"]
+body:
+  - type: input
+    id: adrs
+    attributes:
+      label: ADR a ratificar
+      placeholder: ADR-024, ADR-044
+    validations:
+      required: true
+  - type: input
+    id: blocks
+    attributes:
+      label: Bloquea a
+      description: Issues o códigos BP que esperan esta decisión.
+      placeholder: "#12 (BP-009)"
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Propuesta y alternativas
+      description: Resumen de la ADR, alternativas consideradas y la recomendación.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Reglas
+      options:
+        - label: El PR que resulte solo cambia ADR, registry.json e índices (sin implementación masiva).
+          required: true
+        - label: La ratificación cita el respaldo explícito del propietario (fecha y decisión).
+          required: true

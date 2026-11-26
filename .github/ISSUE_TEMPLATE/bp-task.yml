@@ -1,0 +1,61 @@
+name: Tarea del BACKLOG (BP-XXX)
+description: Una tarea de BACKLOG.md, dividida en subtareas (cada subtarea = 1 PR).
+title: "BP-XXX: "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Una tarea `BP-XXX` por Issue. Divide el trabajo **antes** de codificar: cada checkbox de subtareas es un PR sugerido de ~200–500 líneas productivas (ver la "Política de Pull Requests" en AGENTS.md).
+  - type: input
+    id: bp
+    attributes:
+      label: Código BP
+      description: Tal como aparece en BACKLOG.md.
+      placeholder: BP-008
+    validations:
+      required: true
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone / hito
+      description: Fase del ROADMAP.md o milestone de GitHub.
+      placeholder: "M1 · Vertical Inventario + Identidad (Fases 03–04)"
+    validations:
+      required: true
+  - type: textarea
+    id: adrs
+    attributes:
+      label: ADRs requeridos
+      description: Indica el estado de cada uno. Si alguno está pendiente, agrega el label `blocked-by-adr` y abre una "Ratificación de ADR".
+      placeholder: |
+        - ADR-024 Permisos — PENDIENTE
+        - ADR-014 Multiempresa — APROBADA
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Criterios de aceptación
+      description: Casos de docs/testing/STRATEGY.md (SEC-01, INV-01…) y resultados esperados.
+      placeholder: |
+        - SEC-01: IDOR entre empresas → denegación en servidor
+    validations:
+      required: true
+  - type: textarea
+    id: subtasks
+    attributes:
+      label: Subtareas (cada checkbox = 1 PR sugerido)
+      description: "Módulo fundacional: (1) migraciones/esquema, (2) dominio + puertos + tests unitarios, (3) adaptador pgx + integración, (4) OpenAPI + handlers."
+      value: |
+        - [ ] Migraciones y esquema PostgreSQL
+        - [ ] Dominio + puertos + tests unitarios
+        - [ ] Adaptador pgx + tests de integración
+        - [ ] Contrato OpenAPI + handlers HTTP
+    validations:
+      required: true
+  - type: textarea
+    id: out
+    attributes:
+      label: Fuera de alcance
+      placeholder: Lo que explícitamente no entra en esta tarea.
