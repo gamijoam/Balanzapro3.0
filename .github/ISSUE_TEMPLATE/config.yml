@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Registro de decisiones (ADR)
+    url: https://github.com/gamijoam/Balanzapro3.0/blob/main/docs/decisions/README.md
+    about: Consulta las ADR aprobadas y pendientes antes de abrir una tarea.
+  - name: BACKLOG y ROADMAP
+    url: https://github.com/gamijoam/Balanzapro3.0/blob/main/BACKLOG.md
+    about: Las tareas BP-XXX y su orden de dependencias.
