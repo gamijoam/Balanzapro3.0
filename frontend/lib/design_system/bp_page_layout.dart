@@ -39,71 +39,75 @@ class BPPageLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = BPVisuals.of(context);
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
     return ColoredBox(
       color: theme.background,
-      child: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final wide =
-                constraints.maxWidth >= BPTokens.wideBreakpoint &&
-                MediaQuery.textScalerOf(context).scale(14) <= 21;
-            final navigation = BPSidebar(
-              key: Key(wide ? "desktop-navigation" : "compact-navigation"),
-              items: items,
-              selectedId: selectedId,
-              onNavigate: onNavigate,
-              compact: !wide,
-            );
-            final header = Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: BPTokens.lg,
-                vertical: BPTokens.sm,
-              ),
-              decoration: BoxDecoration(
-                color: theme.surface,
-                border: Border(bottom: BorderSide(color: theme.border)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Padding(
+        padding: EdgeInsets.only(bottom: keyboardInset),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final wide =
+                  constraints.maxWidth >= BPTokens.wideBreakpoint &&
+                  MediaQuery.textScalerOf(context).scale(14) <= 21;
+              final navigation = BPSidebar(
+                key: Key(wide ? "desktop-navigation" : "compact-navigation"),
+                items: items,
+                selectedId: selectedId,
+                onNavigate: onNavigate,
+                compact: !wide,
+              );
+              final header = Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: BPTokens.lg,
+                  vertical: BPTokens.sm,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.surface,
+                  border: Border(bottom: BorderSide(color: theme.border)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(title, style: theme.title),
+                    Text(contextLabel, style: theme.muted),
+                  ],
+                ),
+              );
+              return Column(
+                key: const Key("bp-page-layout"),
                 children: [
-                  Text(title, style: theme.title),
-                  Text(contextLabel, style: theme.muted),
-                ],
-              ),
-            );
-            return Column(
-              key: const Key("bp-page-layout"),
-              children: [
-                // On short windows the header can scroll instead of crushing
-                // the content viewport. It retains its complete context label.
-                ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: constraints.maxHeight / 3,
-                  ),
-                  child: SingleChildScrollView(child: header),
-                ),
-                Expanded(
-                  child: Row(
-                    children: [
-                      if (wide)
-                        SizedBox(
-                          width: BPTokens.sidebarWidth,
-                          child: navigation,
-                        ),
-                      Expanded(child: child),
-                    ],
-                  ),
-                ),
-                if (!wide)
+                  // On short windows the header can scroll instead of crushing
+                  // the content viewport. It retains its complete context label.
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       maxHeight: constraints.maxHeight / 3,
                     ),
-                    child: navigation,
+                    child: SingleChildScrollView(child: header),
                   ),
-              ],
-            );
-          },
+                  Expanded(
+                    child: Row(
+                      children: [
+                        if (wide)
+                          SizedBox(
+                            width: BPTokens.sidebarWidth,
+                            child: navigation,
+                          ),
+                        Expanded(child: child),
+                      ],
+                    ),
+                  ),
+                  if (!wide && keyboardInset == 0)
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: constraints.maxHeight / 3,
+                      ),
+                      child: navigation,
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
