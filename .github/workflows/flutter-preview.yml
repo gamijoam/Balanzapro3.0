@@ -1,0 +1,53 @@
+name: flutter-preview
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/flutter-preview.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/flutter-preview.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-preview-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  web:
+    name: flutter-web-preview
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install verified Flutter SDK
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -fsSL --retry 3 -o flutter.tar.xz https://storage.googleapis.com/flutter_infra_release/releases/stable/linux/flutter_linux_3.50.0-stable.tar.xz
+          echo '6ea2d806fd57269ae783e6788e2a81fc26eaad782f1e0d0ff38623bb765ff9f5  flutter.tar.xz' | sha256sum -c -
+          tar -xJf flutter.tar.xz
+          rm flutter.tar.xz
+          echo "$RUNNER_TEMP/flutter/bin" >> "$GITHUB_PATH"
+      - name: Verify toolchain
+        run: |
+          set -euo pipefail
+          flutter config --no-analytics
+          flutter --version --machine | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["frameworkRevision"]=="ab2912035e160d9cad6306df307576da6128ebdb" and d["dartSdkVersion"]=="3.14.0"'
+      - name: Validate web development scaffold
+        working-directory: frontend
+        run: |
+          set -euo pipefail
+          flutter pub get --enforce-lockfile
+          dart format --output=none --set-exit-if-changed lib test
+          flutter analyze --no-pub
+          flutter test --no-pub --concurrency=1
+          flutter build web --debug --no-pub --no-wasm-dry-run
+          git diff --exit-code -- pubspec.lock
