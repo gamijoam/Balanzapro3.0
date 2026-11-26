@@ -81,3 +81,60 @@ class PolicyTest(unittest.TestCase):
         issue = dict(ISSUE, title="ADR-024 · Permisos", labels=["adr"])
         pr = dict(PR, body=BODY.replace("BP-003", "ADR-024"))
         self.assertTrue(self.errors(pr=pr, files=[dict(FILES[0], filename="backend/main.go")], issue=issue))
+
+RATIFY_BODY = """## BP / Issue relacionado
+Closes #15
+ADR-024
+## ADRs relacionados o ratificados
+ADR-024 ratificada por el propietario.
+## Alcance
+**Entra:**
+- Ficha ADR-024, registro e índices de estado
+**Queda fuera (explícito):**
+- Implementación de permisos (BP-009)
+## Criterios de aceptación
+- ADR-024 con respaldo explícito del propietario
+## Checklist de validación
+- [x] Unidad
+- [x] Arquitectura
+- [x] Pruebas
+- [x] Migraciones N/A
+- [x] Secretos
+## Cómo probar
+No aplica: solo documentación de decisiones.
+## Tamaño y excepciones
+Excepción: documentación
+Justificación: ratificación de decisión y conteos de estado.
+"""
+RATIFY_ISSUE = dict(number=15, title="ADR-024 · Permisos", state="OPEN", labels=["adr"],
+                    milestone=None, blockers=[], open_children=False)
+RATIFY_PR = dict(title="docs(adr): ratificar ADR-024", body=RATIFY_BODY,
+                 labels=[{"name": "adr"}, {"name": "chore"}])
+REGISTRY = {"ADR-024": "PROPUESTA / RATIFICACIÓN PENDIENTE"}
+
+
+def doc(path, previous=None):
+    f = dict(filename=path, additions=4, deletions=1)
+    if previous:
+        f["previous_filename"] = previous
+    return f
+
+
+class RatificationTest(unittest.TestCase):
+    def errors(self, files):
+        return validate(RATIFY_PR, files, RATIFY_ISSUE, REGISTRY)[0]
+
+    def test_ratification_of_decision_files(self):
+        self.assertEqual([], self.errors([doc("docs/decisions/ADR-024.md"), doc("docs/decisions/registry.json")]))
+
+    def test_ratification_may_update_status_indexes(self):
+        # MASTER.md and BACKLOG.md record ratification counts and BP status.
+        self.assertEqual([], self.errors([doc("docs/decisions/ADR-024.md"), doc("docs/decisions/registry.json"),
+                                          doc("docs/MASTER.md"), doc("BACKLOG.md")]))
+
+    def test_ratification_rejects_other_files(self):
+        for path in ("README.md", "backend/internal/x.go", ".github/workflows/backend.yml", "docs/MASTER.md.bak"):
+            self.assertTrue(self.errors([doc("docs/decisions/ADR-024.md"), doc(path)]), path)
+
+    def test_ratification_rejects_renamed_code(self):
+        self.assertTrue(self.errors([doc("docs/decisions/ADR-024.md", previous="backend/internal/x.go")]))

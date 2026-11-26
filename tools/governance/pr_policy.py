@@ -47,6 +47,18 @@ def governance_only(files):
                                for p in [f["filename"], f.get("previous_filename", f["filename"])])
 
 
+# A ratification may touch the decision records and the two documents that
+# mirror ADR/BP status; nothing else (no code, workflows or other docs).
+RATIFICATION_EXTRA = {"docs/MASTER.md", "BACKLOG.md"}
+
+
+def ratification_only(files):
+    def allowed(path):
+        return path.startswith("docs/decisions/") or path in RATIFICATION_EXTRA
+    return bool(files) and all(allowed(p) for f in files
+                               for p in [f["filename"], f.get("previous_filename", f["filename"])])
+
+
 def validate(pr, files, issue, registry):
     errors = []
     title = TITLE.fullmatch(pr["title"])
@@ -123,8 +135,7 @@ def validate(pr, files, issue, registry):
         if "blocked-by-adr" in ilabels and not gov:
             errors.append("Issue marcado blocked-by-adr: ratificar primero.")
         ratification = bool(expected and all(c.startswith("ADR-") for c in expected)
-                            and files and all(f["filename"].startswith("docs/decisions/") for f in files)
-                            and "adr" in labels)
+                            and ratification_only(files) and "adr" in labels)
         if expected and all(c.startswith("ADR-") for c in expected) and not ratification:
             errors.append("Un issue ADR solo permite documentación de ratificación, no implementación.")
         if (pending or blocking) and not ratification:
