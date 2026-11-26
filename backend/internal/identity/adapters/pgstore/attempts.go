@@ -1,7 +1,9 @@
 package pgstore
 
 import (
+	"bytes"
 	"context"
+	"slices"
 	"time"
 
 	"github.com/gamijoam/Balanzapro3.0/backend/internal/identity/application"
@@ -12,21 +14,57 @@ import (
 
 var _ application.AttemptStore = (*Store)(nil)
 
+var _ application.AttemptBatchStore = (*Store)(nil)
+
 func (s *Store) ReserveAttempt(ctx context.Context, key application.AttemptKey, p domain.AttemptPolicy) (bool, error) {
-	if err := p.Validate(); err != nil {
-		return false, err
-	}
-	if key.OrganizationID == uuid.Nil || key.Digest == ([32]byte{}) ||
-		(key.Kind != "password" && key.Kind != "pin" && key.Kind != "totp") ||
-		p.Window%time.Microsecond != 0 || p.Cooldown%time.Microsecond != 0 {
+	return s.ReserveAttempts(ctx, []application.AttemptBudget{{Key: key, Policy: p}})
+}
+
+// Limit the number of rows locked per request and use a stable order for
+// both inserts and locks, regardless of the caller's input order.
+func (s *Store) ReserveAttempts(ctx context.Context, budgets []application.AttemptBudget) (bool, error) {
+	if len(budgets) < 1 || len(budgets) > 3 {
 		return false, domain.ErrInvalidArgument
+	}
+	ordered := slices.Clone(budgets)
+	first := ordered[0].Key
+	for _, b := range ordered {
+		key, p := b.Key, b.Policy
+		if err := p.Validate(); err != nil {
+			return false, err
+		}
+		if key.OrganizationID == uuid.Nil || key.OrganizationID != first.OrganizationID ||
+			key.Kind != first.Kind || key.Digest == ([32]byte{}) ||
+			(key.Kind != "password" && key.Kind != "pin" && key.Kind != "totp") ||
+			p.Window%time.Microsecond != 0 || p.Cooldown%time.Microsecond != 0 {
+			return false, domain.ErrInvalidArgument
+		}
+	}
+	slices.SortFunc(ordered, func(a, b application.AttemptBudget) int { return bytes.Compare(a.Key.Digest[:], b.Key.Digest[:]) })
+	for i := 1; i < len(ordered); i++ {
+		if ordered[i].Key == ordered[i-1].Key {
+			return false, domain.ErrInvalidArgument
+		}
 	}
 	tx, err := s.pool.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
 	if err != nil {
 		return false, application.ErrAttemptStorage
 	}
 	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
-	_, err = tx.Exec(ctx, `INSERT INTO identity_attempt_budgets(organization_id,budget_key,kind,max_attempts,window_us,cooldown_us)
+	for _, b := range ordered {
+		allowed, err := reserveInTx(ctx, tx, b.Key, b.Policy)
+		if err != nil || !allowed {
+			return false, err
+		}
+	}
+	if err = tx.Commit(ctx); err != nil {
+		return false, application.ErrAttemptStorage
+	}
+	return true, nil
+}
+
+func reserveInTx(ctx context.Context, tx pgx.Tx, key application.AttemptKey, p domain.AttemptPolicy) (bool, error) {
+	_, err := tx.Exec(ctx, `INSERT INTO identity_attempt_budgets(organization_id,budget_key,kind,max_attempts,window_us,cooldown_us)
  VALUES($1,$2,$3,$4,$5,$6) ON CONFLICT(organization_id,budget_key,kind) DO NOTHING`,
 		key.OrganizationID, key.Digest[:], key.Kind, p.MaxAttempts, p.Window.Microseconds(), p.Cooldown.Microseconds())
 	if err != nil {
@@ -75,9 +113,6 @@ func (s *Store) ReserveAttempt(ctx context.Context, key application.AttemptKey, 
  WHERE organization_id=$1 AND budget_key=$2 AND kind=$3`,
 		key.OrganizationID, key.Digest[:], key.Kind, next.Used, next.WindowStart, next.LastReserved, until)
 	if err != nil || tag.RowsAffected() != 1 {
-		return false, application.ErrAttemptStorage
-	}
-	if err = tx.Commit(ctx); err != nil {
 		return false, application.ErrAttemptStorage
 	}
 	return true, nil
