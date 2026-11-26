@@ -80,22 +80,42 @@ class BPButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final bool primary;
   @override
-  Widget build(BuildContext context) => ConstrainedBox(
-    constraints: const BoxConstraints(
-      minHeight: BPTokens.touchTarget,
-      minWidth: BPTokens.touchTarget,
-    ),
-    child: primary
-        ? ShadButton(
-            enabled: onPressed != null,
-            onPressed: onPressed,
-            child: Text(label),
-          )
-        : ShadButton.outline(
-            enabled: onPressed != null,
-            onPressed: onPressed,
-            child: Text(label),
-          ),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      const padding = EdgeInsets.symmetric(
+        horizontal: BPTokens.md,
+        vertical: BPTokens.sm,
+      );
+      // ShadButton lays out its label in a non-flex Row. Bound the label
+      // explicitly and permit vertical growth for enlarged text.
+      final child = ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: constraints.hasBoundedWidth
+              ? (constraints.maxWidth - padding.horizontal - BPTokens.xs).clamp(
+                  0.0,
+                  double.infinity,
+                )
+              : double.infinity,
+        ),
+        child: Text(label, textAlign: TextAlign.center),
+      );
+      return ConstrainedBox(
+        constraints: const BoxConstraints(
+          minHeight: BPTokens.touchTarget,
+          minWidth: BPTokens.touchTarget,
+        ),
+        child: ShadButton.raw(
+          variant: primary
+              ? ShadButtonVariant.primary
+              : ShadButtonVariant.outline,
+          height: 0,
+          padding: padding,
+          enabled: onPressed != null,
+          onPressed: onPressed,
+          child: child,
+        ),
+      );
+    },
   );
 }
 
