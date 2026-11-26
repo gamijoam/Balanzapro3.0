@@ -32,3 +32,6 @@ body:
           required: true
         - label: La ratificación cita el respaldo explícito del propietario (fecha y decisión).
           required: true
+
+        - label: El issue se vincula como dependencia bloqueante nativa de los BP afectados y se cierra solo con ratificación registrada.
+          required: true

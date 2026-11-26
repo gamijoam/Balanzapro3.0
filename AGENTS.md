@@ -28,3 +28,12 @@ Consultar .agents/skills/<nombre>/SKILL.md según tarea. No sustituyen reglas an
 ## Entrega
 Resumen, archivos, ADR aplicados, evidencia RED/GREEN, impacto en seguridad/datos, migración/rollback, riesgos y pendientes. Si no hay validación fiscal específica, no etiquetar documentos como facturas autorizadas.
 
+
+## Gobernanza avanzada — propuesta en PRs separados
+- **Desarrollador:** una subtarea y rama/worktree; TDD, pruebas reales, PR y evidencia. No aprueba su propio trabajo.
+- **Auditor independiente:** revisar diff, ADR, arquitectura, seguridad, invariantes comerciales y cobertura; registrar hallazgos en el PR con archivo/línea y prueba, sin fingir una aprobación humana. P0 crítico, P1 importante bloqueante, P2 mejora necesaria, P3 sugerencia no bloqueante. P0/P1 impiden recomendar merge; P2 se corrige o queda aceptado explícitamente con issue.
+- **Propietario humano:** ratifica ADR, decide excepciones y aceptación, autoriza explícitamente cada merge. Una IA no fusiona automáticamente ni suplanta al revisor. Dos agentes autenticados como el mismo usuario no son dos aprobaciones GitHub independientes.
+- Usar `Part of #N` para trabajo parcial (incluidas subtareas de una tarea padre); `Closes #N` solamente para una unidad totalmente aceptada, sin hijos pendientes, y con autorización humana. No cerrar el BP padre por fusionar un PR. Un issue ADR solo permite su ratificación documentada.
+- 200–500 líneas productivas es objetivo, no mínimo ni límite inflexible. Si superar 500 está justificado, declarar razón y riesgo; dividir cuando sea posible. Gobernanza, documentación, seguridad, migraciones y dependencias admiten excepciones explícitas, nunca elusión de ADR, seguridad o revisión.
+- Campo canónico del Project: **Estado**. `Status` es nativo y no es una segunda fuente de verdad. No actualizar ambos como si fueran equivalentes. Estado Completado exige aceptación de todo el issue, no merge parcial.
+- Checks nuevos se prueban en modo no obligatorio; distinguir previews controlados por el PR de validación desde base confiable. No modificar protecciones ni aprobar excepciones administrativas sin autorización humana.
