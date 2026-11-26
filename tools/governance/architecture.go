@@ -161,7 +161,7 @@ func main() {
 		os.Exit(2)
 	}
 	for _, issue := range v {
-		fmt.Println(issue)
+		fmt.Printf("%q\n", issue)
 	}
 	if len(v) != 0 {
 		os.Exit(1)
