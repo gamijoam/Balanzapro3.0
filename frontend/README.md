@@ -34,3 +34,12 @@ built web preview use `flutter build web --debug -t lib/catalog_main.dart
 The counter and loading switch are local examples, not commercial actions.
 System brightness controls the theme. Extend this catalog as shared component
 APIs grow; Widgetbook remains a candidate.
+
+### Table catalog example
+
+    flutter run -t lib/table_catalog_main.dart -d chrome
+
+The example is synthetic and independent of the inventory entrypoint.
+BPTable receives one page (up to 50 rows and eight columns); the caller
+owns query, page requests, selection and error recovery. Use full remaining
+viewport height. This is not a virtualized 100k SKU grid.
