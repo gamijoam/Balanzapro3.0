@@ -1,3 +1,4 @@
+import "package:flutter/services.dart";
 import "package:flutter/widgets.dart";
 import "package:shadcn_ui/shadcn_ui.dart";
 
@@ -8,6 +9,7 @@ abstract final class BPTokens {
       wideBreakpoint = 1000,
       sidebarWidth = 224;
   static const double radius = 8;
+  static const double formMaxWidth = 720;
   static const Color primaryLight = Color(0xFF1E40AF);
   static const Color onPrimaryLight = Color(0xFFFFFFFF);
   static const Color primaryDark = Color(0xFF93C5FD);
@@ -126,10 +128,18 @@ class BPInput extends StatelessWidget {
     required this.label,
     required this.placeholder,
     required this.onChanged,
+    this.enabled = true,
+    this.focusNode,
+    this.textInputAction,
+    this.onSubmitted,
   });
   final TextEditingController controller;
   final String label, placeholder;
   final ValueChanged<String> onChanged;
+  final bool enabled;
+  final FocusNode? focusNode;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onSubmitted;
   @override
   Widget build(BuildContext context) => Semantics(
     label: label,
@@ -137,6 +147,10 @@ class BPInput extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: BPTokens.touchTarget),
       child: ShadInput(
         controller: controller,
+        enabled: enabled,
+        focusNode: focusNode,
+        textInputAction: textInputAction,
+        onSubmitted: onSubmitted,
         placeholder: Text(placeholder),
         onChanged: onChanged,
       ),
