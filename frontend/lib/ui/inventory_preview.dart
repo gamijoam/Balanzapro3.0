@@ -2,12 +2,25 @@ import "package:flutter/widgets.dart";
 
 import "../design_system/design_system.dart";
 import "../design_system/bp_page_layout.dart";
+import "../design_system/bp_table.dart";
+import "../design_system/bp_form.dart";
 
-/// Experimental UI adapter, not the final design system.
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
   @override
   Widget build(BuildContext context) => const BPApp(home: _InventoryPreview());
+}
+
+/// Synthetic records, retained only for this application instance.
+class _Fixture {
+  const _Fixture(this.id, this.name, this.code, this.stock);
+  final String id, name, code;
+  final int stock;
+  String get status => stock == 0
+      ? "Agotado"
+      : stock < 10
+      ? "Stock bajo"
+      : "Disponible";
 }
 
 class _InventoryPreview extends StatefulWidget {
@@ -17,30 +30,92 @@ class _InventoryPreview extends StatefulWidget {
 }
 
 class _InventoryPreviewState extends State<_InventoryPreview> {
-  static const products = [
-    ("Arroz 1 kg", "ALI-001", "48", "Disponible"),
-    ("Café 250 g", "ALI-002", "6", "Stock bajo"),
-    ("Aceite 1 L", "ALI-003", "0", "Agotado"),
+  final products = <_Fixture>[
+    const _Fixture("1", "Arroz 1 kg", "ALI-001", 48),
+    const _Fixture("2", "Café 250 g", "ALI-002", 6),
+    const _Fixture("3", "Aceite 1 L", "ALI-003", 0),
   ];
   final search = TextEditingController();
-  String query = "";
+  final name = TextEditingController();
+  final code = TextEditingController();
+  static const pageSize = 10;
   String selected = "products";
+  String? selectedProduct, editingId;
+  bool editing = false;
+  int page = 0, nextId = 4;
+
   @override
   void dispose() {
     search.dispose();
+    name.dispose();
+    code.dispose();
     super.dispose();
+  }
+
+  void _startEdit(_Fixture? item) {
+    setState(() {
+      editing = true;
+      editingId = item?.id;
+      name.text = item?.name ?? "";
+      code.text = item?.code ?? "";
+    });
+  }
+
+  String? _validateName(String value) {
+    if (value.trim().isEmpty) return "Escribe un nombre";
+    if (value.trim().length > 100) return "Máximo 100 caracteres";
+    return null;
+  }
+
+  String? _validateCode(String value) {
+    final normalized = value.trim().toUpperCase();
+    if (normalized.isEmpty) return "Escribe un código";
+    if (normalized.length > 40) return "Máximo 40 caracteres";
+    if (products.any(
+      (p) => p.id != editingId && p.code.toUpperCase() == normalized,
+    )) {
+      return "Ese código ya existe en el ejemplo";
+    }
+    return null;
+  }
+
+  Future<bool> _save(Map<String, String> values) async {
+    final newName = values["name"]!, newCode = values["code"]!;
+    if (!editing ||
+        _validateName(newName) != null ||
+        _validateCode(newCode) != null)
+      return false;
+    setState(() {
+      final index = products.indexWhere((p) => p.id == editingId);
+      if (index < 0) {
+        products.add(
+          _Fixture(
+            (nextId++).toString(),
+            newName.trim(),
+            newCode.trim().toUpperCase(),
+            0,
+          ),
+        );
+      } else {
+        final old = products[index];
+        products[index] = _Fixture(
+          old.id,
+          newName.trim(),
+          newCode.trim().toUpperCase(),
+          old.stock,
+        );
+      }
+      editing = false;
+      editingId = null;
+      selectedProduct = null;
+      search.text = newCode.trim();
+      page = 0;
+    });
+    return true;
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = BPVisuals.of(context);
-    final visible = products
-        .where(
-          (p) =>
-              p.$1.toLowerCase().contains(query) ||
-              p.$2.toLowerCase().contains(query),
-        )
-        .toList();
     return BPPageLayout(
       title: "BalanzaPro3.0",
       contextLabel: "Entorno de desarrollo · Datos ficticios",
@@ -53,105 +128,156 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       onNavigate: (id) => setState(() => selected = id),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final wide =
+          final theme = BPVisuals.of(context);
+          if (selected == "home") {
+            return _dashboard(
+              theme,
               constraints.maxWidth >= BPTokens.wideBreakpoint &&
-              MediaQuery.textScalerOf(context).scale(14) <= 21;
-          if (selected == "home") return _dashboard(theme, wide);
-          return ListView(
-            key: ValueKey(selected),
-            padding: EdgeInsets.all(wide ? BPTokens.xxl : BPTokens.lg),
-            children: [
-              Text(
-                selected == "products" ? "Productos" : "Movimientos",
-                style: theme.heading,
-              ),
-              const SizedBox(height: BPTokens.sm),
-              Text(
-                selected == "products"
-                    ? "Consulta de existencias de ejemplo"
-                    : "Vista de demostración; sin operaciones reales",
-                style: theme.muted,
-              ),
-              const SizedBox(height: BPTokens.xl),
-              if (selected == "products") ...[
-                Text("Buscar por nombre o código", style: theme.label),
-                const SizedBox(height: BPTokens.sm),
-                BPInput(
-                  label: "Buscar productos",
-                  controller: search,
-                  placeholder: "Ej. café o ALI-002",
-                  onChanged: (value) =>
-                      setState(() => query = value.trim().toLowerCase()),
-                ),
-                const SizedBox(height: BPTokens.lg),
-                Text("${visible.length} productos", style: theme.muted),
-                const SizedBox(height: BPTokens.md),
-                if (visible.isEmpty)
-                  BPCard(
-                    child: Column(
-                      children: [
-                        const Text("No encontramos productos"),
-                        const SizedBox(height: BPTokens.md),
-                        BPButton(
-                          primary: false,
-                          label: "Limpiar búsqueda",
-                          onPressed: () {
-                            search.clear();
-                            setState(() => query = "");
-                          },
-                        ),
-                      ],
-                    ),
-                  )
-                else
-                  ...visible.map(
-                    (p) => Padding(
-                      padding: const EdgeInsets.only(bottom: BPTokens.sm),
-                      child: BPCard(
-                        child: wide
-                            ? Row(
-                                children: [
-                                  Expanded(
-                                    flex: 3,
-                                    child: Text(p.$1, style: theme.title),
-                                  ),
-                                  Expanded(flex: 2, child: Text(p.$2)),
-                                  Expanded(child: Text("${p.$3} und.")),
-                                  Expanded(flex: 2, child: Text(p.$4)),
-                                ],
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(p.$1, style: theme.title),
-                                  const SizedBox(height: BPTokens.xs),
-                                  Text(p.$2, style: theme.muted),
-                                  const SizedBox(height: BPTokens.sm),
-                                  Text("${p.$3} und. · ${p.$4}"),
-                                ],
-                              ),
-                      ),
-                    ),
-                  ),
-              ] else
-                const BPCard(
-                  child: Text(
-                    "Los movimientos estarán disponibles al conectar la API protegida.",
-                  ),
-                ),
-            ],
-          );
+                  MediaQuery.textScalerOf(context).scale(14) <= 21,
+            );
+          }
+          if (selected == "movements") {
+            return const ListViewPlaceholder();
+          }
+          if (editing) return _editor(theme, constraints);
+          return _products(theme);
         },
       ),
     );
   }
 
+  Widget _products(BPVisuals theme) {
+    final query = search.text.trim().toLowerCase();
+    final visible = products
+        .where(
+          (p) =>
+              p.name.toLowerCase().contains(query) ||
+              p.code.toLowerCase().contains(query),
+        )
+        .toList();
+    final pages = (visible.length + pageSize - 1) ~/ pageSize;
+    final chosen = visible.where((p) => p.id == selectedProduct).firstOrNull;
+    return BPTable(
+      key: const ValueKey("products"),
+      columns: const ["Producto", "Código", "Stock", "Estado"],
+      rows: [
+        for (final p in visible.skip(page * pageSize).take(pageSize))
+          BPTableRow(p.id, [p.name, p.code, p.stock.toString(), p.status]),
+      ],
+      page: page,
+      pageCount: pages,
+      searchController: search,
+      selectedId: selectedProduct,
+      onSelect: (id) => setState(() => selectedProduct = id),
+      onPage: (index) => setState(() {
+        page = index;
+        selectedProduct = null;
+      }),
+      onSearch: (_) => setState(() {
+        page = 0;
+        selectedProduct = null;
+      }),
+      onClearSearch: () => setState(() {
+        search.clear();
+        page = 0;
+        selectedProduct = null;
+      }),
+      toolbar: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Productos", style: theme.heading),
+          const SizedBox(height: BPTokens.sm),
+          Text(
+            "Prueba local · Los cambios se pierden al cerrar la aplicación.",
+            style: theme.muted,
+          ),
+          const SizedBox(height: BPTokens.md),
+          Wrap(
+            spacing: BPTokens.sm,
+            runSpacing: BPTokens.sm,
+            children: [
+              BPButton(
+                label: "Nuevo producto",
+                onPressed: () => _startEdit(null),
+              ),
+              BPButton(
+                label: "Editar seleccionado",
+                primary: false,
+                onPressed: chosen == null ? null : () => _startEdit(chosen),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _editor(BPVisuals theme, BoxConstraints constraints) => Column(
+    children: [
+      ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: constraints.maxHeight / 2),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(BPTokens.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  editingId == null
+                      ? "Nuevo producto de ejemplo"
+                      : "Editar producto de ejemplo",
+                  style: theme.heading,
+                ),
+                const SizedBox(height: BPTokens.sm),
+                Text(
+                  "Solo memoria local; no se guardan datos reales.",
+                  style: theme.muted,
+                ),
+                const SizedBox(height: BPTokens.sm),
+                BPButton(
+                  label: "Cancelar borrador",
+                  primary: false,
+                  onPressed: () => setState(() {
+                    editing = false;
+                    editingId = null;
+                  }),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+      Expanded(
+        child: BPForm(
+          fields: [
+            BPTextField(
+              id: "name",
+              label: "Nombre del producto",
+              controller: name,
+              validate: _validateName,
+            ),
+            BPTextField(
+              id: "code",
+              label: "Código",
+              controller: code,
+              validate: _validateCode,
+            ),
+          ],
+          onSubmit: _save,
+        ),
+      ),
+    ],
+  );
+
   Widget _dashboard(BPVisuals theme, bool wide) {
     final cards = [
-      for (final metric in const [
-        ("Productos de ejemplo", "3"),
-        ("Stock bajo de ejemplo", "1"),
-        ("Agotados de ejemplo", "1"),
+      for (final metric in [
+        ("Productos de ejemplo", products.length),
+        (
+          "Stock bajo de ejemplo",
+          products.where((p) => p.stock > 0 && p.stock < 10).length,
+        ),
+        ("Agotados de ejemplo", products.where((p) => p.stock == 0).length),
       ])
         BPCard(
           child: Column(
@@ -159,7 +285,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
             children: [
               Text(metric.$1, style: theme.label),
               const SizedBox(height: BPTokens.sm),
-              Text(metric.$2, style: theme.heading),
+              Text(metric.$2.toString(), style: theme.heading),
             ],
           ),
         ),
@@ -202,4 +328,22 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       ],
     );
   }
+}
+
+class ListViewPlaceholder extends StatelessWidget {
+  const ListViewPlaceholder({super.key});
+  @override
+  Widget build(BuildContext context) => ListView(
+    key: const ValueKey("movements"),
+    padding: const EdgeInsets.all(BPTokens.lg),
+    children: [
+      Text("Movimientos", style: BPVisuals.of(context).heading),
+      const SizedBox(height: BPTokens.lg),
+      const BPCard(
+        child: Text(
+          "Los movimientos estarán disponibles al conectar la API protegida.",
+        ),
+      ),
+    ],
+  );
 }
