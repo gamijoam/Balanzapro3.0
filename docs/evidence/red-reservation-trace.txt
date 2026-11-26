@@ -1,0 +1,16 @@
+--- FAIL: TestReservationHistoryIsTraceable (0.16s)
+    reservation_trace_test.go:80: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/reservation_trace_test.go:80
+        	Error:      	Received unexpected error:
+        	            	not implemented
+        	Test:       	TestReservationHistoryIsTraceable
+--- FAIL: TestReservationEventsCoherentUnderConcurrency (0.32s)
+    reservation_trace_test.go:143: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/reservation_trace_test.go:22
+        	            				/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/reservation_trace_test.go:143
+        	Error:      	Received unexpected error:
+        	            	ERROR: relation "inventory_reservation_events" does not exist (SQLSTATE 42P01)
+        	Test:       	TestReservationEventsCoherentUnderConcurrency
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	0.483s
+FAIL

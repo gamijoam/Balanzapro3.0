@@ -1,3 +1,2 @@
-# CI futura
-Directorio reservado por el blueprint. No contiene implementación. Inicializar mediante tarea aprobada de ROADMAP/BACKLOG, siguiendo AGENTS.md.
-
+# CI
+`backend.yml`: gofmt, go vet, pruebas unitarias e integración con PostgreSQL 16 desechable y `-race`, build y govulncheck del backend. Flutter y releases pendientes (BP-003, ADR-165).

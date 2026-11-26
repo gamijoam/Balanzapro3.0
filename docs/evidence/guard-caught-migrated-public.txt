@@ -1,0 +1,5 @@
+--- FAIL: TestDecimalRoundTripThroughPostgres (0.01s)
+    integration_test.go:136: pgtest: refusing database: database "bp_test" has migrations applied in public (looks like a real deployment); use an empty test database
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	0.012s
+FAIL

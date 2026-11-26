@@ -1,0 +1,1 @@
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	0.008s

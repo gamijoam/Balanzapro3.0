@@ -1,0 +1,81 @@
+ok  	github.com/gamijoam/Balanzapro3.0/backend/cmd/bpserver	0.004s
+--- FAIL: TestReservationHistoryOfReservationWithoutEvents (0.18s)
+    reservation_trace_test.go:158: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/reservation_trace_test.go:158
+        	Error:      	Received unexpected error:
+        	            	inventory: not found: reservation 8f728a10-e80f-406b-8b6a-6941357e76da
+        	Test:       	TestReservationHistoryOfReservationWithoutEvents
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	5.632s
+--- FAIL: TestSweepContinuesAfterCompanyError (0.00s)
+    sweep_test.go:43: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/application/sweep_test.go:43
+        	Error:      	Not equal: 
+        	            	expected: []uuid.UUID{uuid.UUID{0x1e, 0xc2, 0x41, 0xa8, 0x98, 0xe2, 0x48, 0x58, 0xa9, 0x5a, 0x1d, 0xe5, 0xe6, 0x52, 0x46, 0xc9}, uuid.UUID{0x6f, 0x7d, 0x7f, 0x6c, 0x7f, 0xa8, 0x4c, 0xac, 0xbb, 0xd8, 0x34, 0xbd, 0x38, 0x4e, 0x6, 0xf1}, uuid.UUID{0x46, 0x1f, 0x4a, 0xe1, 0x7f, 0x94, 0x4e, 0xf6, 0xa0, 0x42, 0x3c, 0x7f, 0xe1, 0x45, 0x9a, 0x36}}
+        	            	actual  : []uuid.UUID{uuid.UUID{0x1e, 0xc2, 0x41, 0xa8, 0x98, 0xe2, 0x48, 0x58, 0xa9, 0x5a, 0x1d, 0xe5, 0xe6, 0x52, 0x46, 0xc9}}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,10 +1,4 @@
+        	            	-([]uuid.UUID) (len=3) {
+        	            	+([]uuid.UUID) (len=1) {
+        	            	  (uuid.UUID) (len=16) {
+        	            	   00000000  1e c2 41 a8 98 e2 48 58  a9 5a 1d e5 e6 52 46 c9  |..A...HX.Z...RF.|
+        	            	- },
+        	            	- (uuid.UUID) (len=16) {
+        	            	-  00000000  6f 7d 7f 6c 7f a8 4c ac  bb d8 34 bd 38 4e 06 f1  |o}.l..L...4.8N..|
+        	            	- },
+        	            	- (uuid.UUID) (len=16) {
+        	            	-  00000000  46 1f 4a e1 7f 94 4e f6  a0 42 3c 7f e1 45 9a 36  |F.J...N..B<..E.6|
+        	            	  }
+        	Test:       	TestSweepContinuesAfterCompanyError
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/application	0.005s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	0.006s
+panic: non-positive interval for NewTicker
+
+goroutine 25 [running]:
+time.NewTicker(0x1f64e3396b8?)
+	/root/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.26.11.linux-amd64/src/time/tick.go:38 +0xbb
+github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs.(*ReservationSweeper).Run(0x1f64e3b4060, {0x6b3b68, 0x8fad40})
+	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper.go:48 +0x4d
+github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs_test.TestRunRejectsNonPositiveIntervalWithoutPanic.func2()
+	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:91 +0x2e
+created by github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs_test.TestRunRejectsNonPositiveIntervalWithoutPanic in goroutine 24
+	/home/user/Balanzapro3.0/backend/internal/inventory/jobs/sweeper_test.go:91 +0xfd
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/jobs	0.026s
+?   	github.com/gamijoam/Balanzapro3.0/backend/internal/organization	[no test files]
+--- FAIL: TestCheckURLComparesNormalizedProductionURL (0.00s)
+    guard_test.go:73: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:73
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLComparesNormalizedProductionURL
+    guard_test.go:74: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:74
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLComparesNormalizedProductionURL
+    guard_test.go:75: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/pgtest/guard_test.go:75
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestCheckURLComparesNormalizedProductionURL
+        	Messages:   	fail closed
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/pgtest	1.725s
+--- FAIL: TestMigrationsUpgradeExistingData (0.19s)
+    backfill_test.go:45: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/postgres/backfill_test.go:45
+        	Error:      	Received unexpected error:
+        	            	postgres: migrate up: partial migration error (type:sql,version:3): ERROR: check constraint "inventory_skus_unit_dimension" of relation "inventory_skus" is violated by some row (SQLSTATE 23514)
+        	Test:       	TestMigrationsUpgradeExistingData
+        	Messages:   	upgrade must succeed with legacy rows
+--- FAIL: TestUnitConstraintToleratesUnmappableLegacyRows (0.18s)
+    backfill_test.go:80: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/platform/postgres/backfill_test.go:80
+        	Error:      	Received unexpected error:
+        	            	postgres: migrate up: partial migration error (type:sql,version:3): ERROR: check constraint "inventory_skus_unit_dimension" of relation "inventory_skus" is violated by some row (SQLSTATE 23514)
+        	Test:       	TestUnitConstraintToleratesUnmappableLegacyRows
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/postgres	0.606s
+ok  	github.com/gamijoam/Balanzapro3.0/backend/internal/platform/qty	0.004s
+FAIL

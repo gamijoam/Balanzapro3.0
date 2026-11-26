@@ -1,0 +1,74 @@
+--- FAIL: TestBaseUnitMustMatchQuantityKind (0.00s)
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	weight/und
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	unit/kg
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	volume/kg
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	weight/l
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	length/ml
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	unit/caja
+    domain_test.go:141: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:141
+        	Error:      	Expected error with "inventory: invalid argument" in chain but got nil.
+        	Test:       	TestBaseUnitMustMatchQuantityKind
+        	Messages:   	weight/xx
+--- FAIL: TestBaseUnitIsNormalized (0.00s)
+    domain_test.go:148: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:148
+        	Error:      	Not equal: 
+        	            	expected: "kg"
+        	            	actual  : "KG"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-kg
+        	            	+KG
+        	Test:       	TestBaseUnitIsNormalized
+    domain_test.go:149: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/domain/domain_test.go:149
+        	Error:      	Not equal: 
+        	            	expected: "weight"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(domain.QuantityKind) (len=6) "weight"
+        	            	+(domain.QuantityKind) ""
+        	            	 
+        	Test:       	TestBaseUnitIsNormalized
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/domain	0.008s
+--- FAIL: TestDatabaseRejectsUnitOutsideDimension (0.14s)
+    units_test.go:17: 
+        	Error Trace:	/home/user/Balanzapro3.0/backend/internal/inventory/adapters/pgstore/units_test.go:17
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestDatabaseRejectsUnitOutsideDimension
+FAIL
+FAIL	github.com/gamijoam/Balanzapro3.0/backend/internal/inventory/adapters/pgstore	0.148s
+FAIL
