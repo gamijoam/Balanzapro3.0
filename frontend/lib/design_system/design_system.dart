@@ -10,6 +10,7 @@ abstract final class BPTokens {
       sidebarWidth = 224;
   static const double radius = 8;
   static const double formMaxWidth = 720;
+  static const double dialogMaxWidth = 480;
   static const Color primaryLight = Color(0xFF1E40AF);
   static const Color onPrimaryLight = Color(0xFFFFFFFF);
   static const Color primaryDark = Color(0xFF93C5FD);
@@ -77,10 +78,11 @@ class BPButton extends StatelessWidget {
     required this.label,
     required this.onPressed,
     this.primary = true,
+    this.autofocus = false,
   });
   final String label;
   final VoidCallback? onPressed;
-  final bool primary;
+  final bool primary, autofocus;
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
@@ -111,6 +113,7 @@ class BPButton extends StatelessWidget {
               ? ShadButtonVariant.primary
               : ShadButtonVariant.outline,
           height: 0,
+          autofocus: autofocus,
           padding: padding,
           enabled: onPressed != null,
           onPressed: onPressed,
