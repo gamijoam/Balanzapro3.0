@@ -53,6 +53,10 @@ func (s *memStore) GetUser(_ context.Context, org, id uuid.UUID) (domain.User, e
 	return u, nil
 }
 
+func (s *memStore) LockUser(ctx context.Context, org, id uuid.UUID) (domain.User, error) {
+	return s.GetUser(ctx, org, id) // InTx already serializes the whole store
+}
+
 func (s *memStore) UpdateUser(_ context.Context, u domain.User) error {
 	s.users[u.ID] = u
 	return nil
