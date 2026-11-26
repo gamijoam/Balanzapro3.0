@@ -20,3 +20,17 @@ On VPS the SDK is outside the repository, under /opt/BalanzaPro3.0-dev/sdk/flutt
 
 Native platform runners, Shadcn, navigation and inventory fixture screens
 are separate follow-up work. No public deployment. ADR-169 remains in force.
+
+## Development component catalog
+
+Separate entrypoint; no route is added to the inventory application.
+
+    flutter run -t lib/catalog_main.dart -d chrome
+    flutter test --no-pub --concurrency=1 test/component_catalog_test.dart
+
+Requires an installed browser for interactive web execution. For a separately
+built web preview use `flutter build web --debug -t lib/catalog_main.dart
+--no-pub --no-wasm-dry-run`. Do not publish it as a production app.
+The counter and loading switch are local examples, not commercial actions.
+System brightness controls the theme. Extend this catalog as shared component
+APIs grow; Widgetbook remains a candidate.
