@@ -84,26 +84,56 @@ func qtyText(q *qty.Q) *string {
 
 type txAdapter struct{ tx pgx.Tx }
 
-func (t *txAdapter) Assignments(ctx context.Context, org, user, company uuid.UUID) ([]domain.Assignment, error) {
+func (t *txAdapter) Assignments(ctx context.Context, org, user uuid.UUID, target domain.ScopePath) ([]domain.Assignment, error) {
+	orgTarget := target.OrganizationID == org && org != uuid.Nil &&
+		target.CompanyID == uuid.Nil && target.BranchID == uuid.Nil && target.WarehouseID == uuid.Nil
+	companyTarget := target.OrganizationID == uuid.Nil && target.CompanyID != uuid.Nil
+	if org == uuid.Nil || user == uuid.Nil || (!orgTarget && !companyTarget) {
+		return nil, nil
+	}
+	// Read grants and evidence in the same statement. A company membership
+	// must exist even for an inherited organization role. Branch/warehouse
+	// IDs must refer to the actual company and, when supplied, to each other.
 	rows, err := t.tx.Query(ctx, `
-		SELECT role_id, scope_level, branch_id, warehouse_id FROM permission_assignments
-		WHERE organization_id = $1 AND user_id = $2 AND company_id = $3 ORDER BY id`, org, user, company)
+		SELECT a.role_id, a.scope_level, a.company_id, a.branch_id, a.warehouse_id
+		FROM permission_assignments a
+		JOIN identity_users u ON u.organization_id = a.organization_id AND u.id = a.user_id
+		WHERE a.organization_id = $1 AND a.user_id = $2 AND u.status = 'active'
+		  AND (
+		    ($3::uuid IS NULL AND a.scope_level = 'organization')
+		    OR ($3::uuid IS NOT NULL
+		        AND (a.company_id = $3 OR a.scope_level = 'organization')
+		        AND EXISTS (
+		            SELECT 1 FROM identity_memberships m
+		            WHERE m.organization_id = $1 AND m.user_id = $2 AND m.company_id = $3)
+		        AND ($4::uuid IS NULL OR EXISTS (
+		            SELECT 1 FROM branches b WHERE b.company_id = $3 AND b.id = $4))
+		        AND ($5::uuid IS NULL OR EXISTS (
+		            SELECT 1 FROM warehouses w WHERE w.company_id = $3 AND w.id = $5
+		              AND ($4::uuid IS NULL OR w.branch_id = $4)))
+		    )
+		  )
+		ORDER BY a.id`, org, user, nullUUID(target.CompanyID), nullUUID(target.BranchID), nullUUID(target.WarehouseID))
 	if err != nil {
 		return nil, wrap(err, "assignments")
 	}
 	defer rows.Close()
 	var out []domain.Assignment
 	for rows.Next() {
-		a := domain.Assignment{OrganizationID: org, UserID: user, CompanyID: company}
+		a := domain.Assignment{OrganizationID: org, UserID: user}
 		var level string
-		var branch, wh *uuid.UUID
-		if err := rows.Scan(&a.RoleID, &level, &branch, &wh); err != nil {
+		var company, branch, wh *uuid.UUID
+		if err := rows.Scan(&a.RoleID, &level, &company, &branch, &wh); err != nil {
 			return nil, wrap(err, "assignments")
 		}
+		a.CompanyID = fromNull(company)
 		a.Scope.Level = domain.ScopeLevel(level)
 		switch a.Scope.Level {
+		case domain.LevelOrganization:
+			a.Scope.ID = org
+			a.MemberCompanyID = target.CompanyID
 		case domain.LevelCompany:
-			a.Scope.ID = company
+			a.Scope.ID = a.CompanyID
 		case domain.LevelBranch:
 			a.Scope.ID = fromNull(branch)
 		case domain.LevelWarehouse:

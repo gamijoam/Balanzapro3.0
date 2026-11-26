@@ -40,7 +40,9 @@ type Store interface {
 // Tx is what the use cases need from storage; every read is filtered by
 // organization.
 type Tx interface {
-	Assignments(ctx context.Context, org, user, company uuid.UUID) ([]domain.Assignment, error)
+	// Assignments returns grants only for an active actor and a verified target.
+	// Organization inheritance into a company requires current membership.
+	Assignments(ctx context.Context, org, user uuid.UUID, target domain.ScopePath) ([]domain.Assignment, error)
 	Roles(ctx context.Context, org uuid.UUID, ids []uuid.UUID) (map[uuid.UUID]domain.Role, error)
 	InsertAuthorization(ctx context.Context, a domain.Authorization) error
 	// LockAuthorization holds the row so it is redeemed once (SEC-02).
@@ -81,7 +83,7 @@ func NewService(store Store, now func() time.Time) *Service {
 }
 
 func decide(ctx context.Context, tx Tx, r domain.Request) error {
-	as, err := tx.Assignments(ctx, r.OrganizationID, r.UserID, r.Target.CompanyID)
+	as, err := tx.Assignments(ctx, r.OrganizationID, r.UserID, r.Target)
 	if err != nil {
 		return err
 	}
