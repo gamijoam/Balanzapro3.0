@@ -73,13 +73,14 @@ func NewRole(id, org uuid.UUID, code string, grants []Grant) (Role, error) {
 	return r, nil
 }
 
-// ScopeLevel of an assignment within a company (ADR-014).
+// ScopeLevel of an assignment within an organization (ADR-014, ADR-174).
 type ScopeLevel string
 
 const (
-	LevelCompany   ScopeLevel = "company"
-	LevelBranch    ScopeLevel = "branch"
-	LevelWarehouse ScopeLevel = "warehouse"
+	LevelOrganization ScopeLevel = "organization"
+	LevelCompany      ScopeLevel = "company"
+	LevelBranch       ScopeLevel = "branch"
+	LevelWarehouse    ScopeLevel = "warehouse"
 )
 
 // ScopeRef is where an assignment applies.
@@ -91,9 +92,12 @@ type ScopeRef struct {
 // ScopePath is the target of an action: its company and, when it has one,
 // branch and warehouse.
 type ScopePath struct {
-	CompanyID   uuid.UUID
-	BranchID    uuid.UUID
-	WarehouseID uuid.UUID
+	// OrganizationID is set only for an explicit organization-level target.
+	// An empty path is not a global permission.
+	OrganizationID uuid.UUID
+	CompanyID      uuid.UUID
+	BranchID       uuid.UUID
+	WarehouseID    uuid.UUID
 }
 
 // covers reports whether an assignment at ref applies to the path:
@@ -110,13 +114,17 @@ func (p ScopePath) covers(ref ScopeRef) bool {
 	return false
 }
 
-// Assignment gives a role to a user in one scope of one company.
+// Assignment gives a role to a user at a stored scope.
 type Assignment struct {
 	OrganizationID uuid.UUID
 	UserID         uuid.UUID
 	RoleID         uuid.UUID
 	CompanyID      uuid.UUID
 	Scope          ScopeRef
+	// MemberCompanyID is evidence supplied by trusted storage after checking
+	// active user membership for the requested company. Never accept it from
+	// an HTTP request. It is used only for an organization-level assignment.
+	MemberCompanyID uuid.UUID
 }
 
 // Request asks whether a user may perform a permission on a target,
@@ -130,15 +138,31 @@ type Request struct {
 }
 
 // Decide denies by default. It allows when an assignment of the same user
-// and organization, in the target's company and covering the target, gives
+// and organization, at a covering scope with verified membership for inherited company access, gives
 // a role of that organization granting the permission within its limit.
 // ErrLimitExceeded means the permission exists but no applicable grant
 // covers the amount (a supervisor may authorize it, ADR-025).
 func Decide(r Request, assignments []Assignment, roles map[uuid.UUID]Role) error {
+	// Organization scope is explicit; a missing company does not imply it.
+	p := r.Target
+	orgTarget := p.OrganizationID == r.OrganizationID && p.OrganizationID != uuid.Nil &&
+		p.CompanyID == uuid.Nil && p.BranchID == uuid.Nil && p.WarehouseID == uuid.Nil
+	companyTarget := p.OrganizationID == uuid.Nil && p.CompanyID != uuid.Nil
+	if r.OrganizationID == uuid.Nil || r.UserID == uuid.Nil ||
+		(!orgTarget && !companyTarget) || (r.Amount != nil && r.Amount.IsNegative()) {
+		return ErrForbidden
+	}
 	limited := false
 	for _, a := range assignments {
-		if a.UserID != r.UserID || a.OrganizationID != r.OrganizationID ||
-			a.CompanyID != r.Target.CompanyID || r.Target.CompanyID == uuid.Nil || !r.Target.covers(a.Scope) {
+		if a.UserID != r.UserID || a.OrganizationID != r.OrganizationID || a.Scope.ID == uuid.Nil {
+			continue
+		}
+		if a.Scope.Level == LevelOrganization {
+			if a.Scope.ID != r.OrganizationID || a.CompanyID != uuid.Nil ||
+				(!orgTarget && a.MemberCompanyID != p.CompanyID) {
+				continue
+			}
+		} else if !companyTarget || a.CompanyID != p.CompanyID || !p.covers(a.Scope) {
 			continue
 		}
 		role, ok := roles[a.RoleID]
