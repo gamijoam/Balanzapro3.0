@@ -39,7 +39,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(
         find.text(
-          "Los movimientos estarán disponibles al conectar la API protegida.",
+          "Los movimientos reales requieren la API protegida. Estos registros son ficticios.",
         ),
         findsOneWidget,
       );

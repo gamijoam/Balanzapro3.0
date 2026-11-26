@@ -6,23 +6,12 @@ import "../design_system/bp_table.dart";
 import "../design_system/bp_form.dart";
 import "../design_system/bp_badge.dart";
 import "../design_system/bp_choice_bar.dart";
+import "inventory_consultation.dart";
 
 class PreviewApp extends StatelessWidget {
   const PreviewApp({super.key});
   @override
   Widget build(BuildContext context) => const BPApp(home: _InventoryPreview());
-}
-
-/// Synthetic records, retained only for this application instance.
-class _Fixture {
-  const _Fixture(this.id, this.name, this.code, this.stock);
-  final String id, name, code;
-  final int stock;
-  String get status => stock == 0
-      ? "Agotado"
-      : stock < 10
-      ? "Stock bajo"
-      : "Disponible";
 }
 
 class _InventoryPreview extends StatefulWidget {
@@ -32,17 +21,17 @@ class _InventoryPreview extends StatefulWidget {
 }
 
 class _InventoryPreviewState extends State<_InventoryPreview> {
-  final products = <_Fixture>[
-    const _Fixture("1", "Arroz 1 kg", "ALI-001", 48),
-    const _Fixture("2", "Café 250 g", "ALI-002", 6),
-    const _Fixture("3", "Aceite 1 L", "ALI-003", 0),
+  final products = <PreviewProduct>[
+    const PreviewProduct("1", "Arroz 1 kg", "ALI-001", 48),
+    const PreviewProduct("2", "Café 250 g", "ALI-002", 6),
+    const PreviewProduct("3", "Aceite 1 L", "ALI-003", 0),
   ];
   final search = TextEditingController();
   final name = TextEditingController();
   final code = TextEditingController();
   static const pageSize = 10;
   String selected = "products";
-  String? editingId, feedback;
+  String? editingId, feedback, detailId, historyProductId;
   String filter = "all";
   bool editing = false;
   int page = 0, nextId = 4;
@@ -55,7 +44,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
     super.dispose();
   }
 
-  void _startEdit(_Fixture? item) {
+  void _startEdit(PreviewProduct? item) {
     setState(() {
       editing = true;
       feedback = null;
@@ -93,7 +82,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       final index = products.indexWhere((p) => p.id == editingId);
       if (index < 0) {
         products.add(
-          _Fixture(
+          PreviewProduct(
             (nextId++).toString(),
             newName.trim(),
             newCode.trim().toUpperCase(),
@@ -102,7 +91,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
         );
       } else {
         final old = products[index];
-        products[index] = _Fixture(
+        products[index] = PreviewProduct(
           old.id,
           newName.trim(),
           newCode.trim().toUpperCase(),
@@ -111,6 +100,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       }
       editing = false;
       editingId = null;
+      detailId = null;
       feedback = index < 0
           ? "Producto creado en esta sesión"
           : "Producto actualizado en esta sesión";
@@ -132,7 +122,10 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
         BPNavItem("movements", "Movimientos", icon: BPNavIcon.movements),
       ],
       selectedId: selected,
-      onNavigate: (id) => setState(() => selected = id),
+      onNavigate: (id) => setState(() {
+        selected = id;
+        if (id == "movements") historyProductId = null;
+      }),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final theme = BPVisuals.of(context);
@@ -144,16 +137,33 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
             );
           }
           if (selected == "movements") {
-            return const ListViewPlaceholder();
+            return MovementHistory(
+              key: ValueKey("history-$historyProductId"),
+              products: products,
+              productId: historyProductId,
+              onBack: () => setState(() => selected = "products"),
+            );
           }
           if (editing) return _editor(theme, constraints);
+          if (detailId != null) {
+            final product = products.firstWhere((p) => p.id == detailId);
+            return ProductDetail(
+              product: product,
+              onBack: () => setState(() => detailId = null),
+              onEdit: () => _startEdit(product),
+              onHistory: () => setState(() {
+                historyProductId = product.id;
+                selected = "movements";
+              }),
+            );
+          }
           return _products(theme);
         },
       ),
     );
   }
 
-  bool _matchesFilter(_Fixture p) => switch (filter) {
+  bool _matchesFilter(PreviewProduct p) => switch (filter) {
     "available" => p.stock >= 10,
     "low" => p.stock > 0 && p.stock < 10,
     "empty" => p.stock == 0,
@@ -168,6 +178,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       if (fromDashboard) {
         search.clear();
         selected = "products";
+        detailId = null;
       }
     });
   }
@@ -208,6 +219,7 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       pageCount: pages,
       searchController: search,
       rowActionLabel: "Editar",
+      onRowDetails: (id) => setState(() => detailId = id),
       onRowAction: (id) => _startEdit(products.firstWhere((p) => p.id == id)),
       onPage: (index) => setState(() => page = index),
       onSearch: (_) => setState(() {
@@ -396,22 +408,4 @@ class _InventoryPreviewState extends State<_InventoryPreview> {
       ],
     );
   }
-}
-
-class ListViewPlaceholder extends StatelessWidget {
-  const ListViewPlaceholder({super.key});
-  @override
-  Widget build(BuildContext context) => ListView(
-    key: const ValueKey("movements"),
-    padding: const EdgeInsets.all(BPTokens.lg),
-    children: [
-      Text("Movimientos", style: BPVisuals.of(context).heading),
-      const SizedBox(height: BPTokens.lg),
-      const BPCard(
-        child: Text(
-          "Los movimientos estarán disponibles al conectar la API protegida.",
-        ),
-      ),
-    ],
-  );
 }

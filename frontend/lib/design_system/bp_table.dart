@@ -25,6 +25,7 @@ class BPTable extends StatelessWidget {
     this.selectedId,
     this.onSelect,
     this.onRowAction,
+    this.onRowDetails,
     this.rowActionLabel = "Abrir",
     required this.onPage,
     this.state = BPTableState.ready,
@@ -60,7 +61,7 @@ class BPTable extends StatelessWidget {
   final TextEditingController searchController;
   final ValueChanged<String> onSearch;
   final String? selectedId;
-  final ValueChanged<String>? onSelect, onRowAction;
+  final ValueChanged<String>? onSelect, onRowAction, onRowDetails;
   final String rowActionLabel, clearSearchLabel;
   final ValueChanged<int> onPage;
   final BPTableState state;
@@ -185,6 +186,21 @@ class BPTable extends StatelessWidget {
               onPressed: () => onSelect!(row.id),
             ),
           );
+    final actions = onRowDetails == null
+        ? action
+        : Wrap(
+            spacing: BPTokens.xs,
+            runSpacing: BPTokens.xs,
+            children: [
+              BPButton(
+                key: ValueKey("bp-row-details-${row.id}"),
+                label: "Ver ${row.cells.first}",
+                primary: false,
+                onPressed: () => onRowDetails!(row.id),
+              ),
+              action,
+            ],
+          );
     if (wide) {
       return Row(
         children: [
@@ -192,7 +208,7 @@ class BPTable extends StatelessWidget {
             Expanded(
               child: Semantics(label: columns[i], child: _cell(row, i)),
             ),
-          SizedBox(width: BPTokens.sidebarWidth, child: action),
+          SizedBox(width: BPTokens.sidebarWidth, child: actions),
         ],
       );
     }
@@ -221,9 +237,9 @@ class BPTable extends StatelessWidget {
             ),
           ),
         if (onRowAction != null)
-          Align(alignment: Alignment.centerRight, child: action)
+          Align(alignment: Alignment.centerRight, child: actions)
         else
-          action,
+          actions,
       ],
     );
   }
