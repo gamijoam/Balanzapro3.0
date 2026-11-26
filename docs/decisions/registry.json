@@ -153,9 +153,10 @@
   },
   {
     "id": "025",
-    "title": "Supervisor",
-    "status": "PROPUESTA / RATIFICACIÓN PENDIENTE",
-    "decision": "PIN individual, autorización limitada y auditada."
+    "title": "Autorización de supervisor",
+    "status": "APROBADA",
+    "decision": "PIN personal del supervisor (ADR-026) verificado en servidor; autorización ligada a acción, entidad, monto, terminal y sesión; un solo uso, expira ~2 min; validada contra permisos y límites del supervisor; auditada (SEC-02).",
+    "ratified_on": "2026-11-26"
   },
   {
     "id": "026",
