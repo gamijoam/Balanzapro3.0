@@ -19,9 +19,22 @@ import (
 )
 
 // Store is the unit of work over a pool.
-type Store struct{ pool *pgxpool.Pool }
+type Store struct {
+	pool            *pgxpool.Pool
+	attemptCapacity int
+}
 
 func New(pool *pgxpool.Pool) *Store { return &Store{pool: pool} }
+
+// NewAttemptStore requires an explicit capacity. All replicas must use
+// the same trusted configuration. The ceiling is a technical guardrail,
+// not a production sizing recommendation. New does not enable attempts.
+func NewAttemptStore(pool *pgxpool.Pool, capacity int) (*Store, error) {
+	if pool == nil || capacity < 1 || capacity > 100000 {
+		return nil, domain.ErrInvalidArgument
+	}
+	return &Store{pool: pool, attemptCapacity: capacity}, nil
+}
 
 // InTx runs fn in one READ COMMITTED transaction, committed only if fn
 // returns nil.

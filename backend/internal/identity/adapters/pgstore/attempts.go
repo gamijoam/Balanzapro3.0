@@ -23,7 +23,7 @@ func (s *Store) ReserveAttempt(ctx context.Context, key application.AttemptKey, 
 // Limit the number of rows locked per request and use a stable order for
 // both inserts and locks, regardless of the caller's input order.
 func (s *Store) ReserveAttempts(ctx context.Context, budgets []application.AttemptBudget) (bool, error) {
-	if len(budgets) < 1 || len(budgets) > 3 {
+	if s == nil || s.attemptCapacity < 1 || len(budgets) < 1 || len(budgets) > 3 {
 		return false, domain.ErrInvalidArgument
 	}
 	ordered := slices.Clone(budgets)
@@ -51,7 +51,28 @@ func (s *Store) ReserveAttempts(ctx context.Context, budgets []application.Attem
 		return false, application.ErrAttemptStorage
 	}
 	defer func() { _ = tx.Rollback(context.WithoutCancel(ctx)) }()
+	// Serialize all budget reservations for this organization. The lock
+	// precedes all budget-row locks, including those for existing keys.
+	// NO KEY UPDATE is compatible with foreign-key reference checks.
+	var org uuid.UUID
+	if err := tx.QueryRow(ctx, "SELECT id FROM organizations WHERE id=$1 FOR NO KEY UPDATE", first.OrganizationID).Scan(&org); err != nil {
+		return false, application.ErrAttemptStorage
+	}
 	for _, b := range ordered {
+		var exists bool
+		if err := tx.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM identity_attempt_budgets WHERE organization_id=$1 AND budget_key=$2 AND kind=$3)", b.Key.OrganizationID, b.Key.Digest[:], b.Key.Kind).Scan(&exists); err != nil {
+			return false, application.ErrAttemptStorage
+		}
+		if !exists {
+			var count int
+			// Limit the scan even if preexisting data exceeds the configured cap.
+			if err := tx.QueryRow(ctx, "SELECT count(*) FROM (SELECT 1 FROM identity_attempt_budgets WHERE organization_id=$1 LIMIT $2) AS bounded", org, s.attemptCapacity).Scan(&count); err != nil {
+				return false, application.ErrAttemptStorage
+			}
+			if count >= s.attemptCapacity {
+				return false, application.ErrAttemptCapacity
+			}
+		}
 		allowed, err := reserveInTx(ctx, tx, b.Key, b.Policy)
 		if err != nil || !allowed {
 			return false, err
